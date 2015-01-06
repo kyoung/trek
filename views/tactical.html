@@ -1,0 +1,417 @@
+<% include header.html %>
+
+<div id="leftSide" class="fleft">
+    <div id="tacticalMenu" class="tactical">
+        <div>
+            <ul class="menu horizontal small x2">
+                <li class="blue offline" id="comms">Comms</li>
+                <li class="lightblue" id="tactical">Tactical</li>
+            </ul>
+        </div>
+        <div class="clear"></div>
+    	<div>
+    		<ul class="menu x1">
+    			<li class="blue" id="raiseShields">Raise Shields</li>
+    			<li class="blue" id="redAlert">Red Alert</li>
+    			<li class="blue" id="setTarget">Select Target</li>
+    		</ul>
+        </div>
+        <div id="flyoutMenu" class="tactical-flyout">
+        </div>
+    	<div>
+    		<p class="descriptiveText">Current target:</p>
+    		<p id="targetName">None</p>
+    	</div>
+        <div>
+            <p class="descriptiveText">Scale and Zoom:</p>
+            <ul class="menu x2 small horizontal">
+                <li class="lightBlue" id="torpedoZoom">Torpedo</li>
+                <li class="blue" id="phaserZoom">Phaser</li>
+            </ul>
+        </div>
+        <div id="zoomSelector" class="tactical-bar-selector">
+            <div id="1" class="zoomBar selected"></div>
+            <div id="2" class="zoomBar selected"></div>
+            <div id="3" class="zoomBar selected"></div>
+            <div id="4" class="zoomBar selected"></div>
+            <div id="5" class="zoomBar selected"></div>
+            <div id="6" class="zoomBar selected"></div>
+            <div id="7" class="zoomBar selected"></div>
+            <div id="8" class="zoomBar selected"></div>
+            <div id="9" class="zoomBar selected"></div>
+            <div id="10" class="zoomBar selected"></div>
+            <div id="11" class="zoomBar selected"></div>
+            <div id="12" class="zoomBar selected"></div>
+            <div id="13" class="zoomBar selected"></div>
+            <div id="14" class="zoomBar selected"></div>
+            <div id="15" class="zoomBar selected"></div>
+            <div id="16" class="zoomBar selected"></div>
+        </div>
+        <div class="clear"></div>
+        <p class="descriptiveText">Torpedo Count: <span id="torpCount"></span></p>
+        <p class="descriptiveText">Torpedo Yield:</p>
+        <div id="yieldSelector" class="tactical-bar-selector">
+            <div id="1" class="yieldBar selected"></div>
+            <div id="2" class="yieldBar"></div>
+            <div id="3" class="yieldBar"></div>
+            <div id="4" class="yieldBar"></div>
+            <div id="5" class="yieldBar"></div>
+            <div id="6" class="yieldBar"></div>
+            <div id="7" class="yieldBar"></div>
+            <div id="8" class="yieldBar"></div>
+            <div id="9" class="yieldBar"></div>
+            <div id="10" class="yieldBar"></div>
+            <div id="11" class="yieldBar"></div>
+            <div id="12" class="yieldBar"></div>
+            <div id="13" class="yieldBar"></div>
+            <div id="14" class="yieldBar"></div>
+            <div id="15" class="yieldBar"></div>
+            <div id="16" class="yieldBar"></div>
+        </div>
+        <div class="clear"></div>
+        <p class="descriptiveText">Torpedo Bays:</p>
+        <div id="torpedoBays" class="tactical-torpedo-bays">
+
+        </div>
+        <div class="clear"></div>
+    	<div>
+    		<ul class="menu x1">
+    			<li class="lightGreen" id="fireTorpedo">Fire Torpedo</li>
+    			<li class="lightGreen" id="firePhasers">Fire Phasers</li>
+                <li class="blue" id="mainscreen">Main Screen</li>
+    		</ul>
+    	</div>
+    </div>
+</div>
+
+<div id="rightSide" class="fleft">
+	<iframe id="viewScreen"></iframe>
+</div>
+
+<script type="text/javascript">
+
+var shipName = "<%= ship.name %>";
+var $comDisplay = $("#comms");
+var $tacticalDisplay = $("#tactical");
+
+var $torpedoBays = $("#torpedoBays");
+var weaponsTarget = '';
+var $yieldBars = $('.yieldBar');
+var $zoomBars = $('.zoomBar');
+var $shieldSwitch = $("#raiseShields");
+var $targetName = $("#targetName");
+var $alertStatus = $("#redAlert");
+var torpedoYield = 1;
+var zoomLevel = 16;
+var torpedoInventory = 96;
+var $torpCount = $("#torpCount");
+var zoom = "torpedo";
+var $torpedoZoom = $("#torpedoZoom");
+var $phaserZoom = $("#phaserZoom");
+var $viewScreen = $("#viewScreen");
+var $mainscreen = $("#mainscreen");
+var $setTarget = $("#setTarget");
+var $flyoutMenu = $("#flyoutMenu");
+var $firePhasers = $("#firePhasers");
+var $fireTorpedoes = $("#fireTorpedo");
+
+
+
+$torpedoZoom.click(function(){
+
+    $(this).addClass( "lightBlue" );
+    $phaserZoom.removeClass( "lightBlue" );
+    zoom = "torpedo";
+    $viewScreen.attr(
+        'src',
+        'tactical_screen?zoom=' + zoom + '&zoom_level=' + zoomLevel
+    );
+
+});
+
+$phaserZoom.click(function(){
+
+    $(this).addClass( "lightBlue" );
+    $torpedoZoom.removeClass( "lightBlue" );
+    zoom = "phasers";
+    $viewScreen.attr(
+        'src',
+        'tactical_screen?zoom=' + zoom + '&zoom_level=' + zoomLevel
+    );
+
+});
+
+// Notify the window that there is Comms activity
+trek.socket.on( "hail", function(data){
+
+    $comDisplay.removeClass( "offline" );
+    $comDisplay.addClass( "blink" );
+
+});
+
+
+function loadTorpedoBay( bayName ) {
+
+    trek.api(
+        "tactical/loadTorpedo",
+        { tube: bayName },
+        updateState
+    );
+
+};
+
+
+function displayTorpedoBayStatus( status ) {
+
+    $torpedoBays.empty();
+
+    var bayTmpl = "<div class='tactical-torpedo-bay {{class_}}'>{{number}}: {{status_}}</div>";
+
+    _.each( status, function( e ) {
+
+        var render = {
+            class_: 'tactical-torpedo-bay-' + e.status.toLowerCase(),
+            name: e.name.replace( /Torpedo/g, "" ),
+            number: e.name.replace( /Torpedo Bay /g, "" ),
+            status_: e.status.toUpperCase()
+
+        };
+
+        var $torpBay = $( Mustache.render( bayTmpl, render ) );
+
+        if ( e.status == "Empty" ) {
+            $torpBay.click( function() {
+                loadTorpedoBay( e.name );
+            });
+        }
+
+        $torpedoBays.append( $torpBay );
+
+    } );
+
+};
+
+
+function parseTacticalState( data ){
+
+    weaponsTarget = data.weapons_target;
+    torpedoInventory = data.torpedo_inventory;
+
+    displayTorpedoBayStatus( data.torpedo_bay_status );
+
+    if (data.shields_status){
+        $shieldSwitch.addClass( "lightBlue" );
+    } else {
+        $shieldSwitch.removeClass( "lightBlue" );
+    };
+
+    if ( data.alertStatus == "red" ) {
+        $alertStatus.addClass( "red" );
+    } else {
+        $alertStatus.removeClass("red");
+    };
+
+    updateTarget();
+    updateTorpedo();
+
+};
+
+function updateState() {
+
+    trek.api(
+        "tactical/status",
+        parseTacticalState
+    );
+
+}
+
+$mainscreen.click(function(){
+
+    trek.api(
+        "command/mainViewer",
+        {
+            screen: "tactical_screen",
+            zoom: zoom,
+            zoom_level: zoomLevel
+        },
+        'PUT',
+        updateState
+    );
+
+});
+
+$alertStatus.click(function(){
+
+    var alertState;
+
+	if ( $(this).hasClass("red") ) {
+
+		$(this).removeClass("red");
+        alertState = "clear";
+
+	} else {
+
+		$(this).addClass("red");
+		$shieldSwitch.addClass( "lightBlue" );
+        alertState = "red";
+
+	}
+
+    trek.api(
+        "tactical/alert",
+        { status: alertState },
+        'PUT',
+        updateState
+    );
+});
+
+
+function updateTarget() {
+    $targetName.html( weaponsTarget.replace( /_/g, " " ) );
+};
+
+
+function updateTorpedo() {
+    $torpCount.html( torpedoInventory );
+};
+
+
+function buildTargetMenu( scanData ) {
+
+    var submenu = $( "<ul class='menu x1'></ul>" );
+    _.each( scanData, function(s){
+
+        if ( s.name == shipName ) {
+            return;
+        }
+
+        var prettyName = s.name.replace( /_/g, " " );
+        var trgt = $("<li class='green' id='" + s.name + "'>" + prettyName + "</li>");
+
+        trgt.click(function(){
+            weaponsTarget = this.id;
+            updateTarget();
+            trek.api(
+                "tactical/target",
+                { target: this.id },
+                'PUT',
+                updateState
+            );
+            $flyoutMenu.html( "" );
+        });
+
+        submenu.append( trgt );
+
+    } );
+
+    $flyoutMenu.append( submenu );
+
+};
+
+
+function getTargets() {
+    trek.api(
+        "tactical/scan",
+        buildTargetMenu
+    );
+}
+
+
+$setTarget.click( getTargets );
+
+
+$firePhasers.click(function(){
+    trek.api( "tactical/firePhasers" );
+});
+
+$fireTorpedoes.click(function(){
+    trek.api(
+        "tactical/fireTorpedo",
+        {
+            yield: torpedoYield
+        },
+        updateState
+    );
+});
+
+$yieldBars.mouseover(function(){
+
+    torpedoYield = parseInt( $(this).attr( "id" ) );
+
+    _.each( $yieldBars, function( e ) {
+
+        if ( parseInt( e.id ) <= torpedoYield ) {
+            $(e).addClass( "selected" );
+        }
+        else {
+            $(e).removeClass( "selected" );
+        }
+
+    } );
+
+});
+
+$zoomBars.mouseover(function(){
+
+    zoomLevel = parseInt( $(this).attr( "id" ) );
+
+    _.each( $zoomBars, function( e ){
+
+        if ( parseInt( e.id ) <= zoomLevel ) {
+            $( e ).addClass( "selected" );
+        }
+        else {
+            $( e ).removeClass( "selected" );
+        }
+    });
+
+    setDisplay();
+
+});
+
+
+function setDisplay() {
+
+    var q_string = "?zoom=" + zoom + "&zoom_level=" + zoomLevel;
+    $viewScreen.attr( 'src', 'tactical_screen' + q_string );
+
+};
+$tacticalDisplay.click( setDisplay );
+
+
+function toggleShields() {
+
+    var set_online = $shieldSwitch.hasClass( "lightblue" ) ? false: true;
+
+    console.log( "Setting shields: " + set_online );
+
+    trek.api(
+        "tactical/shields",
+        { online: set_online },
+        "PUT",
+        updateState
+    );
+
+};
+$shieldSwitch.click( toggleShields );
+
+
+function displayCom() {
+
+    $viewScreen.attr( 'src', 'comm_screen' );
+    $comDisplay.removeClass( "blink" );
+    $comDisplay.addClass( "offline" );
+
+};
+$comDisplay.click( displayCom );
+
+
+setDisplay();
+updateState();
+
+setInterval( updateState, 1000 );
+
+trek.playBridgeSound();
+
+</script>
+<% include footer.html %>

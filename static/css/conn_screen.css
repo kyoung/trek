@@ -1,0 +1,14 @@
+#displayScreen {
+    width: 100%;
+    height: 100%;
+}
+
+.scannerObject {
+  position: fixed;
+    font-size: 8px;
+}
+.scannerObject p {
+    line-height: 10px;
+    margin: 0;
+    padding: 0;
+}

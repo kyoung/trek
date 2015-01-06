@@ -1,0 +1,494 @@
+<% include header.html %>
+<div id="leftSide" class="fleft">
+    <div id="viewMenu">
+        <ul class="menu horizontal x3">
+            <li class="blue lightblue" id="pickNav">Nav</li>
+            <li class="blue" id="pickWarp">Warp</li>
+            <li class="blue" id="pickHelm">Helm</li>
+        </ul>
+    </div>
+    <div class="clear"></div>
+    <div id="navMenu" class="nav-menu">
+        <ul class="menu x1">
+            <li class="green system-select" id="Sector 2298">
+                Sector 2298
+            </li>
+            <li class="green system-select" id="DG Tau">
+                DG Tau System
+            </li>
+            <li class="blue" id="mainViewer">Main Viewer</li>
+        </ul>
+    </div>
+    <div id="helmMenu" class="nav-helm-menu">
+        <p>System Orientation</p>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 width="250px" height="250px" viewBox="-10 0 250 250" xml:space="preserve" class="blue comm-helm-arrow" id="conn-helm-svg">
+            <g>
+                    <circle fill="none" stroke="#60DDF7" stroke-width="10" stroke-miterlimit="10" stroke-dasharray="1.0174,40.6977" cx="119.5" cy="119.5" r="119.5"/>
+            </g>
+            <g>
+                    <circle fill="none" stroke="#60DDF7" stroke-width="3" stroke-miterlimit="10" stroke-dasharray="0.9932,19.8643" cx="119.5" cy="119.5" r="119.5"/>
+            </g>
+            <polygon points="119.500,19.287 157.441,106.500 195.382,193.714 119.500,140.501 43.619,193.714 81.560,106.500" id="conn-helm-pointer" fill="#0F8AA6"/>
+
+        </svg>
+        <p>Rotational Thrusters</p>
+        <ul class="menu small x2">
+            <li class="left green" id="turnLeft">
+                <svg class="conn-arrow left">
+                    <path d="M20 0 L 20 15 L 0 7.5 Q" fill = "black"/>
+                </svg>
+            </li>
+            <li class="right green" id="turnRight">
+                <svg class="conn-arrow right">
+                    <path d="M0 0 L 20 7.5 L 0 15 Q" fill = "black"/>
+                </svg>
+            </li>
+        </ul>
+    </div>
+    <div id="warpMenu" class="nav-helm-menu">
+        <div>
+            <ul class="menu x1">
+                <li class="blue selector" id="setCourse">Set Course</li>
+            </ul>
+            <div class="clear"></div>
+            <ul class="menu horizontal small x2">
+                <li class="blue selector" id="setWarp">Warp</li>
+                <li class="blue selector" id="setImpulse">Impulse</li>
+            </ul>
+            <div class="clear"></div>
+            <ul class="menu x1">
+                <li class="blue selector" id="plotIntercept">Plot Intercept</li>
+            </ul>
+        </div>
+        <div id="flyoutMenu" class="nav-flyout">
+        </div>
+        <div>
+            <p id="inputInfo" class="nav-input-info"></p>
+            <p id="inputBox">
+            </p>
+        </div>
+        <div>
+            <ul class="menu x3">
+                <li class="lightgreen numPad">1</li>
+                <li class="lightgreen numPad">2</li>
+                <li class="lightgreen numPad">3</li>
+                <li class="lightgreen numPad">4</li>
+                <li class="lightgreen numPad">5</li>
+                <li class="lightgreen numPad">6</li>
+                <li class="lightgreen numPad">7</li>
+                <li class="lightgreen numPad">8</li>
+                <li class="lightgreen numPad">9</li>
+                <li class="lightgreen numPad">m</li>
+                <li class="lightgreen numPad">0</li>
+                <li class="lightgreen numPad">.</li>
+            </ul>
+        </div>
+        <div class="clear">
+        </div>
+        <div>
+            <ul class="menu x1">
+                <li class="blue" id="engage">
+                    Engage
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="rightSide" class="fleft">
+    <iframe id="viewScreen"></iframe>
+</div>
+<script type="text/javascript">
+var selected_option;
+var interception_parameters = {};
+var intercept_target;
+var time_to_intercept;
+var intercept_timer;
+
+var $inputbox = $( "#inputBox" );
+var $systemSelections = $( ".system-select" );
+var $viewScreen = $( "#viewScreen" );
+
+var $pickWarp = $( "#pickWarp" );
+var $pickNav = $( "#pickNav" );
+var $pickHelm = $( "#pickHelm" );
+var $picks = $( "#viewMenu li" );
+
+var $helmMenu = $( "#helmMenu" );
+var $navMenu = $( "#navMenu" );
+var $warpMenu = $( "#warpMenu" );
+
+var $turnLeft = $( "#turnLeft" );
+var $turnRight = $( "#turnRight" );
+var turningLeft = false;
+var turningRight = false;
+var turnRate = 0;
+var turnState = 0;
+
+var navArrow = document.getElementById("conn-helm-pointer");
+
+$viewScreen.attr( 'src', 'conn_screen' );
+
+$systemSelections.click( function(e) {
+
+    $systemSelections.removeClass( "lightgreen" );
+    $(this).addClass( "lightgreen" );
+
+    $viewScreen.attr( "src", "conn_screen?system=" + this.id );
+
+} );
+
+$pickNav.click( function( e ) {
+
+    $picks.removeClass( "lightblue" );
+    $pickNav.addClass( "lightblue" );
+    $helmMenu.hide();
+    $warpMenu.hide();
+    $navMenu.show();
+
+} );
+
+$pickHelm.click( function( e ) {
+
+    $picks.removeClass( "lightblue" );
+    $pickHelm.addClass( "lightblue" );
+    $helmMenu.show();
+    $navMenu.hide();
+    $warpMenu.hide();
+
+} );
+
+$pickWarp.click( function( e ) {
+
+    $picks.removeClass( "lightblue" );
+    $pickWarp.addClass( "lightblue" );
+    $helmMenu.hide();
+    $navMenu.hide();
+    $warpMenu.show();
+
+} );
+
+$(".selector").click(function(){
+
+    selected_option = this.id;
+    $(".selector").removeClass("lightblue");
+    $(".selector").addClass("blue");
+    $(this).removeClass("blue");
+    $(this).addClass("lightblue");
+    $inputbox.html("");
+
+});
+
+$("#mainViewer").click(function(){
+
+    // TODO Change this to read the source of the iframe...
+    // I want the zoom info
+    var x = document.getElementById("viewScreen");
+    var searchTerms = x.contentWindow.location.search.replace( "?", "" );
+
+    trek.api(
+        "command/mainViewer",
+        { screen: "conn_screen&" + searchTerms },
+        updateNavigationData
+    );
+
+});
+
+$(".numPad").click(function(){
+    var x_char = $(this).html();
+    var x_existing = $inputbox.html();
+    var x_newchar = x_existing + x_char;
+    $inputbox.html(x_newchar);
+});
+
+$("#plotIntercept").click( function(){
+    trek.api( "tactical/scan", drawInterceptMenu );
+} );
+
+
+function drawInterceptMenu( data ){
+
+    console.log( data );
+
+    var $submenu = $("<ul class='menu x1'></ul>");
+
+    _.each( data, function(s) {
+
+        if ( s.name == "<%= ship.name %>" ) {
+            return;
+        }
+
+        console.log( "drawing " + s.name )
+
+        s.cleanName = s.name.replace( /_/g, " " );
+
+        var $intcpt = $("<li class='green' id='" + s.name + "'>" + s.cleanName + "</li>");
+
+        $intcpt.click( function(){
+            intercept_target = this.id;
+            $("#inputInfo").html( "Intercept " + this.id.replace( /_/g, " " ) );
+            $("#flyoutMenu").html( "" );
+        } );
+
+        console.log( "appending" )
+        $submenu.append( $intcpt );
+
+    });
+
+    $("#flyoutMenu").append( $submenu );
+
+}
+
+
+function interceptTimer( data ){
+
+    ms_to_intercept = parseInt( data.timeToIntercept, 10 );
+    time_to_intercept = Math.round(ms_to_intercept / 1000);
+    console.log("Time to intercept: " + time_to_intercept);
+    if (time_to_intercept < 0) {
+        return;
+    };
+    intercept_timer = setInterval(
+        function(){
+
+            time_to_intercept -= 1;
+            if ( time_to_intercept == 0 ) {
+
+                clearInterval( intercept_timer );
+                $( "#inputInfo" ).html("");
+
+            };
+
+            $("#inputInfo").html(
+                "Time to intercept: " + time_to_intercept
+            );
+        },
+        1000);
+
+};
+
+
+$("#engage").click(function(){
+
+    var e = $inputbox.html().split( "m" );
+
+    switch( selected_option ) {
+
+        case "setCourse":
+
+            trek.api(
+                'navigation/course',
+                { bearing: e[0], mark: e[1] },
+                'PUT',
+                function() { console.log( "Setcourse confirmed" ); }
+            );
+
+            break;
+
+        case "setWarp":
+
+            if (intercept_target) {
+
+                trek.api(
+                    "navigation/plot-intercept",
+                    {
+                        warp: e[0],
+                        target: intercept_target
+                    },
+                    'PUT',
+                    interceptTimer);
+
+                intercept_target = undefined;
+
+            } else {
+
+                trek.api(
+                    "navigation/warp",
+                    { speed: e[0] },
+                    'PUT',
+                    function(data) { console.log( data ) } );
+
+            }
+
+            break;
+
+        case "setImpulse":
+
+            if ( intercept_target ) {
+
+                trek.api(
+                    "navigation/plot-intercept",
+                    {
+                        impulse: e[0],
+                        target: intercept_target
+                    },
+                    interceptTimer);
+
+                intercept_target = undefined;
+
+            } else {
+
+                trek.api(
+                    "navigation/impulse",
+                    { speed: e[0] },
+                    'PUT',
+                    function(c) { consoel.log( c ) });
+
+            }
+            break;
+        case "plotIntercept":
+            break;
+        default:
+            $inputbox.html("");
+    };
+    $(".selector").removeClass("lightblue");
+    $(".selector").addClass("blue");
+    $inputbox.html("");
+
+});
+
+
+function turnShipRight() {
+    if ( turningRight ) {
+        // toggle off turn
+        turningRight = false;
+        trek.api(
+            'navigation/turn',
+            { direction: 'stop' },
+            'PUT',
+            function () {}
+        );
+        $turnRight.removeClass( "toggle" );
+
+    } else {
+        if ( turningLeft ) {
+            turningLeft = false;
+            $turnLeft.removeClass( "toggle" );
+        }
+        turningRight = true;
+        trek.api(
+            'navigation/turn',
+            { direction: 'starboard' },
+            'PUT',
+            function() {}
+        );
+        $turnRight.addClass( "toggle" );
+    }
+}
+
+
+function turnShipLeft() {
+    if ( turningLeft ) {
+        // toggle off turn
+        turningLeft = false;
+        trek.api(
+            'navigation/turn',
+            { direction: 'stop' },
+            'PUT',
+            function () {}
+        );
+        $turnLeft.removeClass( "toggle" );
+
+    } else {
+        if ( turningRight ) {
+            turningRight = false;
+            $turnRight.removeClass( "toggle" );
+        }
+        turningLeft = true;
+        trek.api(
+            'navigation/turn',
+            { direction: 'port' },
+            'PUT',
+            function() {}
+        );
+        $turnLeft.addClass( "toggle" );
+    }
+}
+
+
+$turnRight.click( turnShipRight );
+$turnLeft.click( turnShipLeft );
+
+
+trek.socket.on( "Navigation", function( navData ) {
+
+    if ( _.has( navData, "turn_direction" ) ) {
+        // best effort turn
+        i = setInterval(
+            updateNavigationData,
+            500);
+
+        // update nav data after turn time
+        setTimeout(
+            function() {
+                clearInterval(i);
+                updateNavigationData();
+            },
+            navData.turn_duration * 1.1);
+    }
+
+});
+
+
+trek.socket.on( "Turning", function( navData ) {
+
+    updateNavigationDisplay( navData );
+
+});
+
+
+function updateNavigationDisplay( navData ) {
+    console.log( navData );
+
+    turnRate = navData.rotation.bearing;
+    turnState = navData.bearing.bearing
+    var degree = ( 1 - turnState ) * 360 + 90;
+    navArrow.setAttribute(
+        "transform",
+        "rotate(" + degree + ", 119.5, 119.5)");
+
+}
+
+var turnCalcTimeStamp = 0;
+function updateOrientation(tStamp) {
+
+    if ( turnRate != 0 ) {
+
+        delta = tStamp - turnCalcTimeStamp;
+        var b = turnState + turnRate * delta;
+
+        // Normalize the bearing
+        if ( b > 1 ) b -= 1;
+        if ( b < 0 ) b += 1;
+
+        var degree = ( 1 - b ) * 360 + 90;
+
+        navArrow.setAttribute(
+            "transform",
+            "rotate(" + degree + ", 119.5, 119.5)");
+
+    }
+
+    requestAnimationFrame(updateOrientation);
+
+}
+
+
+function updateNavigationData() {
+
+    trek.api( 'navigation/status', updateNavigationDisplay );
+
+}
+
+// Setup animation to show orientation movement
+requestAnimationFrame(updateOrientation);
+
+
+// Always select the local system by default
+$systemSelections[ 1 ].click();
+updateNavigationData();
+
+trek.playBridgeSound();
+
+</script>
+<% include footer.html %>

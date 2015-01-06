@@ -1,0 +1,17 @@
+iframe {
+    border: 0;
+}
+
+iframe#displayScreen {
+    height: 100%;
+    width: 100%;
+}
+
+#leftSide {
+    width: 290px;
+    height: 100%;
+}
+
+#rightSide {
+    width: calc(100% - 290px);
+}

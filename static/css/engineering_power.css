@@ -1,0 +1,67 @@
+p {
+    line-height: 1em;
+    margin-bottom: 5px;
+}
+
+p.top {
+    margin-top: 20px;
+}
+
+ul {
+    list-style: none;
+    margin-top: 0px;
+}
+
+.power_wrapper {
+  margin-left: 20px;
+  margin-top: 40px;
+}
+
+span.spacer {
+    margin-left: 10px;
+}
+
+.powerBars li {
+    margin-top: 20px;
+}
+
+span.sys_name {
+    display: inline-block;
+    width: 300px;
+}
+
+span.sys_bar {
+    display: inline-block;
+    background-color: rgba(96, 221, 247, 0.4);
+}
+
+span.sys_bar_frame {
+    position: relative;
+    display: inline-block;
+    border: 1px solid rgba(96, 221, 247, 0.4);
+    width: 500px;
+}
+
+span.sys_bar_dark {
+  display: inline-block;
+  background-color: rgba(15, 138, 166, 0.4);
+}
+
+span.sys_bar_active {
+  display: inline-block;
+  background-color: rgba(96, 221, 247, 0.6);
+}
+
+span.sys_bar_red {
+  display: inline-block;
+  background-color: rgba(179, 9, 0, 0.8);
+}
+
+span.sys_marker {
+    position: absolute;
+    top: -5px;
+    left: 0px;
+    height: 32px;
+    border-left: 5px solid #60DDF7;
+    border-right: 5px solid #60DDF7;
+}

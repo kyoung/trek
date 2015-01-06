@@ -1,0 +1,352 @@
+<% include header.html %>
+
+<div id="system_display" class="eng">
+    <p class="top">Power Systems</p>
+    <ul class="menu x1">
+        <li class="blue">Emergency Reset</li>
+    </ul>
+</div>
+
+<script type="text/template" id="reactorTemplate">
+<div id="powerSystem">
+    <p>Output Level:
+        <span class='lightblue'>{{output}} Megadynes</span>
+    </p>
+    <p>Operational Efficiency:
+        <span class='{{level_color}}'>{{output_percent}} percent</span>
+    </p>
+    <p>Output Relay:
+        <span class='lightblue'>{{primary_relay.name}}</span>
+    </p>
+    <div class="eng-power-wrapper">
+        <span class='eng-sys-bar-frame' id='{{ name }}'>
+            <span class='eng-sys-bar-active' style='width:{{op_percent}}%'>
+                &nbsp;
+            </span><span class='eng-sys-bar-red' style='width:{{max_percent}}%'>
+                &nbsp;
+            </span><span class='eng-sys-marker' style='margin-left:{{power_percent}}%'>
+                &nbsp;
+            </span>
+        </span>
+    </div>
+</div>
+</script>
+
+<script type="text/template" id="relayTemplate">
+<div id="powerSystem">
+    <p>Power Input:
+        <span class='{{power_color}}'>{{power}} Megadynes</span>
+    </p>
+    <ul class="eng-power-bars">
+        {{#subsystems}}
+        <li id="{{name}}">
+            <span class='eng-sys-name'>{{name}}</span>
+            <span class='eng-sys-bar-frame' id='{{ name }}'>
+                <span class='eng-sys-bar-dark' style='width:{{min_percent}}%'>
+                    &nbsp;
+                </span><span class='eng-sys-bar-active' style='width:{{op_percent}}%'>
+                    &nbsp;
+                </span><span class='eng-sys-bar-red' style='width:{{max_percent}}%'>
+                    &nbsp;
+                </span><span class='eng-sys-marker' style='margin-left:{{power_percent}}%'>
+                    &nbsp;
+                </span>
+            </span>
+            <span>{{power}}</span>
+            {{#charge}}
+            <div class='eng-charge-meter'>
+                <span
+                    class='eng-charge-meter-bar'
+                    id='{{id}}'
+                    style='width:{{charge_percent}}%'>
+                </span>
+            </div>
+            {{/charge}}
+        </li>
+        {{/subsystems}}
+    </ul>
+</div>
+</script>
+
+<script type="text/template" id="rerouteTemplate">
+<div id="reroute">
+    <p class="lightgreen">Reroute EPS Grid</p>
+    <ul class="menu horizontal x1">
+        {{#primary_relays}}
+        <li id="{{ name }}" class="reroute_id {{ class }}">{{ name }}</li>
+        {{/primary_relays}}
+    </ul>
+</div>
+</script>
+
+<script>
+// Do nothing on red alert... the parent page will get the notification
+trek.on_alert(function() {});
+
+var power_report;
+
+var $system_display = $("#system_display");
+
+var reactor_template = $("#reactorTemplate").html();
+var relay_template = $("#relayTemplate").html();
+var reroute_template = $("#rerouteTemplate").html();
+
+var component = "<%= component %>";
+var power_type = "<%= power_type %>";
+
+
+function loadScreen() {
+
+    if ( component == "undefined" ) {
+        return
+    }
+
+    $system_display.empty();
+    $system_display.append(
+        $("<p class='descriptiveText lightblue top'>" + component + "</p>")
+    );
+
+    trek.api( "engineering/power", loadPowerReport );
+
+}
+
+
+function updateScreen() {
+
+    trek.api( "engineering/power", updatePowerReport );
+
+}
+
+
+function loadPowerReport( powerJSON ) {
+
+    var component_json = _.find(
+        powerJSON[ power_type ],
+        function(e) {
+            return e.name == component;
+        }
+    );
+
+    power_report = component_json;
+
+    var system_html;
+
+    if ( power_type == 'reactors' ) {
+
+        component_json[ 'level_color' ] = 'lightblue';
+
+        if ( component_json.output_level > 1 ) {
+            component_json[ 'level_color' ] = 'red';
+        }
+
+        component_json.output_percent = Math.round(
+            component_json.output_level * 100 );
+
+        component_json[ 'op_percent' ] = (
+            1 / component_json.max_level ) * 100;
+
+        component_json[ 'max_percent' ] = ( component_json.max_level - 1 ) / component_json.max_level * 100;
+
+        component_json[ 'power_percent' ] = component_json.output_level / component_json.max_level * 100;
+
+        system_html = Mustache.render(
+            reactor_template,
+            component_json
+        )
+
+        $system_display.append( system_html );
+
+        $(".eng-sys-bar-frame").click( function( e ) {
+
+            var $this = $( this );
+            var offset = $this.offset();
+            var x = e.clientX - offset.left;
+            var width = $this.width();
+            var clicked_id = this.id;
+
+            var system = _.find(
+                power_report.subsystems,
+                function (e) {
+                    return e.name == clicked_id;
+                }
+            );
+
+            var max = power_report.max_level;
+            var level = x / (width / max);
+
+            trek.api(
+                "engineering/reactor",
+                { reactor: clicked_id, level: level },
+                'POST',
+                loadScreen
+            );
+
+        });
+    }
+
+    else {
+
+        _.each( component_json.subsystems, function( e ) {
+
+            e[ 'power_percent' ] = e.current_power_level / e.max_power_level * 100;
+
+            e[ 'min_percent' ] = e.min_power_level / e.max_power_level * 100;
+
+            e[ 'op_percent' ] = ( 1 - e.min_power_level ) / e.max_power_level * 100;
+
+            e[ 'max_percent' ] = ( e.max_power_level - 1 ) / e.max_power_level * 100;
+
+            e[ 'power' ] = parseInt( e[ 'power' ] );
+
+            e[ 'charge_percent' ] = e.charge * 100;
+
+            e[ 'id' ] = e.name.replace( " ", "-" ) + '-charge';
+
+        });
+
+        power_color = 'lightblue';
+        if ( component_json.current_power_level > 1 ) {
+            power_color = 'red';
+        };
+
+        component_json[ 'power_color' ] = power_color;
+        component_json.power = parseInt( component_json.power );
+
+        system_html = Mustache.render(
+            relay_template,
+            component_json
+        );
+        $system_display.append( system_html );
+
+        $(".eng-sys-bar-frame").click( function(e) {
+
+            var $this = $( this );
+            var offset = $this.offset();
+            var x = e.clientX - offset.left;
+            var width = $this.width();
+            var clicked_id = this.id;
+
+            var system = _.find(
+                power_report.subsystems,
+                function (e) {
+                    return e.name == clicked_id;
+                }
+            );
+
+            var max = system.max_power_level;
+            var level = x / ( width / max );
+
+            trek.api(
+                "engineering/power",
+                { system_name: clicked_id, level: level },
+                'POST',
+                loadScreen
+            );
+
+        });
+
+    }
+
+    if (power_type == 'eps_relays') {
+
+        var primary_relays = _.map(
+            powerJSON.primary_relays,
+            function(e) { return e.name; }
+        );
+
+        var current_relay = _.find(
+            powerJSON.primary_relays,
+            function(e) {
+                sys = _.find(
+                    e.subsystems,
+                    function(f) {
+                        return f.name == component;
+                    }
+                )
+                if ( sys ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        );
+
+        reroute_json = {
+
+            primary_relays: _.map(
+                primary_relays,
+                function(i) {
+                    class_color = "green";
+
+                    if (i == current_relay.name) {
+                        class_color = "lightgreen";
+                    };
+
+                    return {name: i, class: class_color};
+                }
+            )
+
+        }
+
+        reroute_html = Mustache.render(
+            reroute_template,
+            reroute_json
+        );
+
+        $system_display.append( reroute_html );
+
+        $( ".reroute_id" ).click( function( c ) {
+
+            data = {
+                eps_relay: component,
+                primary_power_relay: this.id
+            };
+
+            trek.api(
+                "engineering/eps-route",
+                data,
+                'POST',
+                loadScreen );
+
+        });
+    };
+
+}
+
+
+function updatePowerReport ( powerJSON ) {
+
+    var component_json = _.find(
+        powerJSON[ power_type ],
+        function(e) {
+            return e.name == component;
+        }
+    );
+
+    if ( power_type == 'reactors' ) {
+        return;
+    }
+
+    _.each( component_json.subsystems, function( e ) {
+
+        if ( !e.hasOwnProperty( 'charge' ) ) {
+            return;
+        }
+
+        var width = e.charge * 100;
+        width = width + '%';
+        var id = e.name.replace( " ", "-" ) + '-charge';
+
+        $( '#' + id ).css( 'width', width );
+
+    });
+
+}
+
+loadScreen();
+
+setInterval( updateScreen, 1000 );
+
+
+</script>
+<% include footer.html %>

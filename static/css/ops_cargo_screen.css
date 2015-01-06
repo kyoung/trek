@@ -1,0 +1,12 @@
+#cargoList {
+    margin-top: 30px;
+}
+
+ul {
+    list-style: none;
+    margin-top: 0px;
+}
+
+li.cargo_item {
+    font-size: 0.6em;
+}

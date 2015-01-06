@@ -1,0 +1,162 @@
+<% include header.html %>
+
+<div id="leftSide" class="fleft">
+    <div id="viewMenu">
+        <ul class="menu x1">
+            <li class="blue" id="sr_scan">Primary Scan</li>
+            <li class="blue" id="lr_scan">Long Range Scan</li>
+            <li class="blue" id="detail_scan">Detailed Scan</li>
+            <li class="blue" id="environmental">Environmental Scan</li>
+            <li class="blue" id="internal">Internal Scan</li>
+        </ul>
+    </div>
+    <div class="hidden science-sub_menu" id="sr_scan_menu">
+        <ul class="menu x1">
+            <li class="green" id="Wide Angle EM Field Scan">Wide Angle EM</li>
+            <li class="green" id="Active Antiproton Beam Scan">Antiproton</li>
+            <li class="green" id="Passive High-Resolution Scan">Passive High Resolution</li>
+            <li class="green" id="Magneton Scan">Magneton</li>
+            <li class="green" id="Multiphasic Scan">Multiphasic</li>
+            <li class="green" id="Active Inverse Tachyon Pulse">Tachyon</li>
+            <li class="green" id="Virtual Positron Imaging Scan">Positron</li>
+        </ul>
+    </div>
+    <div class="hidden science-sub_menu" id="lr_scan_menu">
+        <ul class="menu x1">
+            <li class="green" id="EM Field Scan">EM Field</li>
+            <li class="green" id="Gamma Radiation Scan">Gamma Radiation</li>
+            <li class="green" id="Subspace Field Stressor Scan">Subspace Stressor</li>
+            <li class="green" id="Gravimetric Distortion Scan">Gravimetric</li>
+            <li class="green" id="Passive Neutrino Imaging Scan">Neutrino Imaging</li>
+        </ul>
+    </div>
+    <div class="hidden science-sub_menu" id="detailed_scan_menu">
+    </div>
+    <ul class="menu x1">
+        <li class="blue" id="mainViewer">Main Viewer</li>
+    </ul>
+</div>
+
+<div id="rightSide" class="fleft">
+    <iframe id="viewScreen"></iframe>
+</div>
+
+<script>
+
+var $SRScan = $( "#sr_scan" );
+var $LRScan = $( "#lr_scan" );
+var $detailScan = $( "#detail_scan" );
+var $internalScan = $( "#internal" );
+var $environmentalScan = $( "#environmental" );
+
+var $viewMenu = $( "#viewMenu li" );
+var $scienceSubMenues = $( ".science-sub_menu" );
+var $SRScanMenu = $( "#sr_scan_menu" );
+var $SRScanMenuLi = $( "#sr_scan_menu li" );
+var $LRScanMenu = $( "#lr_scan_menu" );
+var $LRScanMenuLi = $( "#lr_scan_menu li" );
+var $detailedScanMenu = $( "#detailed_scan_menu" );
+
+var selectedSubmenu;
+
+var $viewScreen = $( "#viewScreen" );
+
+
+$SRScan.click( function(c) {
+    $viewScreen.attr( 'src', 'science_scans' );
+    $scienceSubMenues.addClass( 'hidden' );
+    $SRScanMenu.removeClass( 'hidden' );
+} );
+
+
+$LRScan.click( function(c) {
+    $viewScreen.attr( 'src', 'science_scans_lr' );
+    $scienceSubMenues.addClass( 'hidden' );
+    $LRScanMenu.removeClass( 'hidden' );
+} );
+
+
+$detailScan.click( function(c) {
+    $viewScreen.attr( 'src', 'science_details' );
+    $scienceSubMenues.addClass( 'hidden' );
+    $detailedScanMenu.removeClass( 'hidden' );
+    refreshHighresMenu();
+} );
+
+
+$internalScan.click( function( c ) {
+    $viewScreen.attr( 'src', 'science_internal' );
+    $scienceSubMenues.addClass( 'hidden' );
+} );
+
+$environmentalScan.click( function( c ) {
+    $viewScreen.attr( 'src', 'science_environmental' );
+    $scienceSubMenues.addClass( 'hidden' );
+} );
+
+$viewMenu.click( function( c ) {
+    $viewMenu.removeClass( 'lightblue' );
+    $( this ).addClass( 'lightblue' );
+} );
+
+
+$SRScanMenuLi.click( function(c) {
+    args = { type: this.id };
+    $viewScreen.attr( 'src', 'science_scans?type=' + this.id )
+    selectedSubmenu = this.id;
+} );
+
+
+$LRScanMenuLi.click( function(c) {
+    args = { type: this.id };
+    $viewScreen.attr( 'src', 'science_scans_lr?type=' + this.id );
+    selectedSubmenu = this.id;
+} );
+
+
+function loadHighresReading( results ) {
+
+    console.log( results );
+    $detailedScanMenu.empty();
+
+    var $ul = $( "<ul class='menu x1'></ul>" );
+    var liTempl = "<li class='green'>{{classification}}</li>";
+
+    _.each( results.classifications, function( e ) {
+
+        var $li = $( Mustache.render( liTempl, e ) );
+        $li.click( function( c ) {
+
+            $viewScreen.attr(
+                'src',
+                'science_details?classification=' + e.classification + "&distance=" + e.distance + "&bearing=" + e.bearing.bearing + "&tag=" + e.tag
+            );
+
+        });
+
+        $ul.append( $li );
+
+    });
+
+    $detailedScanMenu.append( $ul );
+
+};
+
+
+function refreshHighresMenu() {
+
+    trek.api(
+        "science/scanResults",
+        { type: "Passive High-Resolution Scan" },
+        loadHighresReading
+    )
+
+};
+
+
+$SRScan.click();
+
+trek.playBridgeSound();
+
+</script>
+<% include footer.html %>

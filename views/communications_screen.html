@@ -1,0 +1,52 @@
+<% include header.html %>
+<link rel="stylesheet" href="/static/css/communication_screen.css">
+
+<div id="chat_history">
+	<ul id="commlog">
+	</ul>
+</div>
+
+<div id="chat_input">
+	<textarea id="textinput">> </textarea>
+</div>
+
+<script type="text/javascript">
+
+var commlog = $("#commlog");
+var send_window = $("#textinput");
+var socket = io.connect("http://localhost:<%= port %>");
+
+socket.on("hail", function(data){
+	commlog.append("<li class='recieved'>" + data + "</li>");
+	scrollToBottom();
+});
+
+window.onkeyup = function(d){
+	if (d.keyIdentifier == "Enter") {
+		commlog.append("<li class='sent'>" + send_window[0].value + "</li>");
+		scrollToBottom();
+		socket.emit("hail", send_window[0].value)
+		send_window[0].value = "> ";
+	}
+};
+
+function scrollToBottom() {
+	var chat_history = $("#chat_history");
+	chat_history.scrollTop(chat_history[0].scrollHeight);
+};
+
+trek.api("command/commsHistory", function( data ){
+
+	_.each( data, function( d ) {
+		if (d.type == "sent") {
+			commlog.append("<li class='sent'>" + d.message + "</li>");
+		} else {
+			commlog.append("<li class='recieved'>" + d.message + "</li>");
+		}
+	})
+
+});
+
+</script>
+
+<% include footer.html %>

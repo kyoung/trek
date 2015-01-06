@@ -1,0 +1,209 @@
+<% include header.html %>
+<link rel="stylesheet" href="/static/css/conn_screen.css">
+<div id="displayScreen">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#0F8AA6" stroke-width="0.5"/>
+          </pattern>
+          <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <rect width="80" height="80" fill="url(#smallGrid)"/>
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#0F8AA6" stroke-width="1"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+</div>
+
+<script type="text/template" id="scannerObjectTmpl">
+    <div id="{{ name }}" class='scannerObject'>
+        <svg width="8px" height="8px" xmlns="http://www.w3.org/2000/svg">
+            <circle style="fill:#0F8AA6"; cx="4" cy="4" r="4"/>
+        </svg>
+        <p class="name">{{ name }}</p>
+        <p class="speed">{{ speed }}</p>
+        <p class="distBearing">{{ distAndBearing }}</p>
+    </div>
+</script>
+
+<script type="text/javascript">
+
+var tmpl = $( "#scannerObjectTmpl" ).html();
+var sensorObjects = {};
+var map;
+var scanInterval;
+var $displayGrid = $( "#displayScreen" );
+var shipName = "<%= ship.name %>";
+var systemName = "<%= system_name %>";
+var system;
+
+// Parse the zoom values from the URL query string
+var qs_values = trek.parseQueryString();
+var zoomLevel = _.has( qs_values, "zoomLevel" ) ?
+    parseInt( qs_values.zoomLevel ): 1;
+var zoomCoordinateX = _.has( qs_values, "zoomCoordinateX" ) ?
+    parseFloat( qs_values.zoomCoordinateX ): 0;
+var zoomCoordinateY = _.has( qs_values, "zoomCoordinateY" ) ?
+    parseFloat( qs_values.zoomCoordinateY ): 0;
+
+var minX, minY, maxX, maxY;
+
+
+function relativeCoordinates( x, y, z ) {
+
+    if ( !system ) {
+        return
+    }
+
+    var w = $displayGrid.width();
+    var h = $displayGrid.height();
+
+    var xRel = ( w * ( x - minX ))/( maxX - minX );
+    var yRel = ( h * ( maxY - y ))/( maxY - minY );
+    var zRel = 0;
+
+    return {x: xRel, y: yRel, z: zRel};
+
+}
+
+
+function absoluteCoordinates( x, y, z ) {
+
+    var w = $displayGrid.width();
+    var h = $displayGrid.height();
+
+    console.log( "w: " + w );
+    console.log( "h: " + h );
+    console.log( "minX: " + minX + " minY: " + minY );
+    console.log( "maxX: " + maxX + " maxY: " + maxY );
+
+    var xAbs = ( x / w * ( maxX - minX ) + minX );
+    var yAbs = ( y / h * ( maxY - minY ) + minY );
+    var zAbs = 0;
+
+    console.log( xAbs );
+    console.log( yAbs );
+
+    return {x: xAbs, y: yAbs, z: zAbs};
+
+}
+
+
+function paintScan(data) {
+
+    _.each( data, function( e ) {
+
+        var coordinates = relativeCoordinates(
+            e.position.x,
+            e.position.y,
+            e.position.z
+        );
+        var x = coordinates.x;
+        var y = coordinates.y;
+        var dist = trek.prettyDistanceAU( e.distance );
+        var name = e.name;
+        var bearing = trek.prettyBearing( e.bearing.bearing ) + " mark " + e.bearing.mark;
+        var distAndBearing = dist + ", " + bearing;
+
+        // Don't inlucde distance and bearing for yourself
+        if ( e.name == shipName ) {
+            distAndBearing = "";
+        }
+
+        var speed = "";
+        if ( e.warp == "0" ){
+            speed = e.impulse + " impulse";
+        } else {
+            speed = "warp " + e.warp;
+        }
+        if ( e.warp === undefined ) {
+            speed = "";
+        }
+
+        var reading = {
+            name: name.replace( /_/g, " " ),
+            distAndBearing: distAndBearing,
+            speed: speed
+        };
+
+        if ( _.has( sensorObjects, e.name ) ) {
+
+            sensorObjects[ name ].css( "top", y ).css( "left", x );
+            sensorObjects[ name ].html( Mustache.render( tmpl,reading ) );
+
+        } else {
+
+            var obj = $( Mustache.render( tmpl, reading ) );
+            obj.css( "top", y ).css( "left", x );
+            sensorObjects[ e.name ] = obj;
+            $displayGrid.append( obj );
+
+        }
+
+    });
+
+}
+
+
+function scan() {
+    trek.api(
+        "navigation/charts",
+        { system: systemName },
+        paintScan
+    );
+}
+
+
+function setMinMaxVals() {
+
+    var shownWidth = system.width / Math.pow( 2, zoomLevel );
+    var shownHeight = system.width / Math.pow( 2, zoomLevel );
+
+    minX = zoomCoordinateX - shownWidth / 2;
+    maxX = zoomCoordinateX + shownWidth / 2;
+    minY = zoomCoordinateY - shownHeight / 2;
+    maxY = zoomCoordinateY + shownHeight / 2;
+
+}
+
+
+function zoom( click ) {
+
+    var y = $displayGrid.height() - click.clientY;
+    var x = click.clientX;
+
+    var absPoint = absoluteCoordinates( x, y, 0 );
+
+    zoomCoordinateX = absPoint.x;
+    zoomCoordinateY = absPoint.y;
+
+    // Assume a click is a "zoom in " request
+    zoomLevel += 1;
+
+    setMinMaxVals();
+
+    // Set the window location appropriately
+    window.location.search = "system=" + systemName + "&zoomLevel=" + zoomLevel + "&zoomCoordinateY=" + zoomCoordinateY + "&zoomCoordinateX=" + zoomCoordinateX;
+
+}
+
+$displayGrid.click( zoom );
+
+trek.onAlert( function( data ){ return; } );
+
+
+trek.api(
+    'navigation/system',
+    { system: systemName },
+    function( data ) {
+        system = data;
+        setMinMaxVals();
+        scan();
+        scanInterval = setInterval( scan, 500 );
+    }
+);
+
+
+</script>
+<% include footer.html %>

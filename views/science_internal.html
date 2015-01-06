@@ -1,0 +1,129 @@
+<% include header.html %>
+
+<div id='shipDisplay' class='science-internal-schematic'>
+</div>
+
+<div id='dataDisplay' class='science-internal-information'>
+
+</div>
+
+<div class="scan-detail-loading" id="loading"><p>Scanning...</p></div>
+
+<script type="text/javascript" src="/static/js/three.min.js"></script>
+
+<script>
+
+var alerts;
+
+var camera;
+var scene;
+var renderer;
+var blueLineMat, redLineMat;
+var globalLight;
+var loader;
+var shipDorsal, shipStarboard;
+
+var $dataDisplay = $("#dataDisplay");
+var $shipDisplay = $("#shipDisplay");
+var $loading = $("#loading");
+
+
+function loadInternalScan() {
+
+    trek.api( 'science/internal-scan', displayInternalScan );
+
+}
+
+
+function displayInternalScan( data ) {
+
+    alerts = data.alerts;
+    // display the alerts information
+    displayRadiation( alerts.radiation );
+
+    loadShipSchematics( data.mesh, data.meshScale );
+
+}
+
+
+function loadShipSchematics( meshName, meshScale ) {
+
+    var w;
+    var h;
+    w = $shipDisplay.width();
+    h = $shipDisplay.height();
+
+    camera = new THREE.OrthographicCamera( -10, 10, 10, -10, 1, 100 );
+    scene = new THREE.Scene();
+    scene.add( camera );
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize( w, h );
+    $shipDisplay.append( renderer.domElement );
+
+    blueLineMat = new THREE.MeshBasicMaterial(
+        { wireframe : true, color : "#60DDF7" }
+    );
+    redLineMat = new THREE.MeshBasicMaterial(
+        { wireframe : true, color : "#B30900" }
+    );
+
+    globalLight = new THREE.AmbientLight( 0x777777 );
+    scene.add( globalLight );
+
+    loader = new THREE.JSONLoader( true );
+    loader.load(
+        "static/mesh/" + meshName,
+        function( geo, mat ) {
+
+            $loading.remove();
+
+            shipDorsal = new THREE.Mesh( geo, blueLineMat );
+            shipStarboard = new THREE.Mesh( geo, blueLineMat );
+
+            shipStarboard.position.set( 0, 5, -7 );
+            shipDorsal.position.set( 0, -5, -7 );
+
+            shipStarboard.scale.x = shipStarboard.scale.y = shipStarboard.scale.z = meshScale;
+
+            shipDorsal.scale.x = shipDorsal.scale.y = shipDorsal.scale.z = meshScale;
+
+            shipDorsal.rotateX( Math.PI / 2 );
+            shipDorsal.rotateY( Math.PI / 2 );
+
+            shipStarboard.rotateY( Math.PI / 2 );
+
+            scene.add( shipDorsal );
+            scene.add( shipStarboard );
+
+            renderer.render( scene, camera );
+
+        }
+    );
+
+}
+
+
+function displayRadiation( radiationReport ) {
+
+
+}
+
+
+function displayAlarm( alert ) {
+
+    // display the alert in big flashing red
+    // as a dismissable alert
+
+}
+
+
+trek.socket.on( "environmental-alarm", displayAlarm )
+
+// Disable alert screen
+trek.onAlert( function() {} );
+
+loadInternalScan();
+
+</script>
+
+<% include footer.html %>

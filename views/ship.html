@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title><%= ship.name %> Command</title>
+        <link rel="stylesheet" href="/static/css/main.css">
+        <script src="static/js/jquery.min.js"></script>
+    </head>
+    <body>
+        <div id="screenMenu">
+            <ul class="menu">
+                <li class="blue"><a href="mainviewer">Mainviewer</a></li>
+                <li class="blue"><a href="viewscreen">Viewscreen</a></li>
+                <li class="blue"><a href="ops">Ops</a></li>
+                <li class="blue"><a href="tactical">Tactical</a></li>
+                <li class="blue"><a href="conn">Conn</a></li>
+                <li class="blue"><a href="science">Science</a></li>
+                <li class="blue"><a href="engineering">Engineering</a></li>
+            </ul>
+        </div>
+        <div id="message">
+            <h2>Ship Systems</h2>
+            <p>Select which of <%= ship.name %>'s systems you would like to interface
+            with.</p>
+        </div>
+        <script type="text/javascript">
+        </script>
+    </body>
+</html>

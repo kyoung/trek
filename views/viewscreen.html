@@ -1,0 +1,68 @@
+<% include header.html %>
+<div id="leftSide" class="fleft">
+	<div id="viewMenu">
+		<ul class="menu x1" id="cameras">
+			<li class="lightblue" id="forward">Forward</li>
+			<li class="blue" id="aft">Aft</li>
+		</ul>
+        <p>On screen</p>
+        <ul id="visualRange" class="menu x1">
+        </ul>
+	</div>
+    <div id="mainViewer">
+        <ul class="menu x1">
+            <li class="blue" id="setMainViewer">Mainviewer</li>
+        </ul>
+    </div>
+</div>
+
+<div id="rightSide" class="fleft">
+	<iframe id="viewScreen"></iframe>
+</div>
+
+<script type="text/javascript">
+
+var target_name = "";
+	var viewScreen = $("#viewScreen");
+	viewScreen.attr('src', 'viewscreen_screen');
+
+var visualRange = $("#visualRange");
+function getItemsInVisualRange() {
+    $.get("api/getTargetsInVisualRange", function(data){
+        visualRange.empty();
+        _.each(data, function(d){
+            if(d !== "<%= ship.name %>"){
+                visualRange.append("<li class='green' id='" + d + "'>" + d + "</li>");
+            }
+        });
+        $("#visualRange li").click(function(c){
+            target_name = c.target.id;
+            viewScreen.attr('src', 'viewscreen_screen?target=' + target_name);
+        });
+    });
+}
+
+setInterval(getItemsInVisualRange, 5000);
+
+$("#cameras li").click(function(c){
+    // set the camera;
+    target_name = c.target.id;
+    viewScreen.attr('src', 'viewscreen_screen?target=' + target_name);
+});
+
+function setMainViewer() {
+    trek.api(
+        "command/mainViewer",
+        {
+            screen: "viewscreen_screen"
+            target: target_name
+        },
+        'PUT',
+        function (d) { console.log( "mainscreen set" ); }
+    )
+};
+
+$("#setMainViewer").click(setMainViewer);
+
+</script>
+<% include footer.html %>

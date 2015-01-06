@@ -1,0 +1,22 @@
+{
+  "name": "Trek",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "./node_modules/.bin/nodeunit test",
+    "runtest": "./node_modules/.bin/nodeunit",
+    "start": "coffee ./trek/Server.coffee",
+    "lint": "find ./trek -name '*.coffee' -exec coffeelint {} -f coffeelint.conf \\;",
+    "todo": "grep -A 5 -r TODO trek/*; grep -A 5 -r TODO static/*; grep -A 5 -r TODO test/*; grep -A 5 -r TODO views/*"
+  },
+  "dependencies": {
+    "colors": "0.6.2",
+    "express": "3.5.1",
+    "socket.io": "0.9.15",
+    "ejs": "1.0.0",
+    "cookie": "0.1.2",
+    "coffee-script": "1.7.1",
+    "coffeelint": "1.3.0",
+    "nodeunit": "0.9.0",
+    "stylus": "0.48.1"
+  }
+}

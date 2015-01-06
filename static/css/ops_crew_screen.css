@@ -1,0 +1,12 @@
+.crews li {
+    font-size: 0.6em;
+}
+
+.crews ul {
+    list-style: none;
+    margin-top: 0px;
+}
+
+#crewList {
+    margin-top: 20px;
+}

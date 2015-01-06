@@ -1,0 +1,8 @@
+exports.COMPUTER_COMPONENTS = 'Computer Components'
+exports.EPS_CONDUIT = 'EPS Conduit'
+exports.DILITHIUM = 'Dilithium Crystal'
+exports.HULL_PLATING = 'Duranium Hull Plating'
+exports.WARP_PLASMA = 'Warp Plasma'
+exports.PHASE_COILS = 'Phase Coils'
+exports.WEAPONS_SYSTEMS = 'Weapons Systems'
+exports.MEDICAL_SUPPLIES = 'Meadical Supplies'

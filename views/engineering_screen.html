@@ -1,0 +1,170 @@
+<% include header.html %>
+<div class="eng">
+    <p class="top"><%= ship.name %> Status</p>
+</div>
+<div id="statusReport" class="eng">
+</div>
+
+<script type="text/template" id="sectionStatusTmpl">
+	<p>{{section}}</p>
+    <ul> {{&systemList}} </ul>
+</script>
+
+<script type="text/template" id="systemStatusTmpl">
+	<li id="{{systemName}}" class="system-status {{systemColor}}">
+        {{systemName}}
+
+        <span class="spacer">{{integrity}}</span>
+
+        <span class="spacer">{{#charge}}{{charge}}{{/charge}}</span>
+
+        <span class="online">{{online}}</span>
+
+        {{#active}}
+            <span class="active">{{active}}</span>
+        {{/active}}
+	</li>
+</script>
+
+<script type="text/javascript">
+
+var sectionTmpl = $("#sectionStatusTmpl").html();
+var systemTmpl = $("#systemStatusTmpl").html();
+
+
+function drawStatus( data ) {
+
+    var $statusReport = $( "<div></div>" );
+
+    var systemsBySection = _.groupBy( data, function ( d ) {
+        return d.section;
+    } );
+
+    _.each( systemsBySection, function ( systemsObjects, sectionName ) {
+
+        var systemList = "";
+
+        _.each( systemsObjects, function ( systemObj, systems ) {
+
+            var color = "blue";
+            var online = "Online";
+
+            if ( systemObj.integrity < 1 ){
+
+                color = 'lightBlue';
+            }
+
+            if ( systemObj.operability != 'Operable' ) {
+
+                color = 'red';
+            }
+
+            if ( !systemObj.online ) {
+
+                color = 'green';
+                online = "Offline";
+
+            }
+
+            context = {
+                systemName : systemObj.name.replace( "_", " " ),
+                integrity : Math.floor( systemObj.integrity * 100 ),
+                // charge: systemObj.charge * 100,
+                systemColor : color,
+                online : online
+            }
+
+            if ( systemObj.hasOwnProperty( 'active' ) ) {
+
+                if ( systemObj.active ) {
+
+                    context.active = "Active";
+
+                } else {
+
+                    context.active = "Inactive";
+
+                }
+
+            }
+
+            systemList += Mustache.render( systemTmpl, context );
+        });
+
+        $statusReport.append(
+            $( Mustache.render(
+                sectionTmpl,
+                { section : sectionName,
+                  systemList : systemList
+                }
+             )
+            )
+        );
+    });
+
+    $( "#statusReport" ).html( $statusReport );
+
+    $( ".online" ).click( function ( c ) {
+
+        var online = "online";
+
+        if ( this.innerHTML == "Online" ) {
+
+            online = "offline";
+
+        }
+
+        var data = {
+            system: this.parentElement.id,
+            online: online,
+        }
+
+        trek.api(
+            "engineering/online",
+            data,
+            'PUT',
+            loadScreen
+        )
+
+    });
+
+    $( ".active" ).click( function ( c ) {
+
+        var active = "active";
+
+        if ( this.innerHTML == "Active" ) {
+
+            active = "inactive";
+
+        }
+
+        var data = {
+            system: this.parentElement.id,
+            active: active,
+        }
+
+        trek.api(
+            "engineering/active",
+            data,
+            'POST',
+            loadScreen
+        )
+
+    });
+
+};
+
+
+function loadScreen() {
+
+    trek.api( "engineering/status", drawStatus );
+
+}
+
+
+// Make it so
+loadScreen();
+
+
+</script>
+<% include footer.html %>
