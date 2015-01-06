@@ -1,6 +1,6 @@
 {Torpedo} = require '../trek/Torpedo'
 {BaseObject} = require '../trek/BaseObject'
-{Constitution} = require '../trek/Constitution'
+{Constitution} = require '../trek/ships/Constitution'
 
 
 exports.TorpedoTest =

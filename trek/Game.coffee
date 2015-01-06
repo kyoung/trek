@@ -1,9 +1,5 @@
 fs = require 'fs'
 
-{Ship} = require './Ship'
-{Torpedo} = require './Torpedo'
-{Station} = require './Station'
-{CelestialObject} = require './CelestialObject'
 {SensorSystem, LongRangeSensorSystem} = require './systems/SensorSystems'
 
 C = require './Constants'

@@ -1,4 +1,4 @@
-{Constitution} = require '../trek/Constitution'
+{Constitution} = require '../trek/ships/Constitution'
 {Station} = require '../trek/Station'
 {Transporter} = require '../trek/systems/TransporterSystems'
 
