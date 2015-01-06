@@ -1,4 +1,4 @@
-{Ship} = require '../trek/Ship'
+{Constitution} = require '../trek/Constitution'
 {Station} = require '../trek/Station'
 {Transporter} = require '../trek/systems/TransporterSystems'
 
@@ -6,8 +6,8 @@ exports.TransportTest =
 
     'test transport_boarding_part': ( test ) ->
 
-        s1 = new Ship 'Shuttle 1', 'x11'
-        s2 = new Ship 'Shuttle 2', 'x12'
+        s1 = new Constitution 'Shuttle 1', 'x11'
+        s2 = new Constitution 'Shuttle 2', 'x12'
 
         t = do s1.crew_ready_to_transport
 

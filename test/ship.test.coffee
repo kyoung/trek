@@ -1,4 +1,3 @@
-{Ship} = require '../trek/Ship'
 {Station} = require '../trek/Station'
 {Transporters} = require '../trek/systems/TransporterSystems'
 {System, ChargedSystem} = require '../trek/BaseSystem'

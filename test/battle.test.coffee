@@ -1,4 +1,4 @@
-{Ship} = require '../trek/Ship'
+{Constitution} = require '../trek/ships/Constitution'
 {PhaserSystem, TorpedoSystem, ShieldSystem} = require '../trek/systems/WeaponSystems'
 
 C = require '../trek/Constants'
@@ -9,7 +9,7 @@ exports.BattleTest =
 
     'test shields vs torpedoes': ( test ) ->
 
-        s = new Ship "Icarus", "NX-992"
+        s = new Constitution "Icarus", "NX-992"
         s.set_coordinate { x: 0, y: 0, z: 0 }
 
         # Raise sheilds, set to full power
@@ -56,7 +56,7 @@ exports.BattleTest =
 
 
     'test phaser vs shields': ( test ) ->
-        s = new Ship "Icarus", "NX-992"
+        s = new Constitution "Icarus", "NX-992"
         s.set_coordinate { x: 0, y: 0, z: 0 }
 
         # Raise sheilds, set to full power
@@ -103,10 +103,10 @@ exports.BattleTest =
 
     'test two-ship phaser combat': ( test ) ->
 
-        s1 = new Ship "Icarus", "NX-992"
+        s1 = new Constitution "Icarus", "NX-992"
         s1.set_coordinate { x : 0, y : 0, z : 0 }
 
-        s2 = new Ship "Daedalus", "NX-991"
+        s2 = new Constitution "Daedalus", "NX-991"
         s2.set_coordinate { x : 0, y : PhaserSystem.RANGE * 0.8, z : 0 }
 
         # Mimic Red Alert, and accelerate the charge times
