@@ -164,11 +164,18 @@ exports.ShipTest =
 
     'test shield operability': ( test ) ->
 
+        FFWD_MS = 5000
+        EMPTY_CALLBACK = undefined
+
         s = new Constitution 'E', 1701
         console.log "Ship has #{s.shields.length} shields"
         s.set_shields true
+        # FFWD
+        s.calculate_state EMPTY_CALLBACK, FFWD_MS
         test.ok do s._are_all_shields_up, "Failed to raise shields"
         s.set_shields false
+        # FFWD
+        s.calculate_state EMPTY_CALLBACK, FFWD_MS
         test.ok not do s._are_all_shields_up, "Failed to lower shields"
 
         do test.done

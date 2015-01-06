@@ -1,6 +1,7 @@
 fs = require 'fs'
 
 {SensorSystem, LongRangeSensorSystem} = require './systems/SensorSystems'
+{Torpedo} = require './Torpedo'
 
 C = require './Constants'
 U = require './Utility'

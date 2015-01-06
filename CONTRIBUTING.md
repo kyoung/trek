@@ -12,6 +12,8 @@ The current sprint sections lists the set of features required to make the curre
 ## Tests
 `npm test` Trek has lots of tests! (168 at the time of writing). And they pass! But, there could always be more. The rule of thumb has been to play, find something unexpected, think for 10 seconds, if you still don't know why it's happening, write a test, then fix it, and repeat.
 
+For any tests that need time to elapse, try using the artifcial passing of time through time passed to an object's update methods, rather than timed callbacks, which slow down the tests and are weird.
+
 ## Search for TODOs in the Code
 `npm run todo` will find you small bit of code that seemed like it would be a good idea to refactor at the time, though not big enough to make it into the PMO.
 
