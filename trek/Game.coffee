@@ -700,7 +700,7 @@ class Game
 
         p =
             name: object.name
-            bearing: U.bearin you, object
+            bearing: U.bearing you, object
             distance: U.distance you.position, object.position
             position: object.position
             classification: object.classification
