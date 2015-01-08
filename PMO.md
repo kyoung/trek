@@ -48,12 +48,12 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] We'll need subsystem targetting for weapons
   - [ ] We'll need engineering and tactical to have a better shield status display
   - [x] Create a scenario where two teams must cooperate
-    - [ ] Make it possible to win solo
+    - [x] Make it possible to win solo
   - [x] Create game level events to trigger actions
 - [-] Engineer minigame miracle fixes
 - [x] Engineering power allocation fixes
 - [ ] Music/sound (Theme music, and red alerts. Phasers and torpedo hits.)
-  - [ ] https://www.youtube.com/watch?v=7J-y2rFfny8 (red alert)
+  - [x] https://www.youtube.com/watch?v=7J-y2rFfny8 (red alert)
   - [x] Enterprise-B bridge sounds from Generations
   - [x] Theme from Original Motion picture
   - [ ] Explosions
@@ -181,6 +181,7 @@ Feedback taken from real user testing
   - Added a " - 90"; try now
 - [ ] Objects get tracked once we've done a detailed scan... so how do we untrack them? At some point, we should be able to loose them
 - [ ] It doesn't look like LR scanners can be configured?
+- [ ] Suddenly the conn display doesn't update when at warp, but you end up at your destination... likely that you're not actually going to warp, and all you're seeing is the final position adjustment at the end of travel.
 
 # Completed Sprints
 

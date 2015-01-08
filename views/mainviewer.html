@@ -67,16 +67,17 @@ trek.socket.on(
     function ( data ) {
         console.log( data );
         $viewscreen.attr( 'src', data.screen );
-    }
-);
+    } );
 
 
 $viewscreen.attr(
     'src',
-    "viewscreen_screen?direction=forward"
-);
+    "viewscreen_screen?direction=forward" );
 
 pollForCaptainsLogs();
+
+// In the event of a red alert, play sound...
+trek.onAlert( function( data ){ trek.playKlaxon(); } );
 
 setInterval( pollForCaptainsLogs, 3000 );
 

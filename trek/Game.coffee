@@ -2,6 +2,7 @@ fs = require 'fs'
 
 {SensorSystem, LongRangeSensorSystem} = require './systems/SensorSystems'
 {Torpedo} = require './Torpedo'
+{Transporters} = require './systems/TransporterSystems'
 
 C = require './Constants'
 U = require './Utility'
@@ -395,7 +396,7 @@ class Game
 
         ship = @ships[ prefix ]
 
-        in_range = ( o for o in @game_objects when U.distance_between( ship, o ) < C.TRANSPORTER_RANGE )
+        in_range = ( o for o in @game_objects when U.distance_between( ship, o ) < Transporters.RANGE )
         scanned_in_range = ( o for o in in_range when o in ship._logged_scanned_items )
 
         r = ( do o.transportable for o in scanned_in_range when o.transportable() )
@@ -612,15 +613,12 @@ class Game
     ____________________________________________###
     update_state: =>
 
-        if @is_over
-            return
-
         # Hack: passing in world scan here is such a cop-out...
         # only the player ships need it. And even then, it might be better
         # to just set this on the construction of the ships, and hope the
         # reference holds
 
-        now = new Date().getTime();
+        now = do Date.now
         delta_t = now - @_clock
         @_clock = now
 

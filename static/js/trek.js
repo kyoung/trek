@@ -118,6 +118,16 @@ var trek = (function($, _, Mustache, io) {
 
     t.playBridgeSound = playBridgeSound;
 
+    function playKlaxon () {
+
+        var klaxon = document.createElement( "audio" );
+        klaxon.setAttribute( "autoplay", "" );
+        klaxon.src = "static/sound/redalert.mp3";
+
+    }
+
+    t.playKlaxon = playKlaxon;
+
 
     // Game Over
     function display_game_over () {
