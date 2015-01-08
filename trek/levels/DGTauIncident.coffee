@@ -18,7 +18,8 @@ class DGTauIncident extends Level
 
     background_radiation: ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME * .2
 
-    constructor: () ->
+    constructor: ( @team_count ) ->
+
         super()
         @name = "DG Tau Incident"
         @stardate = do U.stardate
@@ -33,24 +34,19 @@ class DGTauIncident extends Level
         @_initial_lives = do @_get_crew_count
 
 
-    get_environment: () ->
-        @game_environment
+    get_environment: () -> @game_environment
 
 
-    get_ships: () ->
-        @ships
+    get_ships: () -> @ships
 
 
-    get_space_objects: () ->
-        @space_objects
+    get_space_objects: () -> @space_objects
 
 
-    get_game_objects: () ->
-        @game_objects
+    get_game_objects: () -> @game_objects
 
 
-    get_map: () ->
-        @map
+    get_map: () -> @map
 
 
     _get_crew_count: () ->
@@ -232,6 +228,27 @@ class DGTauIncident extends Level
             otherwise.\n
             " ]
 
+        if @team_count is 2
+            return
+
+        @enterprise_logs = [
+            "Captains Log, stardate #{ @stardate }\n
+            \n
+            We've entered the DG Tau system
+            to carry out the evacuation of the mining teams in the
+            area. The young star has entered a dangerously volatile stage
+            in it's development and has been emitting unpredictable bursts
+            of radiation beyond the capacity of the mining stations shielding.\n
+            \n
+            The Enterprise is even less equiped to handle such hostile
+            conditions, and as such we will be required to route as much
+            additional power to shields as possible for the duration of the
+            mission.\n
+            \n
+            I'm not certain how much longer the miners can hold out under these
+            conditions; time, it seems, is not on our side.\n
+            " ]
+
 
     _init_ships: () ->
 
@@ -257,6 +274,10 @@ class DGTauIncident extends Level
         e.set_shields true
         e.set_impulse 0.5
         e.enter_captains_log @enterprise_logs[ 0 ]
+        @ships[ e.prefix_code ] = e
+
+        if @team_count is 1
+            return
 
         x = new Constitution "Lexington", "1709"
         x.star_system = system
@@ -266,9 +287,7 @@ class DGTauIncident extends Level
         x.set_shields true
         x.set_impulse 0.5
         x.enter_captains_log @lexington_logs[ 0 ]
-
         @ships[ x.prefix_code ] = x
-        @ships[ e.prefix_code ] = e
 
 
     _init_game_objects: () ->

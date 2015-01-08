@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "colors": "0.6.2",
+    "commander": "2.6.0",
     "express": "3.5.1",
     "socket.io": "0.9.15",
     "ejs": "1.0.0",

@@ -11,7 +11,7 @@ GAME_TICK_MS = 250
 
 class Game
 
-    constructor: () ->
+    constructor: ( level_name, team_count ) ->
 
         @is_over = false
 
@@ -19,8 +19,8 @@ class Game
         lfs = ( l[0...l.indexOf( "." )] for l in level_files when l.indexOf( ".coffee" ) > 0 )
 
         # ...
-        {Level} = require "./levels/DGTauIncident"
-        @level = new Level()
+        {Level} = require "./levels/#{ level_name }"
+        @level = new Level team_count
         @load_level @level
 
         @_clock = new Date().getTime()

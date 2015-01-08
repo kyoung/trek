@@ -9,9 +9,17 @@ server = http.createServer app
 socket = io.listen server, { log : false }
 cookie = require "cookie"
 
+program = require "commander"
+
+program
+    .version( '0.1' )
+    .option( '-l, --level [level]', 'Select a level.', 'DGTauIncident' )
+    .option( '-t, --teams [count]', 'Enter the number of teams.', parseInt, 1 )
+    .parse( process.argv )
+
 {Game} = require './Game'
 
-game = new Game()
+game = new Game program.level, program.teams
 
 app.engine 'html', require( 'ejs' ).renderFile
 
