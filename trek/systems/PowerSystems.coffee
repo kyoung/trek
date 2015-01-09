@@ -71,7 +71,7 @@ class ReactorSystem extends System
     push_power: ( power ) -> @relay.push_power power
 
 
-    output_level: () -> @output / @output_profile.dyn
+    output_level: -> @output / @output_profile.dyn
 
 
     activate: ( level ) ->
@@ -98,7 +98,7 @@ class ReactorSystem extends System
     is_attached: ( relay ) -> @relay is relay
 
 
-    set_required_output_power: () ->
+    set_required_output_power: ->
 
         # Startup sequence helper
         required_output = do @relay.get_required_power
@@ -116,7 +116,7 @@ class ReactorSystem extends System
         level = (@output + output) / @output_profile.dyn
 
 
-    power_distribution_report: () ->
+    power_distribution_report: ->
 
         r = {}
         r['name'] = @name
@@ -127,7 +127,7 @@ class ReactorSystem extends System
         return r
 
 
-    damage_report: () ->
+    damage_report: ->
 
         operability = if @state > ReactorSystem.OPERABILITY_CUTOFF then OPERABILITY.OPERABLE else OPERABILITY.NONOPERABLE
         time_to_operability = do @_time_to_operability
@@ -155,7 +155,7 @@ class ReactorSystem extends System
         return state
 
 
-    field_output: () ->
+    field_output: ->
 
         if not @online
             return []
@@ -198,7 +198,7 @@ class PowerSystem extends System
     is_attached: ( system ) -> system in @attached_systems
 
 
-    get_systems: () ->
+    get_systems: ->
 
         r = {}
         for s, i in @attached_systems
@@ -208,7 +208,7 @@ class PowerSystem extends System
         return r
 
 
-    get_required_power: () ->
+    get_required_power: ->
         ###
         Determine the required power for all systems to
         operate a full capacity, up to the EPS maximum.
@@ -260,7 +260,7 @@ class PowerSystem extends System
         new_balance = (pwr/new_sum for pwr in power_dist)
 
 
-    get_required_power_balance: () ->
+    get_required_power_balance: ->
         ###
         Initialization report to ensure
         the required power balance so that
@@ -278,7 +278,7 @@ class PowerSystem extends System
         balance = (megadyne / sum for megadyne in megadynes when megadyne?)
 
 
-    set_required_power_balance: () ->
+    set_required_power_balance: ->
         ###
         Check for any attached power subsystems and have them
         prep for power flow
@@ -288,7 +288,7 @@ class PowerSystem extends System
                 sys.set_system_balance do sys.get_required_power_balance
 
 
-    power_distribution_report: () ->
+    power_distribution_report: ->
 
         r = {'name': @name}
         subsystems = []
@@ -307,7 +307,7 @@ class PowerSystem extends System
         return r
 
 
-    power_report: () ->
+    power_report: ->
 
         r =
             name: @name
@@ -362,7 +362,7 @@ class PowerSystem extends System
                 # Presumably it's now pouring plasma all over itself
 
 
-    is_online: () -> @state > System.OPERABILITY_CUTOFF
+    is_online: -> @state > System.OPERABILITY_CUTOFF
 
 
 exports.PowerSystem = PowerSystem

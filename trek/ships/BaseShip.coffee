@@ -338,12 +338,12 @@ class BaseShip extends BaseObject
         return r
 
 
-    shield_report: () ->
+    shield_report: ->
 
         r = ( s.shield_report() for s in @shields )
 
 
-    tactical_report: () ->
+    tactical_report: ->
 
         shield_up = false
         report = {}
@@ -502,22 +502,22 @@ class BaseShip extends BaseObject
         do @_rebuild_crew_checks
 
 
-    _power_sheilds: () -> s.power_on() for s in @shields
+    _power_sheilds: -> s.power_on() for s in @shields
 
 
-    _power_phasers: () -> p.power_on() for p in @phasers
+    _power_phasers: -> p.power_on() for p in @phasers
 
 
-    _auto_load_torpedoes: () -> t.autoload( true ) for t in @torpedo_banks
+    _auto_load_torpedoes: -> t.autoload( true ) for t in @torpedo_banks
 
 
-    _power_down_shields: () -> s.power_down() for s in @shields
+    _power_down_shields: -> s.power_down() for s in @shields
 
 
-    _power_down_phasers: () -> p.power_down() for p in @phasers
+    _power_down_phasers: -> p.power_down() for p in @phasers
 
 
-    _disable_torpedeo_autoload: () -> t.autoload( false ) for t in @torpedo_banks
+    _disable_torpedeo_autoload: -> t.autoload( false ) for t in @torpedo_banks
 
 
     _consume_a_torpedo: () =>
@@ -595,7 +595,7 @@ class BaseShip extends BaseObject
     _________________________________________________###
 
 
-    navigation_report: () ->
+    navigation_report: ->
 
         r =
             bearing: @bearing
@@ -605,7 +605,7 @@ class BaseShip extends BaseObject
             log: @navigation_log.dump()
 
 
-    turn_port: () ->
+    turn_port: ->
 
         if @_navigation_lock
             throw new Error "Cannot engage thruster control while Navigational Computers are piloting."
@@ -615,7 +615,7 @@ class BaseShip extends BaseObject
         do @navigation_report
 
 
-    turn_starboard: () ->
+    turn_starboard: ->
 
         if @_navigation_lock
             throw new Error "Cannot engage thruster control while Navigational Computers are piloting."
@@ -625,7 +625,7 @@ class BaseShip extends BaseObject
         do @navigation_report
 
 
-    stop_turn: () ->
+    stop_turn: ->
 
         if @_navigation_lock
             throw new Error "Cannot engage thruster control while Navigational Computers are piloting."
@@ -892,9 +892,11 @@ class BaseShip extends BaseObject
 
         @impulse = 0
         @warp_speed = warp_speed
+        console.log "[#{ @name }] Setting warp to #{ warp_speed }"
         rotation = @bearing.bearing * Math.PI * 2
+
         # The famous trek warp speed calculation
-        warp_v = Math.pow( @warp_speed, 10/3 ) * WarpSystem.MAX_WARP
+        warp_v = Math.pow( @warp_speed, 10/3 ) * C.SPEED_OF_LIGHT
         @velocity.x = Math.cos( rotation ) * warp_v
         @velocity.y = Math.sin( rotation ) * warp_v
 
@@ -905,7 +907,7 @@ class BaseShip extends BaseObject
         return @warp_speed
 
 
-    _clear_rotation: () -> @bearing_v = { bearing: 0, mark: 0 }
+    _clear_rotation: -> @bearing_v = { bearing: 0, mark: 0 }
 
 
     _log_navigation_action: ( entry ) ->
@@ -949,7 +951,7 @@ class BaseShip extends BaseObject
         r = "Team enroute"
 
 
-    get_cargo_status: () ->
+    get_cargo_status: ->
 
         r = {}
         for cb in @cargobays
@@ -960,16 +962,16 @@ class BaseShip extends BaseObject
     get_cargo_bay: ( number ) -> ( c for c in @cargobays when c.number is number )[0]
 
 
-    get_internal_lifesigns_scan: () -> ( team for team in @internal_personnel )
+    get_internal_lifesigns_scan: -> ( team for team in @internal_personnel )
 
 
-    get_systems_layout: () -> ( s.layout() for s in @systems )
+    get_systems_layout: -> ( s.layout() for s in @systems )
 
 
-    get_decks: () -> ( dv for dk, dv of @DECKS )
+    get_decks: -> ( dv for dk, dv of @DECKS )
 
 
-    get_sections: () -> ( sv for sk, sv of @SECTIONS )
+    get_sections: -> ( sv for sk, sv of @SECTIONS )
 
 
     get_bay_with_capacity: ( qty ) ->
@@ -1054,12 +1056,12 @@ class BaseShip extends BaseObject
         t =
             name: @name
             crew: ( c.scan() for c in @internal_personnel when c.is_onboard() )
-            cargo: @get_cargo_status()
+            cargo: do @get_cargo_status
             decks: @DECKS
             sections: @SECTIONS
 
 
-    crew_ready_to_transport: () ->
+    crew_ready_to_transport: ->
 
         crew = ( c for c in @internal_personnel \
             when c.deck == @transporters.deck \
@@ -1089,7 +1091,7 @@ class BaseShip extends BaseObject
             when "Security Team" then @security_teams.push crew
 
 
-    _rebuild_crew_checks: () ->
+    _rebuild_crew_checks: ->
 
         # Override to rebuild the internal personnel
         @internal_personnel = []
@@ -1143,10 +1145,10 @@ class BaseShip extends BaseObject
     add_scanned_object: ( target ) -> @_logged_scanned_items.push target
 
 
-    get_scanned_objects: () -> @_logged_scanned_items
+    get_scanned_objects: -> @_logged_scanned_items
 
 
-    get_system_scan: () ->
+    get_system_scan: ->
 
         r =
             systems: do @damage_report
@@ -1156,12 +1158,11 @@ class BaseShip extends BaseObject
             # for now, let's simply return the power output to the nacels
             # which is feasably measured
             power_readings: [
-                    @port_warp_coil.warp_field_output(),
-                    @starboard_warp_coil.warp_field_output(),
-                    @warp_core.field_output(),
-                    @impulse_reactors.field_output(),
-                    @emergency_power.field_output()
-                ]
+                    do @port_warp_coil.warp_field_output,
+                    do @starboard_warp_coil.warp_field_output,
+                    do @warp_core.field_output,
+                    do @impulse_reactors.field_output,
+                    do @emergency_power.field_output ]
             mesh: @model_url
             name: @name
             mesh_scale: @model_display_scale
@@ -1191,16 +1192,14 @@ class BaseShip extends BaseObject
             fwd_config.ettc
             port_config.ettc
             starboard_config.ettc
-            aft_config.ettc
-        ]
+            aft_config.ettc ]
         max_ettc = Math.max.apply null, ettcs
 
         time_estimates = [
             fwd_config.time_estimate
             port_config.time_estimate
             aft_config.time_estimate
-            starboard_config.time_estimate
-        ]
+            starboard_config.time_estimate ]
         max_time_estimate = Math.max.apply null, time_estimates
 
         grids = [].concat(fwd_config.grids).concat(port_config.grids).concat(
@@ -1231,7 +1230,7 @@ class BaseShip extends BaseObject
         if resolution < 4
             throw new Error "Short range sensors have a minimum resolution of 4."
 
-        valid_grids = [0...SensorSystem.MAX_SLICES]
+        valid_grids = [ 0...SensorSystem.MAX_SLICES ]
         if grid_start not in valid_grids or grid_end not in valid_grids
             throw new Error "Invalid scan ranges: #{ grid_start }, #{ grid_end }"
         # queue up the responsible scanners, per bearing
@@ -1239,40 +1238,40 @@ class BaseShip extends BaseObject
 
         # Break the sections of the bearing to scan into segments
         # so that each can be checked for scan range
-        first_segment = [Math.min(grid_start, grid_end)..Math.max(grid_start, grid_end)]
+        first_segment = [ Math.min( grid_start, grid_end )..Math.max( grid_start, grid_end ) ]
         crossing_reverse_scan = grid_end > grid_start and not positive_sweep
         crossing_lapping_scan = grid_end < grid_start and positive_sweep
         second_segment = undefined
 
         if crossing_reverse_scan
-            first_segment = [0...grid_start]
-            second_segment = [grid_end...SensorSystem.MAX_SLICES]
+            first_segment = [ 0...grid_start ]
+            second_segment = [ grid_end...SensorSystem.MAX_SLICES ]
 
         if crossing_lapping_scan
-            first_segment = [0...grid_end]
-            second_segment = [grid_start...SensorSystem.MAX_SLICES]
+            first_segment = [ 0...grid_end ]
+            second_segment = [ grid_start...SensorSystem.MAX_SLICES ]
 
         # forward sensors (0.875 > 0.125)
         forward_segments = @_calculate_scan_segment(
-           [0...8].concat( [56...64] ),
+           [ 0...8 ].concat( [ 56...64 ] ),
            first_segment,
            second_segment )
 
         # port sensors (0.125, 0.375)
         port_segments = @_calculate_scan_segment(
-            [8...24],
+            [ 8...24 ],
             first_segment,
             second_segment )
 
         # aft sensors (0.375 > 0.625)
         aft_segments = @_calculate_scan_segment(
-            [24...40],
+            [ 24...40 ],
             first_segment,
             second_segment )
 
         # starboard sensors (0.625 > 0.875)
         starboard_segments = @_calculate_scan_segment(
-            [40...56],
+            [ 40...56 ],
             first_segment,
             second_segment )
 
@@ -1304,12 +1303,13 @@ class BaseShip extends BaseObject
     run_long_range_scan: ( world_scan, type, bearing_from, bearing_to, positive_sweep, range_level, resolution ) ->
 
         if not do @long_range_sensors.is_online
-            throw new Error("Long-Range Sensors are offline")
+            throw new Error "Long-Range Sensors are offline"
+
         # NB scanners take absolute bearings as arguments
-        abs_bearing_from = (bearing_from + @bearing.bearing) % 1
-        abs_bearing_to = (bearing_to + @bearing.bearing) % 1
-        @long_range_sensors.scan(world_scan, type, abs_bearing_from,
-            abs_bearing_to, positive_sweep, range_level, resolution)
+        abs_bearing_from = ( bearing_from + @bearing.bearing ) % 1
+        abs_bearing_to = ( bearing_to + @bearing.bearing ) % 1
+        @long_range_sensors.scan( world_scan, type, abs_bearing_from,
+            abs_bearing_to, positive_sweep, range_level, resolution )
 
 
     get_scan_results: ( type ) ->
@@ -1349,7 +1349,7 @@ class BaseShip extends BaseObject
         @long_range_sensors.readings type, @bearing.bearing
 
 
-    get_internal_scan: () ->
+    get_internal_scan: ->
 
         r =
             alerts:
@@ -1364,7 +1364,7 @@ class BaseShip extends BaseObject
     _________________________________________________###
 
 
-    power_distribution_report: () ->
+    power_distribution_report: ->
 
         r =
             reactors: ( reactor.power_distribution_report() for reactor in @reactors )
@@ -1467,11 +1467,12 @@ class BaseShip extends BaseObject
 
         system = ( s for s in @systems when s.name == system_name )[0]
         if not system?
-            throw new Error "Invalid system name #{system_name}"
+            throw new Error "Invalid system name #{ system_name }"
+
         if is_online
-            system.bring_online()
+            do system.bring_online
         else
-            system.deactivate()
+            do system.deactivate
 
 
     set_active: ( system_name, is_active ) ->
@@ -1518,16 +1519,23 @@ class BaseShip extends BaseObject
     enter_captains_log: ( entry ) -> @captains_log.log entry
 
 
-    get_pending_captains_logs: () -> do @captains_log.pending_logs
+    get_pending_captains_logs: -> do @captains_log.pending_logs
 
 
-    get_lifesigns: () -> @internal_personnel
+    get_lifesigns: -> @internal_personnel
 
 
     set_viewscreen_target: ( target_name ) -> @_viewscreen_target = target_name
 
 
-    _check_if_still_alive: () -> @alive
+    _check_if_still_alive: -> @alive
+
+
+    get_crew_count: ->
+
+        crew = ( c for c in @internal_personnel when c.assignment is @name )
+        count = 0
+        count += team.members.length for team in crew
 
 
     calculate_quadrant: ( from_point ) ->
@@ -1580,7 +1588,7 @@ class BaseShip extends BaseObject
             when ( 0.625 <= b.bearing < 0.875 ) then @SECTIONS.STARBOARD
 
 
-    calculate_impulse: () ->
+    calculate_impulse: ->
 
         x2 = Math.pow @velocity.x, 2
         y2 = Math.pow @velocity.y, 2
@@ -1595,7 +1603,7 @@ class BaseShip extends BaseObject
             @weapons_target = null
 
 
-    _are_all_shields_up: () ->
+    _are_all_shields_up: ->
 
         for s in @shields
             if not s.active
@@ -1605,7 +1613,7 @@ class BaseShip extends BaseObject
         return true
 
 
-    _set_operational_reactor_settings: () ->
+    _set_operational_reactor_settings: ->
 
         for reactor in @reactors
             do reactor.set_required_output_power

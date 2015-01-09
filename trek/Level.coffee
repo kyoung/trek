@@ -1,5 +1,5 @@
 class Level
-    constructor: () ->
+    constructor: ->
         @name = "BaseLevel"
         @game_time_start = new Date().getTime()
         @ships = {}
@@ -7,13 +7,15 @@ class Level
         @game_objects = []
         @map = {}
 
-    get_ships: () ->
-    get_space_objects: () ->
-    get_game_objects: () ->
-    get_map: () ->
-    get_events: () ->
-    get_environment: () ->
-    get_final_score: () ->
+    get_ships: ->
+    get_space_objects: ->
+    get_game_objects: ->
+    get_map: ->
+    get_events: ->
+    get_environment: ->
+    get_final_score: ->
         return false
+    handle_hail: ( prefix, message ) ->
+
 
 exports.Level = Level

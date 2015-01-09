@@ -24,17 +24,17 @@ class Torpedo extends BaseObject
         @name = "Torpedo " + @get_serial_number()
 
 
-    get_serial_number: () ->
+    get_serial_number: ->
         Math.round(Math.random() * 10e8).toString(16)
 
 
-    self_destruct: () =>
+    self_destruct: =>
 
         clearTimeout @_timeout
         @detonate
 
 
-    detonate: () =>
+    detonate: =>
 
         console.log "[TORPEDO] Detonation!"
         clearInterval @fire_interval
@@ -67,7 +67,7 @@ class Torpedo extends BaseObject
         @detonation_callback(@_detonation_position, @yield * Constants.TORPEDO_MAX_DAMAGE)
 
 
-    fire_at_warp: (warp_speed) =>
+    fire_at_warp: ( warp_speed ) =>
 
         if not warp_speed > 0
             throw new Error("Illegal Warp Speed Set")
@@ -75,13 +75,13 @@ class Torpedo extends BaseObject
         @fire({warp: @warp})
 
 
-    fire_at_impulse: (impulse_speed) =>
+    fire_at_impulse: ( impulse_speed ) =>
 
         @impulse = impulse_speed * 1.75
         @fire({impulse: @impulse})
 
 
-    fire: ({impulse, warp}) ->
+    fire: ( { impulse, warp } ) ->
 
         impulse = if isNaN(impulse) then 0 else impulse
         warp = if isNaN(warp) then 0 else warp
@@ -96,7 +96,7 @@ class Torpedo extends BaseObject
         @_timeout = setTimeout @detonate, time
 
 
-    set_bearing: (bearing, mark) =>
+    set_bearing: ( bearing, mark ) =>
 
         @bearing.bearing += bearing
         if @bearing.bearing >= 1
@@ -105,7 +105,7 @@ class Torpedo extends BaseObject
             @bearing.bearing += 1
 
 
-    set_velocity: () =>
+    set_velocity: =>
 
         v = 0
         if @warp > 0
@@ -119,16 +119,17 @@ class Torpedo extends BaseObject
         @velocity.y = Math.sin(rotation) * v
 
 
-    calculate_state: (_, delta) =>
+    calculate_state: ( _, delta ) =>
 
-        now = new Date().getTime()
+        now = do Date.now
         if not delta?
             delta = now - @state_stamp
+
         @state_stamp = now
         @calculate_motion delta
 
 
-    calculate_motion: (delta_t) =>
+    calculate_motion: ( delta_t ) =>
 
         @position.x += @velocity.x * delta_t
         @position.y += @velocity.y * delta_t
@@ -138,7 +139,7 @@ class Torpedo extends BaseObject
         # unaffected by blast damage...
 
 
-    _two_second_warning: () =>
+    _two_second_warning: =>
 
         # Probably a station or something
         if not @target.navigation_log?

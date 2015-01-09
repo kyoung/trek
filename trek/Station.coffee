@@ -6,6 +6,7 @@ C = require './Constants'
 {ReactorSystem, PowerSystem} = require './systems/PowerSystems'
 {System, ChargedSystem} = require './BaseSystem'
 {SensorSystem, LongRangeSensorSystem} = require './systems/SensorSystems'
+{ShieldSystem, PhaserSystem, TorpedoSystem} = require './systems/WeaponSystems'
 
 
 # LEVELS
@@ -20,13 +21,18 @@ for sec_number in [1..17]
     sec_str = sec_number.toString()
     SECTIONS[sec_str] = sec_str
 
+
 random_level = ->
+
     k = Math.floor(Math.random() * Object.keys(LEVELS).length)
     k.toString()
 
+
 random_section = ->
+
     k = Math.floor(Math.random() * Object.keys(SECTIONS).length)
     k.toString()
+
 
 
 class Station extends BaseObject
@@ -38,9 +44,9 @@ class Station extends BaseObject
         @position.y = starting_position.y
         @position.z = starting_position.z
         @classification = "Space Station"
-        @serial = Math.round( Math.random() * 1e6 )
+        @serial = Math.round( 1e6 * do Math.random )
         @cargobays = []
-        for i in [1..10]
+        for i in [ 1..10 ]
             @cargobays.push( new CargoBay( i ) )
 
         do @initialize_crew
@@ -49,39 +55,44 @@ class Station extends BaseObject
 
         @model_url = "outpost.js"
         @model_display_scale = 1
-        @_scan_density[ SensorSystem.SCANS.HIGHRES ] = Math.random() * 4
-        @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = Math.random() * 4
+        @_scan_density[ SensorSystem.SCANS.HIGHRES ] = 4 * do Math.random
+        @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = 4 * do Math.random
 
 
-    initialize_crew: () ->
+    initialize_crew: ->
 
         @crew = [
             new ScienceTeam random_level(), random_section()
             new ScienceTeam random_level(), random_section()
             new ScienceTeam random_level(), random_section()
             new EngineeringTeam random_level(), random_section()
-            new RepairTeam random_level(), random_section()
-        ]
-        c.set_assignment( @name ) for c in @crew
+            new RepairTeam random_level(), random_section() ]
+
+        c.set_assignment @name for c in @crew
 
 
-    initialize_systems: () ->
+    initialize_systems: ->
 
         @lifesupport = new System(
             "Lifesupport",
             LEVELS[ '5' ],
             SECTIONS[ '2' ],
-            System.STATION_LIFESUPPORT_POWER
-        )
+            System.STATION_LIFESUPPORT_POWER )
+
+        @shields = new ShieldSystem(
+            "Station Shielding",
+            LEVELS[ '40' ],
+            SECTIONS[ '10' ],
+            ShieldSystem.POWER )
 
         @plasma_relay = new PowerSystem(
             "Plasma Relay",
             LEVELS[ '32' ],
             SECTIONS[ '15' ],
-            PowerSystem.WARP_RELAY_POWER
-        )
+            PowerSystem.WARP_RELAY_POWER )
 
         @plasma_relay.add_route( @lifesupport )
+        @plasma_relay.add_route( @shields )
 
         @reactor = new ReactorSystem(
             "Fusion Reactor",
@@ -89,16 +100,15 @@ class Station extends BaseObject
             SECTIONS[ '17' ],
             ReactorSystem.ANTIMATTER,
             @plasma_relay,
-            ReactorSystem.ANTIMATTER_SIGNATURE,
-        )
+            ReactorSystem.ANTIMATTER_SIGNATURE )
 
-
-        @reactor.set_required_output_power()
+        do @reactor.set_required_output_power
 
         @systems = [
             @plasma_relay
             @reactor
-        ]
+            @shields
+            @lifesupport ]
 
 
     initialize_hull: ->
@@ -133,11 +143,11 @@ class Station extends BaseObject
         c.set_alignment @alignment for c in @crew
 
 
-    damage_report: () ->
+    damage_report: ->
         return ( s.damage_report() for s in @systems )
 
 
-    get_cargo_status: () ->
+    get_cargo_status: ->
 
         r = {}
         for cb in @cargobays
@@ -145,7 +155,7 @@ class Station extends BaseObject
         return r
 
 
-    get_system_scan: () ->
+    get_system_scan: ->
 
         lifesigns = 0
         if @crew.length > 0
@@ -168,6 +178,14 @@ class Station extends BaseObject
             hull: @hull
 
 
+        if @shields.active and @shields.charge >= 0.01
+            delete r.cargo
+            delete r.lifesigns
+            delete r.systems
+
+        return r
+
+
     get_bay_with_capacity: ( qty ) ->
 
         bays = (c for c in @cargobays when c.remaining_capacity > qty)
@@ -186,12 +204,15 @@ class Station extends BaseObject
         return c
 
 
-    transportable: () ->
+    transportable: ->
+
+        if @shields.active and @shields.charge >= 0.01
+            return false
 
         t =
             name: @name
-            crew: (c.scan() for c in @crew when c.is_onboard())
-            cargo: @get_cargo_status()
+            crew: ( c.scan() for c in @crew when c.is_onboard() )
+            cargo: do @get_cargo_status
             decks: LEVELS
             sections: SECTIONS
 
@@ -239,11 +260,11 @@ class Station extends BaseObject
         matching_teams[0].origin_party
 
 
-    get_lifesigns: () ->
+    get_lifesigns: ->
         r = @crew
 
 
-    _are_all_shields_up: () ->
+    _are_all_shields_up: ->
         false
 
 

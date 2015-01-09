@@ -540,7 +540,7 @@ class Constitution extends BaseShip
         c.set_assignment @name  for c in @crew
 
 
-    _rebuild_crew_checks: () ->
+    _rebuild_crew_checks: ->
 
         # Remove the dead
         @repair_teams = ( r for r in @repair_teams when do r.is_alive )

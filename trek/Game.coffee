@@ -58,7 +58,7 @@ class Game
         @environment_functions = do level.get_environment
 
 
-    state: () ->
+    state: ->
         # return a station
         s = ( o for o in @game_objects when not o.prefix_code? )[0]
 
@@ -72,7 +72,7 @@ class Game
         ).sort()
 
 
-    debug_positions: () ->
+    debug_positions: ->
 
         p = (
             for o in @game_objects
@@ -92,7 +92,7 @@ class Game
         )
 
 
-    random_start_coordinates: () ->
+    random_start_coordinates: ->
 
         board_size = C.SYSTEM_WIDTH / 3
         x = Math.round( ( Math.random() - 0.5 ) * board_size )
@@ -101,7 +101,7 @@ class Game
         r = { x : x, y : y, z : z }
 
 
-    get_startup_stats: () ->
+    get_startup_stats: ->
 
         r = (
             for k, s of @ships
@@ -114,7 +114,7 @@ class Game
         )
 
 
-    get_ships: () -> ( { name : s.name, registry : s.serial } for k, s of @ships )
+    get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @ships )
 
 
     ### Prefix Requisit Codes
@@ -162,10 +162,10 @@ class Game
         # Get charted objects
         r = ( @get_public_space o, you for o in @space_objects \
             when o.charted == true \
-            and o.star_system == star_system)
+            and o.star_system == star_system )
 
         # Overlay any subspace becons
-        s = (@get_public o, you for o in @game_objects \
+        s = ( @get_public o, you for o in @game_objects \
             when @get_public o, you )
 
         # Overlay points that you have scanned and are tracking
@@ -621,6 +621,13 @@ class Game
                 if ship.hear_hail prefix, message
                     @message pfix, "hail", msg
 
+        response_function = ( msg ) =>
+            for pfix, ship of @ships
+                if ship.hear_hail "", msg
+                    @message pfix, "hail", msg
+
+        @level.handle_hail prefix, message, response_function
+
         @ships[ prefix ].hail message, hail_function
 
 
@@ -642,6 +649,7 @@ class Game
         o.calculate_state @world_scan, delta_t for o in @game_objects
 
         if @is_over
+            console.log "[GAME] OVER!"
             clearInterval @i
             score = do @level.get_final_score
             for prefix, ship of @ships
@@ -745,14 +753,14 @@ class Game
         delete @ships[ prefix ]
 
 
-    destroy_all_objects: () ->
+    destroy_all_objects: ->
 
         # Utility function to clear anything that may have a timeout
         @game_objects = []
         @space_objects = []
 
 
-    over: () ->
+    over: ->
 
         # Kill the game
         clearInterval @i

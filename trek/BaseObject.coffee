@@ -29,13 +29,13 @@ class BaseObject
         @alive = false
 
 
-    set_position: (x, y=0, z=0) -> @position = {x:x, y:y, z:z}
+    set_position: ( x, y=0, z=0 ) -> @position = {x:x, y:y, z:z}
 
 
-    calculate_state: () ->
+    calculate_state: ->
 
 
-    transportable: () -> false
+    transportable: -> false
 
 
     scan_for: ( type ) ->

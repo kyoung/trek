@@ -12,7 +12,7 @@ class LogEntry
         @second = date.getSeconds()
 
 
-    flat: () ->
+    flat: ->
 
         s = "#{ @stardate } - #{ @hour }:#{ @minute }:#{ @second }: #{ @entry }"
 
@@ -30,7 +30,7 @@ class Log
         @entries.push new LogEntry text
 
 
-    pending_logs: () ->
+    pending_logs: ->
 
         if @entries.length <= @_read_index
             return ""
@@ -40,12 +40,12 @@ class Log
 
 
 
-    length: () ->
+    length: ->
 
         @entries.length
 
 
-    dump: () ->
+    dump: ->
 
         r = ( e.flat() for e in @entries )
 

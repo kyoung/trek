@@ -61,7 +61,7 @@ class TorpedoSystem extends System
         @_autoload = false
 
 
-    status_report: () ->
+    status_report: ->
 
         if not @is_online()
             @torpedo_state = TorpedoSystem.STATUS.OFFLINE
@@ -70,14 +70,14 @@ class TorpedoSystem extends System
             name: @name
 
 
-    is_loaded: () ->
+    is_loaded: ->
 
         if @torpedo_state == TorpedoSystem.STATUS.LOADED and @.is_online()
             return true
         return false
 
 
-    load: () ->
+    load: ->
 
         t = @consumption_callback()
         if t == 0
@@ -119,6 +119,8 @@ class TorpedoSystem extends System
 class ShieldSystem extends ChargedSystem
 
     @CHARGE_TIME = 15e3
+
+    @INIT_POWER = 0.25
 
     @POWER ={ min : 0.01, max : 2, dyn : 6e4 }
 
@@ -175,12 +177,22 @@ class ShieldSystem extends ChargedSystem
         return 0
 
 
-    shield_report: () ->
+    shield_report: ->
 
         r =
-            charge: @charge
-            status: @state
-            name: @name
+            charge : @charge
+            status : @state
+            name : @name
+
+
+    get_required_power: ->
+
+        { min, max, dyn } = @power_thresholds
+
+        if @online
+            return dyn * ShieldSystem.INIT_POWER
+
+        return 0
 
 
 exports.PhaserSystem = PhaserSystem

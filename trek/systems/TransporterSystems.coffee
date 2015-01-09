@@ -23,7 +23,7 @@ class Transporters extends System
         super @name, @deck, @section, @power_thresholds
 
 
-    effective_range: () ->
+    effective_range: ->
 
         Transporters.RANGE * do @performance
 

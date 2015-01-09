@@ -9,7 +9,7 @@ exports.GameTest =
 
     'test init of game': ( test ) ->
 
-        g = new Game ''
+        g = new Game "DGTauIncident", 2
         ship_prefixes = ( p for p, s of g.ships )
         test.ok ship_prefixes.length == 2, "Too many ships!"
         do g.over
@@ -19,7 +19,7 @@ exports.GameTest =
     'test can fire single Torpedo': ( test ) ->
 
         MAX_DELAY = 100
-        game = new Game ""
+        game = new Game "DGTauIncident", 2
         ent = ''
         rel = ''
         for prefix, ship of game.ships
@@ -48,7 +48,7 @@ exports.GameTest =
 
         test.expect 2
         MAX_DELAY_MS = 20
-        game = new Game ''
+        game = new Game 'DGTauIncident', 2
         ent = ''
         rel = ''
 
@@ -86,7 +86,7 @@ exports.GameTest =
 
     'test can get obects within visual range': ( test ) ->
 
-        game = new Game ''
+        game = new Game 'DGTauIncident', 2
         e_prefix = ''
         e_ship = undefined
         o_prefix = ''
@@ -112,7 +112,7 @@ exports.GameTest =
 
     'test world scan callback': ( test ) ->
 
-        game = new Game ''
+        game = new Game 'DGTauIncident', 2
 
         class Mock_Gas_Cloud
             constructor: ( @position ) ->
@@ -143,46 +143,11 @@ exports.GameTest =
         do test.done
 
 
-    'test can plot intercept courses': ( test ) ->
-        ###
-        This is complicated behaviour, as the ship will
-        turn to face the target before moving
-
-        ###
-
-        test.expect 1
-        game = new Game ''
-        ships = do game.get_startup_stats
-        e = (s for s in ships when s.name == "Enterprise")[0]
-        d = (s for s in ships when s.name != "Enterprise")[0]
-
-        game.ships[ e.prefix ].set_coordinate { x : 1e6, y : 1e7, z : 0 }
-
-        distance_initial = U.distance e.position, d.position
-        t = game.plot_course_and_engage(
-            e.prefix,
-            d.name,
-            { impulse: undefined, warp: 6 }
-        )
-
-        measure_distance_travelled = ->
-            distance_final = U.distance e.position, d.position
-            test.ok distance_final < distance_initial, "Failed to move
-                toward target: started at #{distance_initial} ended at
-                #{distance_final}"
-            do game.over
-            do test.done
-
-        console.log "Interception expected to take #{t} ms"
-
-        setTimeout measure_distance_travelled, C.TIME_FOR_FULL_ROTATION + t * 1.1
-
-
     'test can run active scans': ( test ) ->
 
         test.expect 2
         SensorSystem.DURATION /= 100
-        g = new Game ''
+        g = new Game 'DGTauIncident', 2
         ships = do g.get_startup_stats
         e = ( s for s in ships when s.name == "Enterprise" )[ 0 ]
         d = ( s for s in ships when s.name != "Enterprise" )[ 0 ]

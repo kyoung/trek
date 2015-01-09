@@ -49,7 +49,7 @@ class WarpSystem extends ChargedSystem
         @charge_time = WarpSystem.CHARGE_TIME
 
 
-    _initiate_coil_output: () ->
+    _initiate_coil_output: ->
 
         # Inherit the base coil balance...
         # +/- 5% on each node
@@ -60,7 +60,7 @@ class WarpSystem extends ChargedSystem
             )
 
 
-    warp_field_output: () ->
+    warp_field_output: ->
         if not @online
             return []
         r = ( c * @power * C.WARP_POWER_FIELD_MULTIPLIER for c in @coil_balance )

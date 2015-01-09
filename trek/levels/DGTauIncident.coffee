@@ -34,22 +34,22 @@ class DGTauIncident extends Level
         @_initial_lives = do @_get_crew_count
 
 
-    get_environment: () -> @game_environment
+    get_environment: -> @game_environment
 
 
-    get_ships: () -> @ships
+    get_ships: -> @ships
 
 
-    get_space_objects: () -> @space_objects
+    get_space_objects: -> @space_objects
 
 
-    get_game_objects: () -> @game_objects
+    get_game_objects: -> @game_objects
 
 
-    get_map: () -> @map
+    get_map: -> @map
 
 
-    _get_crew_count: () ->
+    _get_crew_count: ->
 
         count = 0
         for o in @game_objects
@@ -57,12 +57,12 @@ class DGTauIncident extends Level
                 count += do c.count
 
 
-    _is_mission_impossible: () =>
+    _is_mission_impossible: =>
 
         # Is everyone dead?
         everyone_is_dead = true
         for prefix, ship of @ships
-            if ship._check_if_still_alive()
+            if do ship._check_if_still_alive
                 everyone_is_dead = false
 
         if everyone_is_dead
@@ -71,7 +71,7 @@ class DGTauIncident extends Level
         return false
 
 
-    _is_mission_accomplished: () =>
+    _is_mission_accomplished: =>
 
         # Are all miners off of existing stations, and
         # the ships are clear of the system
@@ -93,7 +93,7 @@ class DGTauIncident extends Level
         return false
 
 
-    get_events: () ->
+    get_events: ->
 
         end_game = ( game ) ->
             game.is_over = true
@@ -112,7 +112,7 @@ class DGTauIncident extends Level
                 wiggle = 0.98 + 0.04 * do Math.random
                 return shield_charge_rate * low_level * wiggle
 
-            _end_spike = () ->
+            _end_spike = ->
                 game.set_environment_function(
                     C.ENVIRONMENT.RADIATION,
                     _low_radiation )
@@ -145,7 +145,7 @@ class DGTauIncident extends Level
             radiation ]
 
 
-    get_final_score: () ->
+    get_final_score: ->
 
         score = {}
         for k, s of @ships
@@ -157,23 +157,57 @@ class DGTauIncident extends Level
         return score
 
 
-    _random_start_position: () ->
+    handle_hail: ( prefix, message, response_function ) ->
+
+        console.log "[LEVEL] message: #{ message }"
+
+        # Allow ships to request outposts to lower their shields for transport
+        outpost_number = message.match /Outpost (\d+)/i;
+        lower = message.match /lower/i;
+        raise = message.match /raise/i;
+
+        if not outpost_number? or outpost_number.length is 0 or ( lower?.length is 0 and raise?.length is 0 )
+            return
+
+        outpost_num = outpost_number[1]
+        outpost = ( s for s in @stations when s.name is 'Outpost_' + outpost_num )[ 0 ]
+
+        if lower?.length > 0
+            do outpost.shields.power_down
+
+        else
+            if raise?.length > 0
+                do outpost.shields.power_on
+
+        respond = ->
+            if lower?.length > 0
+                response_function "Acknowledged, lowering shields."
+
+            if raise?.length > 0
+                response_function "Understood, raising shields."
+
+        setTimeout respond, ( 4000 * Math.random() )
+
+        return true
+
+
+    _random_start_position: ->
 
         board_size = C.SYSTEM_WIDTH / 3
-        x = Math.round((Math.random() - 0.5) * board_size)
-        y = Math.round((Math.random() - 0.5) * board_size)
+        x = Math.round( ( Math.random() - 0.5 ) * board_size )
+        y = Math.round( ( Math.random() - 0.5 ) * board_size )
         z = 0
-        r = {x: x, y: y, z: z}
+        r = { x : x, y : y, z : z }
 
 
-    _random_bearing: () ->
+    _random_bearing: ->
 
         b =
             bearing: Math.floor( Math.random() *  1000 ) / 1000
             mark: 0
 
 
-    _init_map: () ->
+    _init_map: ->
 
         sector = new SpaceSector "2298"
         dg_tau = new StarSystem "DG Tau"
@@ -193,7 +227,7 @@ class DGTauIncident extends Level
         @map = sector
 
 
-    _init_logs: () ->
+    _init_logs: ->
 
         @enterprise_logs = [
             "Captains Log, stardate #{ @stardate }\n
@@ -250,7 +284,7 @@ class DGTauIncident extends Level
             " ]
 
 
-    _init_ships: () ->
+    _init_ships: ->
 
         system = @map.get_star_system 'DG Tau'
 
@@ -272,6 +306,8 @@ class DGTauIncident extends Level
         e.set_bearing initial_bearing
         e.set_alignment C.ALIGNMENT.FEDERATION
         e.set_shields true
+        for s in e.shields
+            s.charge = 1
         e.set_impulse 0.5
         e.enter_captains_log @enterprise_logs[ 0 ]
         @ships[ e.prefix_code ] = e
@@ -285,12 +321,14 @@ class DGTauIncident extends Level
         x.set_bearing initial_bearing
         x.set_alignment C.ALIGNMENT.FEDERATION
         x.set_shields true
+        for s in x.shields
+            s.charge = 1
         x.set_impulse 0.5
         x.enter_captains_log @lexington_logs[ 0 ]
         @ships[ x.prefix_code ] = x
 
 
-    _init_game_objects: () ->
+    _init_game_objects: ->
 
         system = @map.get_star_system 'DG Tau'
 
@@ -299,6 +337,8 @@ class DGTauIncident extends Level
             s = new Station "Outpost_#{i}", do @_random_start_position
             s.star_system = system
             s.set_alignment C.ALIGNMENT.FEDERATION
+            do s.shields.power_on
+            s.shields.charge = 1
             @stations.push s
             @game_objects.push s
 
@@ -306,7 +346,7 @@ class DGTauIncident extends Level
             @game_objects.push v
 
 
-    _init_space_objects: () ->
+    _init_space_objects: ->
 
         system = @map.get_star_system 'DG Tau'
         # Central star
@@ -326,7 +366,7 @@ class DGTauIncident extends Level
             @space_objects.push g
 
 
-    _init_environment: () ->
+    _init_environment: ->
 
         @game_environment = {}
         for k, v of C.ENVIRONMENT

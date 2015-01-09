@@ -1,4 +1,5 @@
 <% include header.html %>
+
 <div id="leftSide" class="fleft">
     <div id="viewMenu">
         <ul class="menu horizontal x3">
@@ -57,14 +58,8 @@
                 <li class="blue selector" id="setImpulse">Impulse</li>
             </ul>
             <div class="clear"></div>
-            <ul class="menu x1 disabled">
-                <li class="blue selector" id="plotIntercept">Plot Intercept</li>
-            </ul>
-        </div>
-        <div id="flyoutMenu" class="nav-flyout">
         </div>
         <div>
-            <p id="inputInfo" class="nav-input-info disabled"></p>
             <p id="inputBox">
             </p>
         </div>
@@ -95,15 +90,14 @@
         </div>
     </div>
 </div>
+
 <div id="rightSide" class="fleft">
     <iframe id="viewScreen"></iframe>
 </div>
+
 <script type="text/javascript">
+
 var selected_option;
-var interception_parameters = {};
-var intercept_target;
-var time_to_intercept;
-var intercept_timer;
 
 var $inputbox = $( "#inputBox" );
 var $systemSelections = $( ".system-select" );
@@ -125,7 +119,7 @@ var turningRight = false;
 var turnRate = 0;
 var turnState = 0;
 
-var navArrow = document.getElementById("conn-helm-pointer");
+var navArrow = document.getElementById( "conn-helm-pointer" );
 
 $viewScreen.attr( 'src', 'conn_screen' );
 
@@ -148,7 +142,7 @@ $pickNav.click( function( e ) {
 
 } );
 
-$pickHelm.click( function( e ) {
+$pickHelm.click( function ( e ) {
 
     $picks.removeClass( "lightblue" );
     $pickHelm.addClass( "lightblue" );
@@ -158,7 +152,7 @@ $pickHelm.click( function( e ) {
 
 } );
 
-$pickWarp.click( function( e ) {
+$pickWarp.click( function ( e ) {
 
     $picks.removeClass( "lightblue" );
     $pickWarp.addClass( "lightblue" );
@@ -168,107 +162,37 @@ $pickWarp.click( function( e ) {
 
 } );
 
-$(".selector").click(function(){
+$( ".selector" ).click( function () {
 
     selected_option = this.id;
-    $(".selector").removeClass("lightblue");
-    $(".selector").addClass("blue");
-    $(this).removeClass("blue");
-    $(this).addClass("lightblue");
-    $inputbox.html("");
+    $( ".selector" ).removeClass( "lightblue" );
+    $(this).addClass( "lightblue" );
+    $inputbox.html( "" );
 
 });
 
-$("#mainViewer").click(function(){
+$( "#mainViewer" ).click( function () {
 
     // TODO Change this to read the source of the iframe...
     // I want the zoom info
-    var x = document.getElementById("viewScreen");
+    var x = document.getElementById( "viewScreen" );
     var searchTerms = x.contentWindow.location.search.replace( "?", "" );
 
     trek.api(
         "command/mainViewer",
-        { screen: "conn_screen&" + searchTerms },
-        updateNavigationData
-    );
+        { screen : "conn_screen&" + searchTerms },
+        updateNavigationData );
 
 });
 
-$(".numPad").click(function(){
-    var x_char = $(this).html();
+$( ".numPad" ).click( function () {
+    var x_char = $( this).html();
     var x_existing = $inputbox.html();
     var x_newchar = x_existing + x_char;
     $inputbox.html(x_newchar);
 });
 
-$("#plotIntercept").click( function(){
-    trek.api( "tactical/scan", drawInterceptMenu );
-} );
-
-
-function drawInterceptMenu( data ){
-
-    console.log( data );
-
-    var $submenu = $("<ul class='menu x1'></ul>");
-
-    _.each( data, function(s) {
-
-        if ( s.name == "<%= ship.name %>" ) {
-            return;
-        }
-
-        console.log( "drawing " + s.name )
-
-        s.cleanName = s.name.replace( /_/g, " " );
-
-        var $intcpt = $("<li class='green' id='" + s.name + "'>" + s.cleanName + "</li>");
-
-        $intcpt.click( function(){
-            intercept_target = this.id;
-            $("#inputInfo").html( "Intercept " + this.id.replace( /_/g, " " ) );
-            $("#flyoutMenu").html( "" );
-        } );
-
-        console.log( "appending" )
-        $submenu.append( $intcpt );
-
-    });
-
-    $("#flyoutMenu").append( $submenu );
-
-}
-
-
-function interceptTimer( data ){
-
-    ms_to_intercept = parseInt( data.timeToIntercept, 10 );
-    time_to_intercept = Math.round(ms_to_intercept / 1000);
-    console.log("Time to intercept: " + time_to_intercept);
-    if (time_to_intercept < 0) {
-        return;
-    };
-    intercept_timer = setInterval(
-        function(){
-
-            time_to_intercept -= 1;
-            if ( time_to_intercept == 0 ) {
-
-                clearInterval( intercept_timer );
-                $( "#inputInfo" ).html("");
-
-            };
-
-            $("#inputInfo").html(
-                "Time to intercept: " + time_to_intercept
-            );
-        },
-        1000);
-
-};
-
-
-$("#engage").click(function(){
+$( "#engage" ).click( function () {
 
     var e = $inputbox.html().split( "m" );
 
@@ -278,77 +202,44 @@ $("#engage").click(function(){
 
             trek.api(
                 'navigation/course',
-                { bearing: e[0], mark: e[1] },
+                { bearing : e[0], mark : e[1] },
                 'PUT',
-                function() { console.log( "Setcourse confirmed" ); }
+                function () { console.log( "Setcourse confirmed" ); }
             );
 
             break;
 
         case "setWarp":
 
-            if (intercept_target) {
+            trek.api(
+                "navigation/warp",
+                { speed : e[0] },
+                'PUT',
+                function ( data ) { console.log( data ) } );
 
-                trek.api(
-                    "navigation/plot-intercept",
-                    {
-                        warp: e[0],
-                        target: intercept_target
-                    },
-                    'PUT',
-                    interceptTimer);
-
-                intercept_target = undefined;
-
-            } else {
-
-                trek.api(
-                    "navigation/warp",
-                    { speed: e[0] },
-                    'PUT',
-                    function(data) { console.log( data ) } );
-
-            }
 
             break;
 
         case "setImpulse":
 
-            if ( intercept_target ) {
+            trek.api(
+                "navigation/impulse",
+                { speed: e[ 0 ] },
+                'PUT',
+                function ( c ) { consoel.log( c ) } );
 
-                trek.api(
-                    "navigation/plot-intercept",
-                    {
-                        impulse: e[0],
-                        target: intercept_target
-                    },
-                    interceptTimer);
-
-                intercept_target = undefined;
-
-            } else {
-
-                trek.api(
-                    "navigation/impulse",
-                    { speed: e[0] },
-                    'PUT',
-                    function(c) { consoel.log( c ) });
-
-            }
-            break;
-        case "plotIntercept":
-            break;
         default:
-            $inputbox.html("");
+            $inputbox.html( "" );
+
     };
-    $(".selector").removeClass("lightblue");
-    $(".selector").addClass("blue");
-    $inputbox.html("");
+
+    $( ".selector" ).removeClass( "lightblue" );
+    $inputbox.html( "" );
 
 });
 
 
-function turnShipRight() {
+function turnShipRight () {
     if ( turningRight ) {
         // toggle off turn
         turningRight = false;
@@ -370,14 +261,14 @@ function turnShipRight() {
             'navigation/turn',
             { direction: 'starboard' },
             'PUT',
-            function() {}
+            function () {}
         );
         $turnRight.addClass( "toggle" );
     }
 }
 
 
-function turnShipLeft() {
+function turnShipLeft () {
     if ( turningLeft ) {
         // toggle off turn
         turningLeft = false;
@@ -410,7 +301,7 @@ $turnRight.click( turnShipRight );
 $turnLeft.click( turnShipLeft );
 
 
-trek.socket.on( "Navigation", function( navData ) {
+trek.socket.on( "Navigation", function ( navData ) {
 
     if ( _.has( navData, "turn_direction" ) ) {
         // best effort turn
@@ -420,24 +311,24 @@ trek.socket.on( "Navigation", function( navData ) {
 
         // update nav data after turn time
         setTimeout(
-            function() {
-                clearInterval(i);
+            function () {
+                clearInterval( i );
                 updateNavigationData();
             },
-            navData.turn_duration * 1.1);
+            navData.turn_duration * 1.1 );
     }
 
 });
 
 
-trek.socket.on( "Turning", function( navData ) {
+trek.socket.on( "Turning", function ( navData ) {
 
     updateNavigationDisplay( navData );
 
 });
 
 
-function updateNavigationDisplay( navData ) {
+function updateNavigationDisplay ( navData ) {
     console.log( navData );
 
     turnRate = navData.rotation.bearing;
@@ -450,7 +341,7 @@ function updateNavigationDisplay( navData ) {
 }
 
 var turnCalcTimeStamp = 0;
-function updateOrientation(tStamp) {
+function updateOrientation ( tStamp ) {
 
     if ( turnRate != 0 ) {
 
@@ -481,8 +372,7 @@ function updateNavigationData() {
 }
 
 // Setup animation to show orientation movement
-requestAnimationFrame(updateOrientation);
-
+requestAnimationFrame( updateOrientation );
 
 // Always select the local system by default
 $systemSelections[ 1 ].click();

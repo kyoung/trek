@@ -18,7 +18,7 @@ class BaseTeam
     @RADIATION_TOLERANCE = 240000
 
     @id_counter = 0
-    @get_id: () ->
+    @get_id: ->
         @id_counter += 1
 
     constructor: ( @size ) ->
@@ -34,7 +34,7 @@ class BaseTeam
         @id = do BaseTeam.get_id
 
 
-    offship: () ->
+    offship: ->
 
         @status = STATUS.OFFSHIP
         @deck = NaN
@@ -52,7 +52,7 @@ class BaseTeam
     onboard: ( @deck, @section ) -> @status = STATUS.ONBOARD
 
 
-    is_onboard: () -> @status == STATUS.ONBOARD or @status == STATUS.ENROUTE
+    is_onboard: -> @status == STATUS.ONBOARD or @status == STATUS.ENROUTE
 
 
     goto: ( new_deck, new_section, on_arrival=NaN ) ->
@@ -71,7 +71,7 @@ class BaseTeam
         setTimeout on_arrival, time_to_travel
 
 
-    scan: () ->
+    scan: ->
 
         # What do other ships scanning see?
         r =
@@ -83,7 +83,7 @@ class BaseTeam
             id: @id
 
 
-    count: () -> @members.length
+    count: -> @members.length
 
 
     set_alignment: ( @alignment ) ->
@@ -137,7 +137,7 @@ class BaseTeam
         @members = @members[n...]
 
 
-    is_alive: () -> @members.length > 0
+    is_alive: -> @members.length > 0
 
 
 ### Specialization Teams

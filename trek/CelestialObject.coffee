@@ -37,7 +37,7 @@ class CelestialObject extends BaseObject
 
     block_for: ( type ) -> false
 
-    get_detail_scan: () ->
+    get_detail_scan: ->
 
         r =
             classification: @classification
@@ -115,7 +115,7 @@ class GasCloud extends CelestialObject
         return false
 
 
-    get_detail_scan: () ->
+    get_detail_scan: ->
 
         r =
             classification: @classification

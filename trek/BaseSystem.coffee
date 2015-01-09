@@ -61,7 +61,7 @@ class System
         @power = 0
 
 
-    power_report: () ->
+    power_report: ->
 
         r =
             name: @name
@@ -156,7 +156,7 @@ class System
         @state = Math.min 1, @state
 
 
-    damage_report: () ->
+    damage_report: ->
 
         if @state > System.OPERABILITY_CUTOFF
             operability = OPERABILITY.OPERABLE
@@ -187,7 +187,7 @@ class System
         return state
 
 
-    bring_online: () ->
+    bring_online: ->
 
         @online = true
 
@@ -203,39 +203,43 @@ class System
         return @online
 
 
-    deactivate: () -> @online = false
+    deactivate: ->
+
+        @online = false
+        return @online
 
 
-    power_off: () ->
+    power_off: ->
+
         console.log "Call to depreciated power_off. Use 'deactivate'."
-        @deactivate()
+        do @deactivate
 
 
-    get_required_power: () ->
+    get_required_power: ->
         if @online
             return @power_thresholds.dyn * ( @power_thresholds.min + 0.1 )
         return 0
 
 
-    is_online: () -> @online
+    is_online: -> @online
 
 
-    performance: () ->
+    performance: ->
 
         { min, max, dyn } = @power_thresholds
         performance = @power / dyn
 
 
-    _time_to_operability: () ->
+    _time_to_operability: ->
 
         Math.floor( ( System.OPERABILITY_CUTOFF - @state ) *
             System.REPAIR_TIME )
 
 
-    _time_to_repair: () -> Math.floor (1 - @state) * System.REPAIR_TIME
+    _time_to_repair: -> Math.floor (1 - @state) * System.REPAIR_TIME
 
 
-    layout: () ->
+    layout: ->
         r =
             name: @name
             deck: @deck
@@ -269,19 +273,19 @@ class ChargedSystem extends System
         @_repair_reqs[Cargo.PHASE_COILS] = 30
 
 
-    bring_online: () ->
+    bring_online: ->
 
         @online = true
         do @power_on
 
 
-    power_down: () ->
+    power_down: ->
 
         @active = false
         @charge = 0
 
 
-    power_on: () ->
+    power_on: ->
 
         if not do @is_online
             @active = false
@@ -293,7 +297,7 @@ class ChargedSystem extends System
         return @active
 
 
-    is_active: () ->
+    is_active: ->
 
         if @state < System.OPERABILITY_CUTOFF
             @active = false
@@ -301,7 +305,7 @@ class ChargedSystem extends System
         @active
 
 
-    energy_level: () ->
+    energy_level: ->
 
         if @state > System.OPERABILITY_CUTOFF and @active
             return @charge
@@ -358,7 +362,7 @@ class ChargedSystem extends System
         @charge = Math.max 0, new_charge
 
 
-    damage_report: () ->
+    damage_report: ->
 
         if @state > System.OPERABILITY_CUTOFF
 
@@ -392,7 +396,7 @@ class ChargedSystem extends System
         return state
 
 
-    power_report: () ->
+    power_report: ->
 
         r = super()
         r.charge = @charge

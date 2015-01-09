@@ -1,11 +1,13 @@
 Constants = require './Constants'
 util = require 'util'
 
+
 exports.warp_speed = ( w ) ->
     Constants.WARP_SPEED * Math.pow(w, 10/3)
 
 
-exports.distance = (p1, p2, round=true) ->
+exports.distance = ( p1, p2, round=true ) ->
+
     if not p1? or not p1.x? or not p1.y? or not p1.x?
         throw new Error("p1 Not a valid position: #{util.inspect p1}")
     if not p2? or not p2.x? or not p2.y? or not p2.z?
@@ -19,22 +21,25 @@ exports.distance = (p1, p2, round=true) ->
         return d
 
 
-exports.distance_between = (object1, object2) ->
+exports.distance_between = ( object1, object2 ) ->
     @distance(object1.position, object2.position)
 
 
-exports.in_range = (p1, p2, range) ->
+exports.in_range = ( p1, p2, range ) ->
+
     if exports.distance(p1, p2) < range
         return true
     return false
 
 
-exports.bearing = (you, them, accuracy=3) ->
+exports.bearing = ( you, them, accuracy=3 ) ->
+
     abs_bearing = exports.point_bearing(you.position, them.position)
     exports.abs2rel_bearing you, abs_bearing, accuracy
 
 
 exports.abs2rel_bearing = ( you, abs_bearing, accuracy ) ->
+
     rel_bearing = abs_bearing.bearing - you.bearing.bearing
     if rel_bearing < 0
         rel_bearing += 1
@@ -46,7 +51,8 @@ exports.abs2rel_bearing = ( you, abs_bearing, accuracy ) ->
         mark: mark
 
 
-exports.point_bearing = (p1, p2) ->
+exports.point_bearing = ( p1, p2 ) ->
+
     dx = p2.x - p1.x
     dy = p2.y - p1.y
     abs_bearing = Math.atan2(dy, dx) / (2 * Math.PI)
@@ -64,7 +70,7 @@ exports.abs_bearing = ( you, them ) ->
     exports.point_bearing(you.position, them.position)
 
 
-exports.intercept = (you, them, {impulse, warp}) ->
+exports.intercept = ( you, them, { impulse, warp } ) ->
 
     impulse = if isNaN( impulse ) then 0 else impulse
     warp = if isNaN( warp ) then 0 else warp
@@ -97,6 +103,7 @@ exports.intercept = (you, them, {impulse, warp}) ->
 
 
 exports.intercept_distance = ( you, them ) ->
+
     # TODO: make this 3D
     rel_velocity = {
         x: them.velocity.x - you.velocity.x,
@@ -116,26 +123,35 @@ exports.intercept_distance = ( you, them ) ->
 
 
 exports.isNumber = ( n ) ->
-    !isNaN(parseFloat(n)) && isFinite(n)
+    !isNaN( parseFloat( n ) ) && isFinite( n )
+
 
 exports.atoi = ( n ) ->
-    parseFloat(n, 10)
+    parseFloat n, 10
+
 
 exports.round = ( n, digit ) ->
-    Math.floor(n * Math.pow(10, digit)) / Math.pow(10, digit)
+    Math.floor( n * Math.pow( 10, digit ) ) / Math.pow( 10, digit )
+
 
 exports.round_up = ( n, digit ) ->
-    Math.ceil(n * Math.pow(10, digit)) / Math.pow(10, digit)
+    Math.ceil( n * Math.pow( 10, digit ) ) / Math.pow( 10, digit )
+
 
 exports.norm_bearing = ( bearing ) ->
+
     if bearing < 0
         bearing += 100
     bearing % 1
 
-exports.stardate = () ->
+
+exports.stardate = ->
+
     d = new Date()
     sd = 8500 + d.getYear() + d.getMonth() + d.getDay() / 100
 
-exports.UID = () ->
+
+exports.UID = ->
+
     v = Math.round( Math.random() * 10e16 ).toString( 16 ) +
             Math.round( Math.random() * 10e16 ).toString( 16 )
