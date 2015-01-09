@@ -1,51 +1,85 @@
 <% include header.html %>
-<link rel="stylesheet" href="/static/css/communication_screen.css">
 
-<div id="chat_history">
-	<ul id="commlog">
-	</ul>
-</div>
+<div class="comms-wrapper">
 
-<div id="chat_input">
-	<textarea id="textinput">> </textarea>
+	<div class="comms-history" id="chat_history">
+		<ul class="comms-log" id="commlog">
+		</ul>
+	</div>
+
+	<div class="comms-input" id="chat_input">
+		<textarea id="textinput">> </textarea>
+	</div>
+
 </div>
 
 <script type="text/javascript">
 
-var commlog = $("#commlog");
-var send_window = $("#textinput");
-var socket = io.connect("http://localhost:<%= port %>");
+var commlog = $( "#commlog" );
+var $send_window = $( "#textinput" );
+var $chat_history = $( "#chat_history" );
 
-socket.on("hail", function(data){
+trek.socket.on("hail", function ( data ) {
+
 	commlog.append("<li class='recieved'>" + data + "</li>");
 	scrollToBottom();
+
 });
 
-window.onkeyup = function(d){
-	if (d.keyIdentifier == "Enter") {
-		commlog.append("<li class='sent'>" + send_window[0].value + "</li>");
-		scrollToBottom();
-		socket.emit("hail", send_window[0].value)
-		send_window[0].value = "> ";
+window.onkeyup = function ( d ) {
+
+	console.log( d );
+
+	if (d.keyIdentifier == "Enter" || d.key == "Enter" ) {
+
+		trek.api(
+			"communications/comms",
+			{ message : $send_window[ 0 ].value },
+			'POST',
+			loadComms
+		)
+
+		$send_window[ 0 ].value = "> ";
+
 	}
+
 };
 
-function scrollToBottom() {
-	var chat_history = $("#chat_history");
-	chat_history.scrollTop(chat_history[0].scrollHeight);
+function scrollToBottom () {
+
+	$chat_history.scrollTop( $chat_history[ 0 ].scrollHeight );
+
 };
 
-trek.api("command/commsHistory", function( data ){
+function loadComms () {
 
-	_.each( data, function( d ) {
-		if (d.type == "sent") {
-			commlog.append("<li class='sent'>" + d.message + "</li>");
-		} else {
-			commlog.append("<li class='recieved'>" + d.message + "</li>");
+	trek.api(
+		"communications/comms",
+		function ( data ) {
+
+			commlog.empty();
+
+			_.each( data, function ( d ) {
+
+				if ( d.type == "sent" ) {
+
+					commlog.append("<li class='sent'>" + d.message + "</li>");
+
+				} else {
+
+					commlog.append("<li class='recieved'>" + d.message + "</li>");
+
+				}
+
+			})
+
 		}
-	})
+	);
 
-});
+};
+
+loadComms();
+
 
 </script>
 

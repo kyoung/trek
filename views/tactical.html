@@ -266,20 +266,22 @@ $alertStatus.click(function(){
 });
 
 
-function updateTarget() {
-    $targetName.html( weaponsTarget.replace( /_/g, " " ) );
+function updateTarget () {
+    if ( typeof weaponsTarget != 'undefined' ) {
+        $targetName.html( weaponsTarget.replace( /_/g, " " ) );
+    }
 };
 
 
-function updateTorpedo() {
+function updateTorpedo () {
     $torpCount.html( torpedoInventory );
 };
 
 
-function buildTargetMenu( scanData ) {
+function buildTargetMenu ( scanData ) {
 
     var submenu = $( "<ul class='menu x1'></ul>" );
-    _.each( scanData, function(s){
+    _.each( scanData, function ( s ) {
 
         if ( s.name == shipName ) {
             return;

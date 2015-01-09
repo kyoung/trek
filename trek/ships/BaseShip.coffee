@@ -1486,6 +1486,31 @@ class BaseShip extends BaseObject
             do system.power_down
 
 
+    ### Communications
+    _________________________________________________###
+    get_comms: ->
+
+        if @communication_array?
+            do @communication_array.history
+        else
+            []
+
+
+    hail: ( message, hail_function ) ->
+
+        if @communication_array?
+            @communication_array.hail message, hail_function
+
+
+    hear_hail: ( prefix, message ) ->
+
+        if @prefix_code == prefix
+            return false
+
+        if @communication_array?
+            @communication_array.log_hail message
+
+
     ### Misc.
     _________________________________________________###
 

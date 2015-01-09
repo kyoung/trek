@@ -7,10 +7,10 @@ fs = require 'fs'
 C = require './Constants'
 U = require './Utility'
 
-# Tick speed
-GAME_TICK_MS = 250
 
 class Game
+
+    @TICK_MS = 250
 
     constructor: ( level_name, team_count ) ->
 
@@ -26,7 +26,7 @@ class Game
 
         @_clock = new Date().getTime()
 
-        @i = setInterval @update_state, GAME_TICK_MS
+        @i = setInterval @update_state, Game.TICK_MS
 
 
     message: ( prefix, type, content ) ->
@@ -607,6 +607,22 @@ class Game
 
     set_main_view_target: ( prefix, target_name ) ->
         @ships[ prefix ].set_viewscreen_target target_name
+
+
+    ### Communications Functions
+    ____________________________________________###
+    get_comms_history: ( prefix ) -> do @ships[ prefix ].get_comms
+
+
+    hail: ( prefix, message ) =>
+
+        hail_function = ( msg ) =>
+            for pfix, ship of @ships when pfix isnt prefix
+                if ship.hear_hail prefix, message
+                    @message pfix, "hail", msg
+
+        @ships[ prefix ].hail message, hail_function
+
 
 
     ### Utility Functions

@@ -67,9 +67,6 @@ ___________________________________________________###
 
 shipSockets = {}
 
-# TODO: Clear the comms hack, and make it part of the ship
-comms_history = []
-
 socketAuth = ( data, accept ) ->
     if data.headers.cookie
         data.cookie = cookie.parse data.headers.cookie
@@ -91,15 +88,6 @@ socketConnection = ( socket ) ->
     else
         shipSockets[ prefix ] = [ socket ]
 
-    # TODO: Factor this out into the game object,
-    # we should be checking if communication systems are online
-    socket.on( 'hail', ( message ) ->
-        comms_history.push { from : prefix, message : message }
-        for p, socket_list of shipSockets
-            if atoi( p ) != atoi( prefix )
-                s.emit( 'hail', message ) for s in socket_list
-    )
-
     socket.on( 'disconnect', ->
         shipSockets[ prefix ] = shipSockets[ prefix ].filter ( s ) -> s isnt socket
     )
@@ -110,8 +98,10 @@ socket.on('connection', socketConnection)
 # Super socket feedback ability
 
 sendToSockets = ( prefix, type, content ) ->
+
     if not shipSockets?
-        throw new Error "The shipSockets object has disappeared"
+        throw new Error "The shipSockets object has been disappeared"
+
     sockets = shipSockets[ prefix ]
     if sockets?
         s.emit( type, content ) for s in sockets
@@ -150,6 +140,7 @@ handle_API = ( req, res ) ->
         when 'transporters' then transporters_api prefix, method, command, params
         when 'science' then science_api prefix, method, command, params
         when 'engineering' then engineering_api prefix, method, command, params
+        when 'communications' then communications_api prefix, method, command, params
         # Command sets some cookies and requires the response object
         when 'command' then command_api prefix, method, command, params, res
 
@@ -190,7 +181,9 @@ navigation_api = ( prefix, method, command, params ) ->
                 game.set_impulse_speed prefix, atoi( q.speed )
 
         when 'plot-intercept'
-            plot_intercept prefix, q.target, q.impulse, q.warp
+            console.log "[!] Call to plot an intercept..."
+            # Disabled
+            # plot_intercept prefix, q.target, q.impulse, q.warp
 
         when 'system'
             # stellar telemetry
@@ -204,11 +197,13 @@ navigation_api = ( prefix, method, command, params ) ->
 
 
 tactical_api = ( prefix, method, command, params ) ->
+
     q = params
     resp = switch command
         when 'alert'
-            if method == 'put'
-                game.set_alert prefix, q.status
+            switch 'put'
+                when 'put'
+                    game.set_alert prefix, q.status
 
         when 'scan'
             game.scan prefix
@@ -217,12 +212,14 @@ tactical_api = ( prefix, method, command, params ) ->
             game.get_tactical_status prefix
 
         when 'shields'
-            if method == 'put'
-                game.set_shields prefix, ( q.online == "true" )
+            switch method
+                when 'put'
+                    game.set_shields prefix, ( q.online == "true" )
 
         when 'target'
-            if method == 'put'
-                game.target prefix, q.target
+            switch method
+                when 'put'
+                    game.target prefix, q.target
 
         when 'fireTorpedo'
             game.fire_torpedo prefix, q.yield
@@ -232,6 +229,16 @@ tactical_api = ( prefix, method, command, params ) ->
 
         when 'firePhasers'
             game.fire_phasers prefix
+
+
+communications_api = ( prefix, method, command, params ) ->
+
+    resp = switch command
+        when 'comms'
+            switch method
+                when 'get' then game.get_comms_history prefix
+                when 'post'
+                    game.hail prefix, params.message
 
 
 operations_api = ( prefix, method, command, params ) ->
@@ -254,13 +261,14 @@ operations_api = ( prefix, method, command, params ) ->
             game.get_sections prefix
 
         when 'sendTeamToDeck', 'send-team-to-deck'
-            if method = 'post'
-                game.send_team_to_deck(
-                    prefix,
-                    atoi( params.crew_id ),
-                    params.to_deck,
-                    params.to_section
-                )
+            switch method
+                when 'post'
+                    game.send_team_to_deck(
+                        prefix,
+                        atoi( params.crew_id ),
+                        params.to_deck,
+                        params.to_section
+                    )
 
         when 'repairTeam'
             game.assign_repair_crews(
@@ -283,24 +291,26 @@ transporters_api = ( prefix, method, command, params ) ->
             game.crew_ready_to_transport prefix
 
         when 'transportCargo'
-            if method == 'post'
-                game.transport_cargo(
-                    prefix,
-                    q.origin, q.origin_bay,
-                    q.destination, q.destination_bay,
-                    q.cargo, atoi( q.qty ) )
+            switch method
+                when 'post'
+                    game.transport_cargo(
+                        prefix,
+                        q.origin, q.origin_bay,
+                        q.destination, q.destination_bay,
+                        q.cargo, atoi( q.qty ) )
 
         when 'transportCrew'
-            if method == 'post'
-                transporter_args =
-                    crew_id: q.crew_id
-                    source_name: q.origin
-                    source_deck: q.origin_deck
-                    source_section: q.origin_section
-                    target_name: q.target
-                    target_deck: q.target_deck
-                    target_section: q.target_section
-                game.transport_crew prefix, transporter_args
+            switch method
+                when 'post'
+                    transporter_args =
+                        crew_id: q.crew_id
+                        source_name: q.origin
+                        source_deck: q.origin_deck
+                        source_section: q.origin_section
+                        target_name: q.target
+                        target_deck: q.target_deck
+                        target_section: q.target_section
+                    game.transport_crew prefix, transporter_args
 
 
 science_api = ( prefix, method, command, params ) ->
@@ -308,16 +318,16 @@ science_api = ( prefix, method, command, params ) ->
     q = params
     resp = switch command
         when 'runScan'
-            if method == 'put'
-                game.run_scan(
-                    prefix,
-                    q.type,
-                    atoi( q.grid_start ),
-                    atoi( q.grid_end ),
-                    true,
-                    q.range,
-                    q.resolution
-                )
+            switch method
+                when 'put'
+                    game.run_scan(
+                        prefix,
+                        q.type,
+                        atoi( q.grid_start ),
+                        atoi( q.grid_end ),
+                        true,
+                        q.range,
+                        q.resolution )
 
         when 'scanResults'
             game.get_scan_results prefix, q.type
@@ -357,26 +367,31 @@ engineering_api = ( prefix, method, command, params ) ->
             game.set_power_to_system prefix, q.system_name, q.level
 
         when 'power'
-            if method == 'get'
-                game.get_power_report prefix
-            else if method == 'post'
-                game.set_power_to_system prefix, q.system_name, q.level
+            switch method
+                when 'get'
+                    game.get_power_report prefix
+                when 'post'
+                    game.set_power_to_system prefix, q.system_name, q.level
 
         when 'reactor'
-            if method == 'post'
-                game.set_power_to_reactor prefix, q.reactor, q.level
+            switch method
+                when 'post'
+                    game.set_power_to_reactor prefix, q.reactor, q.level
 
         when 'eps-route'
-            if method == 'post'
-                game.reroute_power_relay prefix, q.eps_relay, q.primary_power_relay
+            switch method
+                when 'post'
+                    game.reroute_power_relay prefix, q.eps_relay, q.primary_power_relay
 
         when 'online'
-            if method == 'post'
-                game.set_system_online prefix, q.system, ( q.online != "offline" )
+            switch method
+                when 'post'
+                    game.set_system_online prefix, q.system, ( q.online != "offline" )
 
         when 'active'
-            if method == 'post'
-                game.set_system_active prefix, q.system, ( q.active != "inactive" )
+            switch method
+                when 'post'
+                    game.set_system_active prefix, q.system, ( q.active != "inactive" )
 
 
 command_api = ( prefix, method, command, params, res ) ->
@@ -389,9 +404,6 @@ command_api = ( prefix, method, command, params, res ) ->
 
         when 'getScan'
             { results: game.scan prefix }
-
-        when 'commsHistory'
-            get_comms_history prefix
 
         when 'getMap'
             { results: game.get_map prefix }
@@ -408,17 +420,6 @@ command_api = ( prefix, method, command, params, res ) ->
 
         when 'captains-log'
             game.get_captains_log prefix
-
-
-get_comms_history = ( prefix ) ->
-
-    messages = []
-    for message in comms_history
-        if atoi(message.from) == atoi(prefix)
-            messages.push {type: "sent", message: message.message}
-        else
-            messages.push {type: "recieved", message: message.message}
-    return messages
 
 
 set_course = ( prefix, bearing, mark ) ->

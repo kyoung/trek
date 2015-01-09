@@ -36,6 +36,10 @@ iframe#viewScreen {
     height: 100%;
 }
 
+.disabled {
+    display: hidden;
+}
+
 #leftSide {
     width: 290px;
     height: 100%;
@@ -901,6 +905,44 @@ span.eng-charge-meter-bar {
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+
+/* Communications
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.comms-input textarea {
+    color: #0F8AA6;
+    background-color: #000;
+    border-color: #0F8AA6;
+    width: 100%;
+    height: 100%;
+    font-size: 2em;
+    font-family: 'Michroma', sans-serif;
+}
+
+.comms-wrapper {
+    height: 100%;
+}
+
+.comms-history {
+    height: calc(100% - 200px);
+    overflow-y: scroll;
+}
+
+.comms-input {
+    height: 200px;
+}
+
+ul.comms-log{
+    list-style: none
+}
+
+ul.comms-log li.recieved {
+    color: #60DDF7;
+}
+
+ul.comms-log li.sent {
+
 }
 
 

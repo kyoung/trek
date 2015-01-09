@@ -8,6 +8,7 @@
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
 {SIFSystem} = require '../systems/SIFSystems'
 {Torpedo} = require '../Torpedo'
+{CommunicationsSystems} = require '../systems/CommunicationSystems'
 {BaseObject} = require '../BaseObject'
 {CargoBay} = require '../CargoBay'
 {Log} = require '../Log'
@@ -107,11 +108,10 @@ class Constitution extends BaseShip
             @SECTIONS.FORWARD,
             System.SENSOR_POWER )
 
-        @communication_array = new System(
+        @communication_array = new CommunicationsSystems(
             'Communications',
             @DECKS.J,
-            @SECTIONS.AFT,
-            System.COMMUNICATIONS_POWER )
+            @SECTIONS.AFT )
 
         # Port and Starboard Sensors, Deck J
         @inertial_dampener = new System(

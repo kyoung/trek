@@ -22,8 +22,6 @@ class System
 
     @BRIG_POWER = { min : 0.1, max : 1.2, dyn : 1e2 }
 
-    @COMMUNICATIONS_POWER = { min : 0.01, max : 2.2, dyn : 5e3 }
-
     @DAMPENER_POWER = { min : 0.6, max : 1.7, dyn : 9e4 }
 
     @TRACTOR_POWER = { min : 0.1 , max : 2, dyn : 3e4 }
