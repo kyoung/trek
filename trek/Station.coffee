@@ -286,7 +286,7 @@ class Station extends BaseObject
                 if @hull[ level ][ section ] == 0
                     @process_casualties level, section
 
-        do @check_if_still_alive
+        do @_check_if_still_alive
 
 
     process_casualties: ( level, section ) ->
