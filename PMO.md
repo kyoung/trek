@@ -121,9 +121,10 @@ Feedback taken from real user testing
 - [ ] Need some kind of "cadet" mode to teach each pannel
 - [ ] Better failure states for Engineering: it's a bit frustrating when the fuses blow without clear indication of what's wrong
 - [ ] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
-- [ ] Red Alerts appeared on the main viewer, WTF?
-- [ ] Set to mainviewer functionality seemed borked. It probably didn't survive the port.
-- [ ] Justin/Tactical still just wants to shoot shit... we might need more responsibilities, or to keep them busy with chatter traffic.
+- [x] Red Alerts appeared on the main viewer, WTF?
+- [x] Set to mainviewer functionality seemed borked. It probably didn't survive the port.
+  - It was just the science station... we never got around to that before
+- [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
 
 ## Alpha 2 Issues
 - [x] Coorperative training missions

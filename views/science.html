@@ -57,60 +57,80 @@ var $LRScanMenu = $( "#lr_scan_menu" );
 var $LRScanMenuLi = $( "#lr_scan_menu li" );
 var $detailedScanMenu = $( "#detailed_scan_menu" );
 
+var $mainViewer = $( "#mainViewer" );
+
 var selectedSubmenu;
 
 var $viewScreen = $( "#viewScreen" );
 
 
 $SRScan.click( function(c) {
+
     $viewScreen.attr( 'src', 'science_scans' );
     $scienceSubMenues.addClass( 'hidden' );
     $SRScanMenu.removeClass( 'hidden' );
+
 } );
 
 
 $LRScan.click( function(c) {
+
     $viewScreen.attr( 'src', 'science_scans_lr' );
     $scienceSubMenues.addClass( 'hidden' );
     $LRScanMenu.removeClass( 'hidden' );
+
 } );
 
 
 $detailScan.click( function(c) {
+
     $viewScreen.attr( 'src', 'science_details' );
     $scienceSubMenues.addClass( 'hidden' );
     $detailedScanMenu.removeClass( 'hidden' );
     refreshHighresMenu();
+
 } );
 
 
 $internalScan.click( function( c ) {
+
     $viewScreen.attr( 'src', 'science_internal' );
     $scienceSubMenues.addClass( 'hidden' );
+
 } );
+
 
 $environmentalScan.click( function( c ) {
+
     $viewScreen.attr( 'src', 'science_environmental' );
     $scienceSubMenues.addClass( 'hidden' );
+
 } );
 
+
 $viewMenu.click( function( c ) {
+
     $viewMenu.removeClass( 'lightblue' );
     $( this ).addClass( 'lightblue' );
+
 } );
 
 
 $SRScanMenuLi.click( function(c) {
-    args = { type: this.id };
+
+    args = { type : this.id };
     $viewScreen.attr( 'src', 'science_scans?type=' + this.id )
     selectedSubmenu = this.id;
+
 } );
 
 
 $LRScanMenuLi.click( function(c) {
-    args = { type: this.id };
+
+    args = { type : this.id };
     $viewScreen.attr( 'src', 'science_scans_lr?type=' + this.id );
     selectedSubmenu = this.id;
+
 } );
 
 
@@ -148,10 +168,21 @@ function refreshHighresMenu() {
     trek.api(
         "science/scanResults",
         { type: "Passive High-Resolution Scan" },
-        loadHighresReading
-    )
+        loadHighresReading )
 
 };
+
+
+function screenToMainViewer() {
+
+    trek.api(
+        "command/main-viewer",
+        { 'screen' : $viewScreen.attr( 'src' ) },
+        "POST",
+        function () {} )
+
+};
+$mainViewer.click( screenToMainViewer );
 
 
 $SRScan.click();

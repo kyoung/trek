@@ -225,7 +225,7 @@ function updateState() {
 
 }
 
-$mainscreen.click(function(){
+$mainscreen.click( function () {
 
     trek.api(
         "command/mainViewer",
@@ -234,24 +234,25 @@ $mainscreen.click(function(){
             zoom: zoom,
             zoom_level: zoomLevel
         },
-        'PUT',
+        'POST',
         updateState
     );
 
-});
+} );
 
-$alertStatus.click(function(){
+
+$alertStatus.click( function () {
 
     var alertState;
 
 	if ( $(this).hasClass("red") ) {
 
-		$(this).removeClass("red");
+		$(this).removeClass( "red" );
         alertState = "clear";
 
 	} else {
 
-		$(this).addClass("red");
+		$(this).addClass( "red" );
 		$shieldSwitch.addClass( "lightBlue" );
         alertState = "red";
 
@@ -259,48 +260,56 @@ $alertStatus.click(function(){
 
     trek.api(
         "tactical/alert",
-        { status: alertState },
+        { status : alertState },
         'PUT',
-        updateState
-    );
-});
+        updateState );
+
+} );
 
 
 function updateTarget () {
+
     if ( typeof weaponsTarget != 'undefined' ) {
+
         $targetName.html( weaponsTarget.replace( /_/g, " " ) );
+
     }
+
 };
 
 
 function updateTorpedo () {
+
     $torpCount.html( torpedoInventory );
+
 };
 
 
 function buildTargetMenu ( scanData ) {
 
     var submenu = $( "<ul class='menu x1'></ul>" );
+
     _.each( scanData, function ( s ) {
 
-        if ( s.name == shipName ) {
-            return;
-        }
+        if ( s.name == shipName ) { return; }
 
         var prettyName = s.name.replace( /_/g, " " );
         var trgt = $("<li class='green' id='" + s.name + "'>" + prettyName + "</li>");
 
-        trgt.click(function(){
+        trgt.click( function () {
+
             weaponsTarget = this.id;
             updateTarget();
+
             trek.api(
                 "tactical/target",
-                { target: this.id },
+                { target : this.id },
                 'PUT',
-                updateState
-            );
+                updateState  );
+
             $flyoutMenu.html( "" );
-        });
+
+        } );
 
         submenu.append( trgt );
 
@@ -311,77 +320,90 @@ function buildTargetMenu ( scanData ) {
 };
 
 
-function getTargets() {
+function getTargets () {
+
     trek.api(
         "tactical/scan",
-        buildTargetMenu
-    );
+        buildTargetMenu );
+
 }
 
 
 $setTarget.click( getTargets );
 
 
-$firePhasers.click(function(){
-    trek.api( "tactical/firePhasers" );
-});
+$firePhasers.click( function () {
 
-$fireTorpedoes.click(function(){
+    trek.api( "tactical/firePhasers" );
+
+} );
+
+
+$fireTorpedoes.click( function () {
+
     trek.api(
         "tactical/fireTorpedo",
-        {
-            yield: torpedoYield
-        },
-        updateState
-    );
-});
+        { yield : torpedoYield },
+        updateState );
 
-$yieldBars.mouseover(function(){
+} );
 
-    torpedoYield = parseInt( $(this).attr( "id" ) );
+
+$yieldBars.mouseover( function () {
+
+    torpedoYield = parseInt( $( this ).attr( "id" ) );
 
     _.each( $yieldBars, function( e ) {
 
         if ( parseInt( e.id ) <= torpedoYield ) {
-            $(e).addClass( "selected" );
-        }
-        else {
-            $(e).removeClass( "selected" );
+
+            $( e ).addClass( "selected" );
+
+        } else {
+
+            $( e ).removeClass( "selected" );
+
         }
 
     } );
 
-});
+} );
 
-$zoomBars.mouseover(function(){
 
-    zoomLevel = parseInt( $(this).attr( "id" ) );
+$zoomBars.mouseover( function () {
 
-    _.each( $zoomBars, function( e ){
+    zoomLevel = parseInt( $( this ).attr( "id" ) );
+
+    _.each( $zoomBars, function( e ) {
 
         if ( parseInt( e.id ) <= zoomLevel ) {
+
             $( e ).addClass( "selected" );
-        }
-        else {
+
+        } else {
+
             $( e ).removeClass( "selected" );
+
         }
-    });
+
+    } );
 
     setDisplay();
 
-});
+} );
 
 
-function setDisplay() {
+function setDisplay () {
 
     var q_string = "?zoom=" + zoom + "&zoom_level=" + zoomLevel;
     $viewScreen.attr( 'src', 'tactical_screen' + q_string );
 
 };
+
 $tacticalDisplay.click( setDisplay );
 
 
-function toggleShields() {
+function toggleShields () {
 
     var set_online = $shieldSwitch.hasClass( "lightblue" ) ? false: true;
 
@@ -389,22 +411,23 @@ function toggleShields() {
 
     trek.api(
         "tactical/shields",
-        { online: set_online },
+        { online : set_online },
         "PUT",
-        updateState
-    );
+        updateState );
 
 };
+
 $shieldSwitch.click( toggleShields );
 
 
-function displayCom() {
+function displayCom () {
 
     $viewScreen.attr( 'src', 'comm_screen' );
     $comDisplay.removeClass( "blink" );
     $comDisplay.addClass( "offline" );
 
 };
+
 $comDisplay.click( displayCom );
 
 

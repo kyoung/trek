@@ -408,8 +408,8 @@ command_api = ( prefix, method, command, params, res ) ->
         when 'getMap'
             { results: game.get_map prefix }
 
-        when 'mainViewer'
-            if method == 'put'
+        when 'mainViewer', 'main-viewer'
+            if method == 'put'or method == 'post'
                 set_main_viewer prefix, q
 
         when 'getSystemScan'
