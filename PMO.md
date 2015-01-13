@@ -113,25 +113,33 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   + Library / Logs
   + Working sector nav
 
-
 # Alpha Test Issues
 Feedback taken from real user testing
 
+## Alpha 3 Issues
+- [ ] Need radiological alarms to let everyone know when something bad is happening
+- [ ] Need some kind of "cadet" mode to teach each pannel
+- [ ] Better failure states for Engineering: it's a bit frustrating when the fuses blow without clear indication of what's wrong
+- [ ] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
+- [ ] Red Alerts appeared on the main viewer, WTF?
+- [ ] Set to mainviewer functionality seemed borked. It probably didn't survive the port.
+- [ ] Justin/Tactical still just wants to shoot shit... we might need more responsibilities, or to keep them busy with chatter traffic.
+
 ## Alpha 2 Issues
-- [ ] Coorperative training missions
-- [ ] Going to warp > 6 crashed the server
-  - [ ] Raising this sort of error has never crashed the server in dev; what's going on?
+- [x] Coorperative training missions
+- [x] Going to warp > 6 crashed the server
+  - [x] Raising this sort of error has never crashed the server in dev; what's going on?
     - http://stackoverflow.com/questions/5999373/how-do-i-prevent-node-js-from-crashing-try-catch-doesnt-work
     - http://engineering.fluencia.com/blog/2013/12/20/the-4-keys-to-100-uptime-with-nodejs
     - A thought: throwing errors in asynchronus functions won't get handled by the web callback, and will thus crash the server, so we need to raise errors at the start of the callback, or find a way to have a universal error handler(?)
 - [ ] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
 - [x] All of the power systems were starting up at full power usage instead of minimum... we need to fix that up. Also, while it's good for most systems to use min power operationally, Shields and Weapons systems should probably start closer to 25%
 - [x] It's unclear from the tactical screen what the respective ship orientation is, and so whether or not it's possible to fire
-- [ ] Engineer and Ops screens require a legend for their displays
+- [x] Engineer and Ops screens require a legend for their displays
 - [ ] Damage indication (screen cracking should be working)
 
 ## Alpha 1 Issues
-- [ ] Captain's log... There should be a screen where you can display mission objecives
+- [x] Captain's log... There should be a screen where you can display mission objecives
 - [x] Engineering
   - [x] We need a feedback screen when something blows up, power wise
 - [x] Ops
