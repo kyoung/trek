@@ -13,9 +13,9 @@ STATUS =
 
 class BaseTeam
 
-    # Tuned to allow 5 minutes of exposure to 20% of shield energy radiation
+    # Tuned to allow 5 * 5 minutes of exposure to 20% of shield energy radiation
     # (As per DGTau mission)
-    @RADIATION_TOLERANCE = 240000
+    @RADIATION_TOLERANCE = 240000 * 5
 
     @id_counter = 0
     @get_id: ->

@@ -118,6 +118,7 @@ var trek = (function($, _, Mustache, io) {
 
     t.playBridgeSound = playBridgeSound;
 
+
     function playKlaxon () {
 
         var klaxon = document.createElement( "audio" );
@@ -129,8 +130,48 @@ var trek = (function($, _, Mustache, io) {
     t.playKlaxon = playKlaxon;
 
 
+    function playAlarm () {
+
+        var alarm = document.createElement( "audio" );
+        alarm.setAttribute( "autoplay", "" );
+        alarm.src = "static/sound/critical.mp3";
+
+    }
+
+    t.playAlarm = playAlarm;
+
+
+    // Draw Fancy Types
+    function displayRed ( message, callback ) {
+
+        var $bg = $( "<div class='blackout'></div>" );
+        var $errorWrap = $( "<div class='errorWrap red'></div>" );
+
+        $errorWrap.html( message );
+        $bg.append( $errorWrap );
+
+        $bg.click( function( c ) {
+
+            $bg.remove();
+
+            if ( typeof callback !== undefined ) {
+
+                callback();
+
+            }
+
+        } );
+
+        $( "body" ).append( $bg );
+        $bg.css( 'visibility', 'visible' );
+
+    }
+
+    t.displayRed = displayRed;
+
+
     // Game Over
-    function display_game_over () {
+    function displayGameOver () {
 
         $.get( '/static/svg/gameover.svg', function( svg ) {
 
@@ -154,7 +195,7 @@ var trek = (function($, _, Mustache, io) {
         }
 
         // check score, and see if you won
-        display_game_over();
+        displayGameOver();
 
     });
 
@@ -163,20 +204,9 @@ var trek = (function($, _, Mustache, io) {
     function apiError( jqXHR, textStatus, errorThrown ) {
 
         console.log( jqXHR );
-
-        var $bg = $( "<div class='blackout'></div>" );
-        var $errorWrap = $( "<div class='errorWrap red'></div>" );
-
         // Display the error results and strip the stack
         var message = jqXHR.responseText.split( '\n' )[ 0 ];
-        $errorWrap.html( message );
-
-        $bg.append( $errorWrap );
-        $bg.click( function( c ) {
-            $bg.remove();
-        });
-        $( "body" ).append( $bg );
-        $bg.css( 'visibility', 'visible' );
+        displayRed( message );
 
     }
 

@@ -53,15 +53,9 @@ class BaseShip extends BaseObject
         do @initialize_crew
         do @initialize_logs
 
-        @radiological_alerts = {} # Deck and Section radiological state
-        for d, v of @DECKS
-
-            if not @radiological_alerts[ d ]?
-                @radiological_alerts[ d ] = {}
-
-            for k, s of @SECTIONS
-                @radiological_alerts[ d ][ s ] = false
-
+        @radiological_alerts = {} # Sectional radiological state
+        for k, s of @SECTIONS
+            @radiological_alerts[ s ] = false
 
         @impulse = 0
         @warp_speed = 0
@@ -481,17 +475,15 @@ class BaseShip extends BaseObject
             passthrough = shield.drain dyns
 
             if passthrough == 0
-                for k, v of @DECKS
-                    @radiological_alerts[ v ][ s ] = false
+                @radiological_alerts[ s ] = false
                 continue
 
             # for now, this affects the entire section at a time
-            if not @radiological_alerts[ @DECKS.A ][ s ]
-                for k, v of @DECKS
-                    @radiological_alerts[ v ][ s ] = true
+            if not @radiological_alerts[ s ]
+                @radiological_alerts[ s ] = true
                 @message(
                     @prefix_code,
-                    "environmental-alarm",
+                    "internal-alarm",
                     "Radiation Hazard in #{ s } section"
                 )
 

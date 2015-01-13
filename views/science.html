@@ -182,7 +182,19 @@ function screenToMainViewer() {
         function () {} )
 
 };
+
 $mainViewer.click( screenToMainViewer );
+
+
+function displayInternalAlarm ( data ) {
+
+    trek.playAlarm();
+    $internalScan.addClass( 'red' );
+
+}
+
+
+trek.socket.on( 'internal-alarm' , displayInternalAlarm );
 
 
 $SRScan.click();
