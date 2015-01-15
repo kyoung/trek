@@ -136,10 +136,10 @@ class BaseTeam
             @status = STATUS.DEAD
 
 
-    medical_treatment: ( time ) ->
+    receive_medical_treatment: ( time ) ->
 
         pct_recovery = time / BaseTeam.HEALING_RATE
-        @members = ( i + pct_recovery for i in @members when i > 0 )
+        @members = ( Math.min(1, i + pct_recovery) for i in @members when i > 0 )
 
 
     die: ( percentage ) ->
@@ -150,6 +150,13 @@ class BaseTeam
 
 
     is_alive: -> @members.length > 0
+
+
+    health: ->
+
+        health = 0
+        health += i for i in @members
+        return health
 
 
 ### Specialization Teams
@@ -231,7 +238,7 @@ class SecurityTeam extends BaseTeam
         winner.be_injured injury
 
 
-    kill: ( crew ) -> BaseTeam.die 1
+    kill: ( crew ) -> crew.die 1
 
 
 class DiplomaticTeam extends BaseTeam

@@ -3,6 +3,8 @@
 {System, ChargedSystem} = require '../trek/BaseSystem'
 {ShieldSystem, PhaserSystem, TorpedoSystem} = require '../trek/systems/WeaponSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../trek/systems/SensorSystems'
+{RepairTeam, ScienceTeam, EngineeringTeam, SecurityTeam, DiplomaticTeam, MedicalTeam} = require '../trek/Crew'
+
 
 {Constitution} = require '../trek/ships/Constitution'
 
@@ -493,3 +495,63 @@ exports.ShipTest =
             test.ok shield.charge < 1, "One minute of radiation failed to drain shield"
 
         do test.done
+
+
+    'test medical facilities': ( test ) ->
+
+        s = new Constitution 'Munnin'
+
+        # find a team on the ship
+        c = ( i for i in s.internal_personnel when i.deck isnt s.sick_bay.deck and i.alignment is s.alignment )[ 0 ]
+        c.radiation_exposure RepairTeam.RADIATION_TOLERANCE * 0.25
+
+        initial_health = do c.health
+
+        dummy_worldscan_callback = () ->
+
+        # tick one
+        s.calculate_state dummy_worldscan_callback, 250
+        sustained_health = do c.health
+        test.ok initial_health is sustained_health, "Team's health changed on their own!"
+
+        # move team to sick bay
+        c.deck = s.sick_bay.deck
+        c.section = s.sick_bay.section
+
+        # tick two
+        s.calculate_state dummy_worldscan_callback, 250
+        improved_health = do c.health
+        test.ok improved_health > sustained_health, "Being in sickbay did not improve health: #{ initial_health } > #{ improved_health }"
+
+        do test.done
+
+
+    'test security teams': ( test ) ->
+
+        s = new Constitution 'Munnin'
+
+        # find a security team
+        c = ( i for i in s.internal_personnel when i.description is "Security Team" )[ 0 ]
+
+        intruder = new SecurityTeam 'x', '5'
+        intruder.set_alignment C.ALIGNMENT.KLINGON
+
+        initial_security_health = do c.health
+        initial_klingon_health = do intruder.health
+
+        # send boarding team
+        s.beam_onboard_crew intruder, c.deck, c.section
+
+        dummy_worldscan_callback = () ->
+
+        # tick
+        s.calculate_state dummy_worldscan_callback, 250
+
+        final_klingon_health = do intruder.health
+
+        # we only test the klingon health, as it's possible we've beamed into the midst of many
+        # security teams and we don't know which we fought
+        test.ok final_klingon_health < initial_klingon_health, "Failed to fight intruder"
+
+        do test.done
+
