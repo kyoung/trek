@@ -1369,7 +1369,7 @@ class BaseShip extends BaseObject
         # Calculates the new system power balance, and the new required
         # power levels for that system. Dials up or down reactor
         # appropriately.
-        system = ( s for s in @systems when s.name == system_name )[0]
+        system = ( s for s in @systems when s.name == system_name )[ 0 ]
         if not system?
             throw new Error "Unable to locate system #{system_name}"
 
@@ -1383,19 +1383,22 @@ class BaseShip extends BaseObject
 
         parent_eps_relays = ( r for r in @eps_grids when r.is_attached system )
         if parent_eps_relays.length > 0
-            parent_eps_relay = parent_eps_relays[0]
+            parent_eps_relay = parent_eps_relays[ 0 ]
 
-        primary_power_relays = ( r for r in @primary_power_relays when r.is_attached( system ) or r.is_attached( parent_eps_relay ) )
+        primary_power_relays = ( r for r in @primary_power_relays when (
+            r.is_attached system or
+            r.is_attached parent_eps_relay ) )
         if primary_power_relays.length isnt 1
             throw new Error "Unable to trace primary power relay for
-                #{system_name}"
-        primary_power_relay = primary_power_relays[0]
+                #{ system_name }"
+        primary_power_relay = primary_power_relays[ 0 ]
 
         reactors = ( r for r in @reactors when r.is_attached primary_power_relay )
         if reactors.length isnt 1
-            throw new Error("Unable to trace reactor power for
-                #{primary_power_relay.name}")
-        reactor = reactors[0]
+            throw new Error "Unable to trace reactor power for
+                #{ primary_power_relay.name }"
+
+        reactor = reactors[ 0 ]
 
         if parent_eps_relay?
             new_eps_balance = parent_eps_relay.calculate_new_balance(
@@ -1410,15 +1413,19 @@ class BaseShip extends BaseObject
         # Else we need to dial down the power first
 
         set_new_balance = ->
+
             if parent_eps_relay?
                 parent_eps_relay.set_system_balance new_eps_balance
             primary_power_relay.set_system_balance new_primary_balance
 
+
         power_reactor = ->
+
             new_level = reactor.calculate_level_for_additional_output delta_power
+
             if not new_level? or isNaN new_level
                 throw new Error "Reactor failed to calculate power requirement
-                    for #{system_name} to #{pct}, (#{delta_power})"
+                    for #{ system_name } to #{ pct }, (#{ delta_power })"
 
             reactor.activate new_level
 
@@ -1432,32 +1439,32 @@ class BaseShip extends BaseObject
 
     set_power_to_reactor: ( reactor_name, level ) ->
 
-        reactor = ( r for r in @reactors when r.name == reactor_name )[0]
+        reactor = ( r for r in @reactors when r.name == reactor_name )[ 0 ]
         if not reactor?
-            throw new Error "Invalid reactor name #{reactor_name}, level: #{level}"
+            throw new Error "Invalid reactor name #{ reactor_name }, level: #{ level }"
 
         reactor.activate level
 
 
     reroute_power_relay: ( eps_relay_name, primary_relay_name ) ->
 
-        eps_relay = ( r for r in @eps_grids when r.name == eps_relay_name )[0]
+        eps_relay = ( r for r in @eps_grids when r.name == eps_relay_name )[ 0 ]
         if not eps_relay?
-            throw new Error "Invalid eps relay name #{eps_relay}"
+            throw new Error "Invalid eps relay name #{ eps_relay }"
 
-        primary_relay = ( r for r in @primary_power_relays when r.name == primary_relay_name )[0]
+        primary_relay = ( r for r in @primary_power_relays when r.name == primary_relay_name )[ 0 ]
         if not primary_relay?
-            throw new Error "Invalid primary relay name #{primary_relay}"
+            throw new Error "Invalid primary relay name #{ primary_relay }"
 
-        current_system = ( r for r in @primary_power_relays when r.is_attached eps_relay )[0]
+        current_system = ( r for r in @primary_power_relays when r.is_attached eps_relay )[ 0 ]
         current_system.remove_route eps_relay
         primary_relay.add_route eps_relay
-        reply = "#{eps_relay_name} rerouted to #{primary_relay_name}"
+        reply = "#{ eps_relay_name } rerouted to #{ primary_relay_name }"
 
 
     set_online: ( system_name, is_online ) ->
 
-        system = ( s for s in @systems when s.name == system_name )[0]
+        system = ( s for s in @systems when s.name == system_name )[ 0]
         if not system?
             throw new Error "Invalid system name #{ system_name }"
 
@@ -1469,9 +1476,9 @@ class BaseShip extends BaseObject
 
     set_active: ( system_name, is_active ) ->
 
-        system = ( s for s in @systems when s.name == system_name )[0]
+        system = ( s for s in @systems when s.name == system_name )[ 0 ]
         if not system?
-            throw new Error "Invalid system name #{system_name}"
+            throw new Error "Invalid system name #{ system_name }"
 
         if is_active
             do system.power_on
@@ -1625,6 +1632,7 @@ class BaseShip extends BaseObject
         @_calculate_motion delta
         @_calculate_environment delta
         @_update_system_state delta
+        @_update_crew delta
 
         if world_scan isnt undefined
             @_update_scanners world_scan, now
@@ -1667,6 +1675,49 @@ class BaseShip extends BaseObject
 
 
     _update_system_state: ( delta_t ) -> s.update_system( delta_t ) for s in @systems
+
+
+    _update_crew: ( delta_t ) ->
+
+
+        health_locaitons = {}
+        # Any crew in sickbay should get better
+        health_locaitons[ @sick_bay.deck ] = [ @sick_bay.section ]
+        # Any crew near a medical team member should get better
+        for crew in @internal_personnel when crew.description == "Medical Team"
+
+            if health_locaitons[ crew.deck ]?
+                health_locaitons[ crew.deck ].push crew.section
+            else
+                health_locaitons[ crew.deck ] = [ crew.section ]
+
+        for c in @internal_personnel when c.alignment is @alignment
+            if health_locaitons[ c.deck ]? and c.section in health_locaitons[ c.deck ]
+                c.receive_medical_treatment delta_t
+
+
+        # Intruders should move around?
+
+
+        # Any security forces in the area of boarding parties will fight and win/lose
+        intruders = ( crew for crew in @internal_personnel when (
+            crew.alignment != @alignment and
+            not do crew.is_captured and
+            crew.description == "Security Team" ) )
+
+        for crew in @internal_personnel when crew.assignment is @name
+
+            for intruder in intruders when intruder.deck is crew.deck and intruder.section is crew.section
+                # If security, you get to fight the invaders, otherwise they kill you
+                if crew.description is "Security Team" and do intruder.health > 0
+                    crew.fight intruder
+                else
+                    intruder.kill crew
+
+
+        # If a repair crew is on the bridge, damaged bridge screens should be repaired
+
+
 
 
     _update_scanners: ( world_scan, now ) ->
