@@ -17,6 +17,9 @@ class BaseTeam
     # (As per DGTau mission)
     @RADIATION_TOLERANCE = 240000 * 5
 
+    # Amount of time to heal to full strength
+    @HEALING_RATE = 240000
+
     @id_counter = 0
     @get_id: ->
         @id_counter += 1
@@ -24,7 +27,7 @@ class BaseTeam
     constructor: ( @size ) ->
 
         @members = []
-        for i in [0...@size]
+        for i in [ 0...@size ]
             @members.push 1
         @deck
         @section
@@ -128,6 +131,12 @@ class BaseTeam
         @members = ( i for i in @members when i > 0 )
         if @members.length == 0
             @status = STATUS.DEAD
+
+
+    medical_treatment: ( time ) ->
+
+        pct_recovery = time / BaseTeam.HEALING_RATE
+        @members = ( i + pct_recovery for i in @members when i > 0 )
 
 
     die: ( percentage ) ->

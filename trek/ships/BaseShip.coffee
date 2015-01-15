@@ -1625,6 +1625,7 @@ class BaseShip extends BaseObject
         @_calculate_motion delta
         @_calculate_environment delta
         @_update_system_state delta
+        @_update_crew delta
 
         if world_scan isnt undefined
             @_update_scanners world_scan, now
@@ -1667,6 +1668,31 @@ class BaseShip extends BaseObject
 
 
     _update_system_state: ( delta_t ) -> s.update_system( delta_t ) for s in @systems
+
+
+    _update_crew: ( delta_t ) ->
+
+
+        health_locaitons = {}
+        # Any crew in sickbay should get better
+        health_locaitons[ @sickbay.deck ] = [ @sickbay.section ]
+        # Any crew near a medical team member should get better
+        for crew in @internal_personnel when crew.description == "Medical Team"
+            if health_locaitons[ crew.deck ]?
+                health_locaitons[ crew.deck ].push crew.section
+            else
+                health_locaitons[ crew.deck ] = [ crew.section ]
+
+        for crew in @internal_personnel
+            if crew.section in health_locaitons[ crew.deck ]?
+                crew.medical_treatment delta_t
+
+
+        # Any security forces in the area of boarding parties will fight and win/lose
+
+        # If a repair crew is on the bridge, damaged bridge screens should be repaired
+
+
 
 
     _update_scanners: ( world_scan, now ) ->
