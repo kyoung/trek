@@ -57,6 +57,10 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [x] Enterprise-B bridge sounds from Generations
   - [x] Theme from Original Motion picture
   - [ ] Explosions
+  - [ ] Transporters
+  - [ ] Alerts
+  - [ ] Torpedo firing
+  - [ ] Phaser firing
 
 # Backlog
 ## Next Sprint
@@ -64,6 +68,12 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Thruster manuvering
     - required for phaser combat
   - [ ] Navigation status display
+- [ ] Tactical
+  - [ ] Breakout the phaser, torpedo, targeting, and comms screens
+- [ ] Crew interactions
+  - [ ] Healing from medics
+  - [ ] Heal crews in sickbay
+  - [ ] Game over if crew is dead
 
 ## For Breakout
 - Pretty Renders
@@ -79,9 +89,6 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
       + http://12devsofxmas.co.uk/2012/01/webgl-and-three-js/
 - Internal Personnel
   - What happens when you over assign repair teams?
-  - Send crews to sections of the ship (transport, sickbay, etc)
-    - Medical teams should be able to heal members on their deck/section
-    - Teams in sickbay should get healthier
   - Intruders
     - Figure out what happens when non-aligned parties beam aboard (IE if we beemed them aboard, take them to the brig, if they beamed aboard, they start attacking crew and disrupting systems)
     - Refactor the crew stuff, as we've simplified the Crew subclasses
@@ -89,8 +96,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - Subsystem targetting!
   - Weapons targeting should be it's own screen... with subsystems ability (if an active scan has been performed)
 - I should be affected by the environment
-  - plot intercepts via radii
-  - different types of cause and effect
+  - have particle density determine safe warp speed
 - Sector maps and other systems
   - Setup LY-based coordinates for objects not in systems
   - Compound coordinates? LY coordinates, offset by metrics is you're in a system
@@ -102,7 +108,6 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - All the render delay is in the loader... if we're going to cache anything in the display, it should be in the parent frame, and then into local storage...
 - Use this for animating transporters:
   - http://julian.com/research/velocity/
-- Display screen (use laptop cameras)???
 - Explosions disrupt warp fields (seems needed for realism, but if not, makes for good ability to run away); perhaps?
   - Might not be needed; you'll want to drop out of warp to turn and fight
 - Additional Screens
