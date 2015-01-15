@@ -52,6 +52,9 @@ class BaseTeam
             @status = STATUS.ONBOARD
 
 
+    is_captured: -> @status == STATUS.PRISONER
+
+
     onboard: ( @deck, @section ) -> @status = STATUS.ONBOARD
 
 
@@ -211,6 +214,24 @@ class SecurityTeam extends BaseTeam
         super 3
         @description = "Security Team"
         @code = "F"
+
+
+    fight: ( foe ) ->
+
+        winner = @
+        looser = foe
+
+        if do Math.random > 0.5
+            winner = foe
+            looser = @
+
+        looser.die 1
+
+        injury = do Math.random
+        winner.be_injured injury
+
+
+    kill: ( crew ) -> BaseTeam.die 1
 
 
 class DiplomaticTeam extends BaseTeam

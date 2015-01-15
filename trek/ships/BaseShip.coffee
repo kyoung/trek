@@ -1678,6 +1678,7 @@ class BaseShip extends BaseObject
         health_locaitons[ @sickbay.deck ] = [ @sickbay.section ]
         # Any crew near a medical team member should get better
         for crew in @internal_personnel when crew.description == "Medical Team"
+
             if health_locaitons[ crew.deck ]?
                 health_locaitons[ crew.deck ].push crew.section
             else
@@ -1689,6 +1690,20 @@ class BaseShip extends BaseObject
 
 
         # Any security forces in the area of boarding parties will fight and win/lose
+        intruders = ( crew for crew in @internal_personnel when (
+            crew.alignment != @alignment and
+            not do crew.is_captured and
+            crew.description == "Security Team" ) )
+
+        for crew in @internal_personnel when crew.assignment is @name
+
+            for intruder in intruders when intruder.deck is crew.deck and intruder.section is crew.section
+                # If security, you get to fight the invaders, otherwise they kill you
+                if crew.description is "Security Team"
+                    crew.fight intruder
+                else
+                    intruder.kill crew
+
 
         # If a repair crew is on the bridge, damaged bridge screens should be repaired
 
