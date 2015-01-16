@@ -5,6 +5,8 @@ Utility = require './Utility'
 
 class Torpedo extends BaseObject
 
+    @MAX_DAMAGE = 1.5e9
+
     constructor: ( @target, yield_level ) ->
 
         @yield_level = parseInt yield_level
@@ -12,7 +14,7 @@ class Torpedo extends BaseObject
         if ( @target.position is undefined or @target.velocity is undefined )
             throw new Error "Torpedo fired without a target"
 
-        if @yield_level not in [ 0...16 ]
+        if @yield_level not in [ 0...17 ]
             throw new Error "Torpedo fired with illegal yield: #{ yield_level }"
 
         super()
@@ -51,7 +53,7 @@ class Torpedo extends BaseObject
 
         # Probably a station or something
         if not @target.navigation_log?
-            @detonation_callback @target.position, @yield*Constants.TORPEDO_MAX_DAMAGE
+            @detonation_callback @target.position, @yield * Torpedo.MAX_DAMAGE
             return
 
         [..., last_target_nav] = @target.navigation_log
@@ -67,10 +69,10 @@ class Torpedo extends BaseObject
                 x: @target.position.z - d_x
                 y: @target.position.y - d_y
                 z: @target.position.z
-            @detonation_callback det_position, @yield*Constants.TORPEDO_MAX_DAMAGE
+            @detonation_callback det_position, @yield * Torpedo.MAX_DAMAGE
             return
 
-        @detonation_callback(@_detonation_position, @yield * Constants.TORPEDO_MAX_DAMAGE)
+        @detonation_callback @_detonation_position, @yield * Torpedo.MAX_DAMAGE
 
 
     fire_at_warp: ( warp_speed ) =>

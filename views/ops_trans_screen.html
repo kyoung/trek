@@ -345,6 +345,7 @@ function beamCrew () {
 
 function beam () {
 
+
 	// Refactor
 	if ( transType == 'cargo' ){
 
@@ -360,6 +361,8 @@ function beam () {
 
 
 function beamBarClicked () {
+
+	trek.playTransporter();
 
 	$("#beam_progress").animate(
 		{bottom: window.innerHeight - 20},
