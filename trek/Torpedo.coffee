@@ -14,7 +14,7 @@ class Torpedo extends BaseObject
         if ( @target.position is undefined or @target.velocity is undefined )
             throw new Error "Torpedo fired without a target"
 
-        if @yield_level not in [ 0...16 ]
+        if @yield_level not in [ 0...17 ]
             throw new Error "Torpedo fired with illegal yield: #{ yield_level }"
 
         super()
