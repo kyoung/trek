@@ -57,9 +57,9 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [x] Enterprise-B bridge sounds from Generations
   - [x] Theme from Original Motion picture
   - [ ] Explosions
-  - [ ] Transporters
-  - [ ] Alerts
-  - [ ] Torpedo firing
+  - [x] Transporters
+  - [x] Alerts
+  - [x] Torpedo firing
   - [ ] Phaser firing
 - [ ] Hotfix
   - [x] Torpedoes are loading with illegal yeild values...
