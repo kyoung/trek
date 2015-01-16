@@ -41,7 +41,7 @@ class TorpedoSystem extends System
     @POWER = { min : 0.4, max : 1.5, dyn : 7e3 }
 
     @RANGE = 300000 * 1000
-    @MAX_DAMAGE = 1.5e9
+
     @BLAST_RADIUS = 1e5
     @PROBABILITY_OF_IMPACT = 0.3
 
@@ -55,7 +55,7 @@ class TorpedoSystem extends System
 
         super @name, @deck, @section, TorpedoSystem.POWER
         @_repair_reqs = []
-        @_repair_reqs[Cargo.WEAPONS_SYSTEMS] = 20
+        @_repair_reqs[ Cargo.WEAPONS_SYSTEMS ] = 20
         @loaded = false
         @torpedo_state = TORPEDO_STATUS.EMPTY
         @_autoload = false

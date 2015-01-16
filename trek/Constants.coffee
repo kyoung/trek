@@ -59,7 +59,7 @@ exports.TIME_FOR_FULL_ROTATION = 10e3
 exports.HULL_STRENGTH = 600
 # Stations are presumed to be much stronger, as they're stationary
 # and don't rely on SIFs and radiation shielding.
-exports.STATION_HULL_STRENGTH = 6e4
+exports.STATION_HULL_STRENGTH = 2.78e4
 # Percentage of hull breached deemed to be catastrophic
 exports.STATION_CATASTROPHIC_HULL_BREACH = 0.15
 

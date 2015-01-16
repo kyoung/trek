@@ -292,7 +292,7 @@ class Game
 
     detonation_event: ( position, blast_power ) =>
 
-        console.log "Blast event at #{position.x} #{position.y} #{position.z}: yield #{blast_power}"
+        console.log "Blast event at #{ position.x } #{ position.y } #{ position.z }: yield #{ blast_power }"
         # Calculate damage to everything
         for o in @game_objects
             o.process_blast_damage position, blast_power, @message
