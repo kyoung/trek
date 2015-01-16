@@ -17,6 +17,9 @@ class BaseTeam
     # (As per DGTau mission)
     @RADIATION_TOLERANCE = 240000 * 5
 
+    # Amount of time to heal to full strength
+    @HEALING_RATE = 240000
+
     @id_counter = 0
     @get_id: ->
         @id_counter += 1
@@ -24,7 +27,7 @@ class BaseTeam
     constructor: ( @size ) ->
 
         @members = []
-        for i in [0...@size]
+        for i in [ 0...@size ]
             @members.push 1
         @deck
         @section
@@ -47,6 +50,9 @@ class BaseTeam
             @status = STATUS.PRISONER
         else
             @status = STATUS.ONBOARD
+
+
+    is_captured: -> @status == STATUS.PRISONER
 
 
     onboard: ( @deck, @section ) -> @status = STATUS.ONBOARD
@@ -130,6 +136,12 @@ class BaseTeam
             @status = STATUS.DEAD
 
 
+    receive_medical_treatment: ( time ) ->
+
+        pct_recovery = time / BaseTeam.HEALING_RATE
+        @members = ( Math.min(1, i + pct_recovery) for i in @members when i > 0 )
+
+
     die: ( percentage ) ->
 
         # Percentage of the team dead
@@ -138,6 +150,13 @@ class BaseTeam
 
 
     is_alive: -> @members.length > 0
+
+
+    health: ->
+
+        health = 0
+        health += i for i in @members
+        return health
 
 
 ### Specialization Teams
@@ -202,6 +221,24 @@ class SecurityTeam extends BaseTeam
         super 3
         @description = "Security Team"
         @code = "F"
+
+
+    fight: ( foe ) ->
+
+        winner = @
+        looser = foe
+
+        if do Math.random > 0.5
+            winner = foe
+            looser = @
+
+        looser.die 1
+
+        injury = do Math.random
+        winner.be_injured injury
+
+
+    kill: ( crew ) -> crew.die 1
 
 
 class DiplomaticTeam extends BaseTeam
