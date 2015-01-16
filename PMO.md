@@ -68,6 +68,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] "Set to mainview" functionality seems to be completely broken
   - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
   - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
+  - [ ] Red alert and sheild status is backwards
+    - [ ] raising the alert seems to be droping the shields
 
 # Backlog
 ## Next Sprint
