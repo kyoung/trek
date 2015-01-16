@@ -49,11 +49,17 @@ class Constitution extends BaseShip
         do @initialize_sensors
         do @initialize_power_systems
 
-        # Forward Sensors, Deck A
+        @bridge = new System(
+            'Bridge',
+            @DECKS.A,
+            @SECTIONS.FORWARD,
+            System.LIFESUPPORT_POWER )
+
+        # Forward Sensors, Deck B
         @lifesupport = new System(
             'Lifesupport',
             @DECKS.B,
-            @SECTIONS.FORWARD,
+            @SECTIONS.PORT,
             System.LIFESUPPORT_POWER )
 
         @port_warp_coil = new WarpSystem(
@@ -158,6 +164,7 @@ class Constitution extends BaseShip
         @systems = @systems.concat( @torpedo_banks ).concat( @sensors )
         @systems = @systems.concat( @power_systems )
         @systems = @systems.concat([
+            @bridge
             @transporters
             @lifesupport
             @communication_array
@@ -200,6 +207,7 @@ class Constitution extends BaseShip
         @forward_eps.add_route @forward_shields
         @forward_eps.add_route @forward_sensors
         @forward_eps.add_route @weapons_targeting
+        @forward_eps.add_route @bridge
 
         @port_eps.add_route @transporters
         @port_eps.add_route @communication_array
@@ -261,7 +269,7 @@ class Constitution extends BaseShip
         @warp_core = new ReactorSystem(
             'Warp Core',
             @DECKS.O,
-            @SECTIONS.AFT,
+            @SECTIONS.FORWARD,
             ReactorSystem.ANTIMATTER,
             @warp_relay,
             ReactorSystem.ANTIMATTER_SIGNATURE )
@@ -439,7 +447,7 @@ class Constitution extends BaseShip
 
         @forward_sensors = new SensorSystem(
             'Forward Sensor Array',
-            @DECKS.A,
+            @DECKS.B,
             @SECTIONS.FORWARD,
             b,
             forward_scan_grid )
@@ -477,7 +485,7 @@ class Constitution extends BaseShip
     initialize_cargo: ->
 
         @cargobays = []
-        for i in [1..4]
+        for i in [ 1..4 ]
             @cargobays.push( new CargoBay i )
 
 

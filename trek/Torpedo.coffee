@@ -5,10 +5,16 @@ Utility = require './Utility'
 
 class Torpedo extends BaseObject
 
-    constructor: ( @target, @yield_level ) ->
+    constructor: ( @target, yield_level ) ->
+
+        @yield_level = parseInt yield_level
 
         if ( @target.position is undefined or @target.velocity is undefined )
             throw new Error "Torpedo fired without a target"
+
+        if @yield_level not in [ 0...16 ]
+            throw new Error "Torpedo fired with illegal yield: #{ yield_level }"
+
         super()
         @yield = Math.pow( 2, @yield_level ) / Math.pow( 2, 16 )
         @warp = 0
@@ -25,7 +31,7 @@ class Torpedo extends BaseObject
 
 
     get_serial_number: ->
-        Math.round(Math.random() * 10e8).toString(16)
+        Math.round( Math.random() * 10e8 ).toString( 16 )
 
 
     self_destruct: =>
