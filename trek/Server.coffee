@@ -145,7 +145,7 @@ handle_API = ( req, res ) ->
         when 'command' then command_api prefix, method, command, params, res
 
     if resp is undefined
-        throw new Error "Undefinted response object for #{ category }/#{ command }"
+        throw new Error "Undefined response object for #{ category }/#{ command }"
 
     res.json resp
 
@@ -296,7 +296,7 @@ transporters_api = ( prefix, method, command, params ) ->
                     game.transport_cargo(
                         prefix,
                         q.origin, q.origin_bay,
-                        q.destination, q.destination_bay,
+                        q.destination, atoi( q.destination_bay ),
                         q.cargo, atoi( q.qty ) )
 
         when 'transportCrew'
