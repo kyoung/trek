@@ -1385,9 +1385,7 @@ class BaseShip extends BaseObject
         if parent_eps_relays.length > 0
             parent_eps_relay = parent_eps_relays[ 0 ]
 
-        primary_power_relays = ( r for r in @primary_power_relays when (
-            r.is_attached system or
-            r.is_attached parent_eps_relay ) )
+        primary_power_relays = ( r for r in @primary_power_relays when r.is_attached( system ) or r.is_attached( parent_eps_relay ) )
         if primary_power_relays.length isnt 1
             throw new Error "Unable to trace primary power relay for
                 #{ system_name }"
