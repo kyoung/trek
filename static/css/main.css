@@ -521,7 +521,7 @@ svg.conn-arrow.left, svg.conn-arrow.right {
 }
 
 
-/* Scanners
+/* Scanners & Science
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
 .science-internal-schematic {
@@ -568,6 +568,23 @@ ul.science-environmental-data li {
 
 .science-internal-information {
 
+}
+
+.scan-detail-alert {
+    position: absolute;
+    top: 300px;
+    left: 250px;
+    width: 500px;
+}
+
+.scan-detail-alert .science-internal-title {
+    font-size: 3em;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.scan-detail-alert .science-internal-detail {
+    margin: 0 auto;
 }
 
 .scan-slider {

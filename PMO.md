@@ -71,8 +71,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Tactical
   - [ ] Breakout the phaser, torpedo, targeting, and comms screens
 - [ ] Crew interactions
-  - [ ] Healing from medics
-  - [ ] Heal crews in sickbay
+  - [x] Healing from medics
+  - [x] Heal crews in sickbay
   - [ ] Game over if crew is dead
 
 ## For Breakout
@@ -87,6 +87,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
     - [http://www.johannes-raida.de/tutorials/three.js/tutorial04/tutorial04.htm]
       + This shows how to build a vertex color. Use this in combinaiton with a icosphere and a goland tool to map out a vertex from a bitmap
       + http://12devsofxmas.co.uk/2012/01/webgl-and-three-js/
+  - It would be nice to be able to put the system star on screen
+  - It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
 - Internal Personnel
   - What happens when you over assign repair teams?
   - Intruders
