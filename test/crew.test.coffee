@@ -1,4 +1,4 @@
-{BaseTeam, RepairTeam, ScienceTeam, EngineeringTeam, SecurityTeam} = require '../trek/Crew'
+{RepairTeam, ScienceTeam, EngineeringTeam, SecurityTeam, DiplomaticTeam, MedicalTeam} = require '../trek/Crew'
 {System, ChargedSystem} = require '../trek/BaseSystem'
 Constants = require '../trek/Constants'
 
@@ -114,4 +114,54 @@ exports.CrewTest =
 		test.ok final_health < initial_health, "Radiation failed to sicken crew."
 
 		do test.done
+
+
+	'test can fight': ( test ) ->
+
+		a = new SecurityTeam 'A', 'Forward'
+		b = new SecurityTeam 'A', 'Forward'
+
+		a.fight b
+
+		test.ok not do a.is_alive or not do b.is_alive, "Fight failed to kill a team"
+
+		suvivor = if do a.is_alive then a else b
+		net_health = 0
+		net_health += i for i in suvivor.members
+		test.ok net_health < suvivor.size, "Survivor failed to be injured"
+
+
+		do test.done
+
+
+	'test can kill': ( test ) ->
+
+		a = new SecurityTeam 'A', 'Forward'
+		b = new ScienceTeam 'A', 'Forward'
+
+		a.kill b
+
+		test.ok not do b.is_alive, "Failed to kill the puny science team"
+
+		do test.done
+
+
+	'test can be healed': ( test ) ->
+
+		a = new SecurityTeam 'A', 'Forward'
+		a.radiation_exposure SecurityTeam.RADIATION_TOLERANCE * 0.9
+
+		initial_health = 0
+		initial_health += i for i in a.members
+
+		a.receive_medical_treatment SecurityTeam.HEALING_RATE * 1.1
+
+		final_health = 0
+		final_health += i for i in a.members
+
+		test.ok final_health > initial_health, "Failed to get better after medical treatment"
+		test.ok final_health == a.size, "Medical treatment went too far: health status of crew is above 100%"
+
+		do test.done
+
 
