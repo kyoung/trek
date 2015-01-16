@@ -64,8 +64,10 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Hotfix
   - [ ] Torpedoes are loading with illegal yeild values...
   - [ ] Phasers won't fire
-  - [ ] Witnessed systems dying to the point of almost no repair
+  - [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
   - [ ] "Set to mainview" functionality seems to be completely broken
+  - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
+  - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
 
 # Backlog
 ## Next Sprint
