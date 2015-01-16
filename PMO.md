@@ -61,6 +61,11 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Alerts
   - [ ] Torpedo firing
   - [ ] Phaser firing
+- [ ] Hotfix
+  - [ ] Torpedoes are loading with illegal yeild values...
+  - [ ] Phasers won't fire
+  - [ ] Witnessed systems dying to the point of almost no repair
+  - [ ] "Set to mainview" functionality seems to be completely broken
 
 # Backlog
 ## Next Sprint

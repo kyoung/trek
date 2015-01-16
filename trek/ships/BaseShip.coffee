@@ -256,8 +256,8 @@ class BaseShip extends BaseObject
         quad = @calculate_quadrant(target.position)
 
         if quad == @SECTIONS.FORWARD
-            coin = Math.random()
-            if @forward_phaser_bank_a.is_online()
+            coin = do Math.random
+            if do @forward_phaser_bank_a.is_online
                 phaser = @forward_phaser_bank_a
             else
                 phaser = @forward_phaser_bank_b
@@ -276,6 +276,8 @@ class BaseShip extends BaseObject
         phaser.charge_down phaser.energy_level(), true
 
         target.process_phaser_damage @position, intensity
+
+        return 'OK'
 
 
     load_torpedo: ( tube_name ) ->
@@ -298,15 +300,13 @@ class BaseShip extends BaseObject
 
         bearing_to_target = U.bearing @, @weapons_target
         quadrant = @calculate_quadrant_from_bearing bearing_to_target
-        loaded_tubes = ( tube for tube in @torpedo_banks \
-            when tube.is_loaded() \
-            and tube.section_bearing == quadrant )
+        loaded_tubes = ( tube for tube in @torpedo_banks when tube.is_loaded() and tube.section_bearing == quadrant )
         if loaded_tubes.length == 0
-            throw new Error "No loaded torpedo tubes in #{quadrant} section.
+            throw new Error "No loaded torpedo tubes in #{ quadrant } section.
             Please load torpedo tubes, or turn to target."
-        tube = loaded_tubes[0]
+        tube = loaded_tubes[ 0 ]
 
-        if not @weapons_targeting.is_online()
+        if not do @weapons_targeting.is_online
             throw new Error "Weapons Targeting Systems are Offline."
 
         if @torpedo_inventory <= 0
@@ -951,7 +951,10 @@ class BaseShip extends BaseObject
         return r
 
 
-    get_cargo_bay: ( number ) -> ( c for c in @cargobays when c.number is number )[0]
+    get_cargo_bay: ( number ) ->
+
+        number = if typeof number is 'string' then parseInt( number ) else number
+        bay = ( c for c in @cargobays when c.number is number )[0]
 
 
     get_internal_lifesigns_scan: -> ( team for team in @internal_personnel )

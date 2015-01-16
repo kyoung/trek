@@ -188,18 +188,19 @@ class Station extends BaseObject
 
     get_bay_with_capacity: ( qty ) ->
 
-        bays = (c for c in @cargobays when c.remaining_capacity > qty)
+        bays = ( c for c in @cargobays when c.remaining_capacity > qty )
         if bays.length == 0
-            throw new Error("No bays with capacity #{qty}")
+            throw new Error "No bays with capacity #{ qty }"
 
         bays[0].number
 
 
     get_cargo_bay: ( n ) ->
 
-        c = (c for c in @cargobays when c.number is n)[0]
+        n = if typeof n is 'string' then parseInt( n ) else n
+        c = ( c for c in @cargobays when c.number is n )[ 0 ]
         if not c?
-            throw new Error("Invalid cargo bay number #{n}")
+            throw new Error "Invalid cargo bay number #{ n }"
 
         return c
 

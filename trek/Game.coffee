@@ -287,7 +287,7 @@ class Game
         @ships[ prefix ].set_target target
 
 
-    fire_phasers: ( prefix ) -> @ships[ prefix ].fire_phasers()
+    fire_phasers: ( prefix ) -> do @ships[ prefix ].fire_phasers
 
 
     detonation_event: ( position, blast_power ) =>
@@ -426,9 +426,9 @@ class Game
     transport_cargo: ( prefix, origin_name, origin_bay, destination_name, destination_bay, cargo, qty ) ->
 
         ship = @ships[ prefix ]
-        origin = (o for o in @game_objects when o.name == origin_name)[0]
-        destination = (d for d in @game_objects when d.name == destination_name)[0]
-        ship.transport_cargo(origin, origin_bay, destination, destination_bay, cargo, qty)
+        origin = ( o for o in @game_objects when o.name == origin_name )[ 0 ]
+        destination = ( d for d in @game_objects when d.name == destination_name )[ 0 ]
+        ship.transport_cargo origin, origin_bay, destination, destination_bay, cargo, qty
 
 
     get_power_report: ( prefix ) -> do @ships[ prefix ].power_distribution_report
