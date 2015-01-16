@@ -119,26 +119,20 @@ var trek = (function($, _, Mustache, io) {
     t.playBridgeSound = playBridgeSound;
 
 
-    function playKlaxon () {
+    // One-off Audio
+    function playAudio ( path ) {
 
-        var klaxon = document.createElement( "audio" );
-        klaxon.setAttribute( "autoplay", "" );
-        klaxon.src = "static/sound/redalert.mp3";
-
-    }
-
-    t.playKlaxon = playKlaxon;
-
-
-    function playAlarm () {
-
-        var alarm = document.createElement( "audio" );
-        alarm.setAttribute( "autoplay", "" );
-        alarm.src = "static/sound/critical.mp3";
+        var sound = document.createElement( "audio" );
+        sound.setAttribute( "autoplay", "" );
+        sound.src = path;
 
     }
 
-    t.playAlarm = playAlarm;
+
+    t.playKlaxon = function () { playAudio( "static/sound/redalert.mp3" ); }
+    t.playAlarm = function () { playAudio( "static/sound/critical.mp3" ); }
+    t.playTorpedo = function () { playAudio( "static/sound/fire_torpedo.mp3" ); }
+    t.playTransporter = function () { playAudio( "static/sound/transporter.mp3" ); }
 
 
     // Draw Fancy Types

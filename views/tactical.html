@@ -305,7 +305,7 @@ function buildTargetMenu ( scanData ) {
                 "tactical/target",
                 { target : this.id },
                 'PUT',
-                updateState  );
+                updateState );
 
             $flyoutMenu.html( "" );
 
@@ -322,9 +322,7 @@ function buildTargetMenu ( scanData ) {
 
 function getTargets () {
 
-    trek.api(
-        "tactical/scan",
-        buildTargetMenu );
+    trek.api( "tactical/scan", buildTargetMenu );
 
 }
 
@@ -341,10 +339,17 @@ $firePhasers.click( function () {
 
 $fireTorpedoes.click( function () {
 
+    kapla = function () {
+
+        trek.playTorpedo();
+        updateState();
+
+    }
+
     trek.api(
         "tactical/fireTorpedo",
         { yield : torpedoYield },
-        updateState );
+        kapla );
 
 } );
 
