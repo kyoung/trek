@@ -126,10 +126,10 @@ class Station extends BaseObject
         decks = 0
 
         for level, section_list of @hull
-            for section in section_list
-                if @hull[ level ][ section ] == 0
+            for section, i of section_list
+                if i == 0
                     holes_in_decks += 1
-            decks += section_list.length
+                decks += 1
 
         # Check if still alive
         # Assume if 15% of the hull is breached, catastrophic failure
@@ -280,11 +280,12 @@ class Station extends BaseObject
         damage_as_pct = damage / C.STATION_HULL_STRENGTH
 
         # Assume the damage occurred on all decks... seems realistic
-        for level, section_list of @hull
-            for section in sections
-                @hull[ level ][ section ] -= damage_as_pct * ( -0.5 + do Math.random )
-                @hull[ level ][ section ] = Math.max 0, @hull[ level ][ section ]
-                if @hull[ level ][ section ] == 0
+        for level, sections of @hull
+            for section, i of sections
+                i -= damage_as_pct * 2 * do Math.random
+                i = Math.max 0, i
+                @hull[ level ][ section ] = i
+                if i is 0
                     @process_casualties level, section
 
         do @_check_if_still_alive
