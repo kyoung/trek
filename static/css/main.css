@@ -12,6 +12,8 @@ html, body {
     font-family: 'Michroma', sans-serif;
     margin: 0;
     padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
 iframe {
@@ -40,13 +42,14 @@ iframe#viewScreen {
     display: hidden;
 }
 
-#leftSide {
+#leftSide, .left-split {
     width: 290px;
     height: 100%;
 }
 
-#rightSide {
+#rightSide, .right-split {
     width: calc(100% - 290px);
+    height: 100%;
 }
 
 a {
