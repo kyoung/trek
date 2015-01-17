@@ -1,7 +1,5 @@
 <% include header.html %>
 
-<link rel="stylesheet" href="/static/css/tactical_screen.css">
-
 <div id="displayScreen" class="fullscreen">
 	<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -26,9 +24,9 @@
         <svg width="8px" height="8px" xmlns="http://www.w3.org/2000/svg">
             <circle style="fill:#0F8AA6"; cx="4" cy="4" r="4"/>
         </svg>
-        <p class="name">{{name}}</p>
-        <p class="speed">{{speed}}</p>
-        <p class="distBearing">{{dist}}, {{bearing}}</p>
+        <p class="name">{{ name_clean }}</p>
+        <p class="speed">{{ speed }}</p>
+        <p class="distBearing">{{ dist }}, {{ bearing }}</p>
     </div>
 </script>
 
@@ -67,9 +65,13 @@ function relativeCoordinates(x, y, z) {
 
 	var weaponRange;
     if ( weaponZoom === "phasers" ){
+
         weaponRange = PHASER_RANGE_M;
+
     } else {
+
         weaponRange = TORPEDO_RANGE_M;
+
     }
 
 	var sp = self.position;
@@ -84,10 +86,11 @@ function relativeCoordinates(x, y, z) {
 
     // offset from center and scaled
     var xMap = ( $displayGrid.width() / 2 ) + xRel * ratio;
-    var yMap = ( $displayGrid.height() / 2 ) + yRel * ratio;
+    // y coordinates are inverted on canvas elements
+    var yMap = ( $displayGrid.height() / 2 ) - yRel * ratio;
     var zMap = 0;
 
-    return {x: xMap, y: yMap, z: zMap};
+    return { x : xMap, y : yMap, z : zMap };
 
 };
 
@@ -95,10 +98,10 @@ function paintScan(data) {
 
 	self = _.find(
         data,
-        function(e){ return e.name == shipName }
+        function ( e ){ return e.name == shipName }
     );
 
-	_.each(data, function(e){
+	_.each( data, function ( e ) {
 
 		var coordinates = relativeCoordinates(
             e.position.x,
@@ -118,6 +121,9 @@ function paintScan(data) {
             reading.dist = "";
 
         }
+
+        e.name_clean = e.name.replace( /_/g, " " );
+
         if ( _.has( sensorObjects, e.name ) ) {
 
             sensorObjects[ e.name ].css( "top", coordinates.y )

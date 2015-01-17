@@ -1,7 +1,8 @@
 <% include header.html %>
-<link rel="stylesheet" href="/static/css/conn_screen.css">
-<div id="displayScreen">
+
+<div class="fullscreen" id="displayScreen">
     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+
         <defs>
           <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
             <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#0F8AA6" stroke-width="0.5"/>
@@ -17,7 +18,7 @@
 </div>
 
 <script type="text/template" id="scannerObjectTmpl">
-    <div id="{{ name }}" class='scannerObject'>
+    <div id="{{ name }}" class='conn-scannerObject'>
         <svg width="8px" height="8px" xmlns="http://www.w3.org/2000/svg">
             <circle style="fill:#0F8AA6"; cx="4" cy="4" r="4"/>
         </svg>
@@ -59,11 +60,12 @@ function relativeCoordinates ( x, y, z ) {
     var w = $displayGrid.width();
     var h = $displayGrid.height();
 
-    var xRel = ( w * ( x - minX ))/( maxX - minX );
-    var yRel = ( h * ( maxY - y ))/( maxY - minY );
+    var xRel = ( w * ( x - minX ) )/( maxX - minX );
+    // y coordinates are inverted on canvas elements
+    var yRel = ( h * ( maxY - y ) )/( maxY - minY );
     var zRel = 0;
 
-    return {x: xRel, y: yRel, z: zRel};
+    return { x : xRel, y : yRel, z : zRel };
 
 }
 
@@ -85,14 +87,12 @@ function absoluteCoordinates ( x, y, z ) {
     console.log( xAbs );
     console.log( yAbs );
 
-    return {x: xAbs, y: yAbs, z: zAbs};
+    return { x : xAbs, y : yAbs, z : zAbs };
 
 }
 
 
 function paintScan ( data ) {
-
-    console.log( "Painting scan data" );
 
     _.each( data, function ( e ) {
 

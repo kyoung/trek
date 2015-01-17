@@ -270,6 +270,16 @@ svg.conn-arrow.left, svg.conn-arrow.right {
     margin-left: 35px;
 }
 
+.conn-scannerObject {
+  position: fixed;
+    font-size: 8px;
+}
+.conn-scannerObject p {
+    line-height: 10px;
+    margin: 0;
+    padding: 0;
+}
+
 
 /* Ops Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

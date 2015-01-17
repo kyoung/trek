@@ -36,7 +36,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [x] Fix Operations / Internal crew movement
   - [x] Where are the rest of the crews?
 - [ ] Fix the Impulse direction indicator
-  - [ ] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
+  - [x] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
 - [x] Fix combat 
   - [x] torpedo strikes don't seem to be working well
   - close range manuvering is required for phasers
@@ -98,7 +98,9 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
     - [ ] include sound effect and cracked screen as well
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
-## For Breakout
+## Backlog For Breakout
+- Hotkeys
+  - Conn station especially
 - Pretty Renders
   - http://devlog-martinsh.blogspot.ca/2011/12/glsl-depth-of-field-with-bokeh-v24.html
   - Just putting a minor blur on the material might be enough
@@ -146,78 +148,21 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 # Alpha Test Issues
 Feedback taken from real user testing
 
-## Alpha 3 Issues
 - [ ] Need radiological alarms to let everyone know when something bad is happening
 - [ ] Need some kind of "cadet" mode to teach each pannel
 - [ ] Better failure states for Engineering: it's a bit frustrating when the fuses blow without clear indication of what's wrong
 - [ ] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
-- [x] Red Alerts appeared on the main viewer, WTF?
-- [x] Set to mainviewer functionality seemed borked. It probably didn't survive the port.
   - It was just the science station... we never got around to that before
 - [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
-
-## Alpha 2 Issues
-- [x] Coorperative training missions
-- [x] Going to warp > 6 crashed the server
-  - [x] Raising this sort of error has never crashed the server in dev; what's going on?
-    - http://stackoverflow.com/questions/5999373/how-do-i-prevent-node-js-from-crashing-try-catch-doesnt-work
-    - http://engineering.fluencia.com/blog/2013/12/20/the-4-keys-to-100-uptime-with-nodejs
-    - A thought: throwing errors in asynchronus functions won't get handled by the web callback, and will thus crash the server, so we need to raise errors at the start of the callback, or find a way to have a universal error handler(?)
 - [ ] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
-- [x] All of the power systems were starting up at full power usage instead of minimum... we need to fix that up. Also, while it's good for most systems to use min power operationally, Shields and Weapons systems should probably start closer to 25%
-- [x] It's unclear from the tactical screen what the respective ship orientation is, and so whether or not it's possible to fire
-- [x] Engineer and Ops screens require a legend for their displays
 - [ ] Damage indication (screen cracking should be working)
-
-## Alpha 1 Issues
-- [x] Captain's log... There should be a screen where you can display mission objecives
-- [x] Engineering
-  - [x] We need a feedback screen when something blows up, power wise
-- [x] Ops
-  - [x] Transporters don't seem to be working
-  - [x] When we over-assign repair crews, we don't get the raised error from the ship object
-- [x] Science
-  - [x] The active scan needs to display a progress bar of some kind
-    - [x] Scanning... Complete... Compiling composite scan...
-    - [x] The active scan array should be able to work even when the ship has turned. This could be accomplished by giving every object a base GUID that we could then use to track back on, like an object hash.
-- [x] Tactical
-  - [x] Torpedo loading needs to be limited
-    - [x] Torpedo tube launch status EMPTY... LOADING... LOADED
-    - [x] on Red Alert, begin loading tubes
-  - [x] The location of the ship seems to disapear when the subspace transponder is offline... we should probably fix that so that the ship is filtered out of the scan, but automatically inserted back in the display
-- [x] Comm
-  - [x] Ability to zoom around
-  - [x] Fix the "Plot intercept" menu as a fly out that display over the screen to select a target
-  - [x] Fix "Plot Intercept" to kill negative number results, and display an error if the plotted intercept was impossible.
-- [x] Stop socket and polling errors from showing up on the console screen after a server restart
-  - [x] Figured out that we need to do this sort of thing in server by checking the return value of the validate function
 
 
 # Bug log
-- [x] Intermittent circular reference to JSON bug on get\_scan
-  + [x] should probably control what gets fed back in the public data
-  + [x] reproduced during a torpedo firing event: It's definitely the torp
-- [x] Firing torpedoes seems unresponsive on occasion, WTF is up with that?
-  + [x] It seems that the system gets gummed up trying to complete the process with the first torpedo; it eventually fires the torpedo
-- [ ] Torpedoes are veering off 90 Degrees clockwise from target?
-  - They use the same tracking code as the ships?!
-- [x] Firing a torpedo without a target needs to be addressed/disabled
-- [x] Setting views to mainscreen seems to call multiple times (ie it'll flicker on an off), and subsequent calls to "Mainviewer" won't fire
-  - [x] Probably waiting on a server response... double check that all handler issue a response.
-- [ ] The colours of the indicators for the transporter menu returning away teams don't work (the green exception)
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
-- [x] Targeting circle in tactical is broken?
-- [x] We need a warning when an EPS has blown
-- [x] Crew are reported on a deck when they are just enroute, we need a distinction
-- [ ] Security teams on deck G don't show up in transorter options
-- [ ] Port shields seems to go offline (?) weird accumulated system damage
 - [ ] Red Alert not setting correctly as status in tactical menu
 - [ ] The position of ships relative to each other in the tactical display is not the same as in the nav display
-- [x] Nav & Tactical screen text shrinks on FF
-  - Set font size to 8px instead of 0.5em
 - [ ] Science Scanner circles don't show up on FF
-- [x] Nav orientation arrow is 90 degrees CCW off
-  - Added a " - 90"; try now
 - [ ] Objects get tracked once we've done a detailed scan... so how do we untrack them? At some point, we should be able to loose them
 - [ ] It doesn't look like LR scanners can be configured?
 - [ ] Suddenly the conn display doesn't update when at warp, but you end up at your destination... likely that you're not actually going to warp, and all you're seeing is the final position adjustment at the end of travel.
