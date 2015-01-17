@@ -1,6 +1,6 @@
 <% include header.html %>
 
-<div id="leftSide" class="fleft">
+<div id="leftSide" class="left-split fleft">
     <div id="viewMenu">
         <ul class="menu horizontal x3">
             <li class="blue lightblue" id="pickNav">Nav</li>
@@ -91,7 +91,7 @@
     </div>
 </div>
 
-<div id="rightSide" class="fleft">
+<div id="rightSide" class="right-split fleft">
     <iframe id="viewScreen"></iframe>
 </div>
 
@@ -329,6 +329,7 @@ trek.socket.on( "Turning", function ( navData ) {
 
 
 function updateNavigationDisplay ( navData ) {
+
     console.log( navData );
 
     turnRate = navData.rotation.bearing;
@@ -356,11 +357,13 @@ function updateOrientation ( tStamp ) {
 
         navArrow.setAttribute(
             "transform",
-            "rotate(" + degree + ", 119.5, 119.5)");
+            "rotate(" + degree + ", 119.5, 119.5)" );
+
+        turnCalcTimeStamp = tStamp;
 
     }
 
-    requestAnimationFrame(updateOrientation);
+    requestAnimationFrame( updateOrientation );
 
 }
 

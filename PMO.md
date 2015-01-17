@@ -32,40 +32,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - Rely more on class variables for these things
 
 # Current Sprint
-- [x] Fix Transporters
-- [x] Fix Operations / Internal crew movement
-  - [x] Where are the rest of the crews?
-- [ ] Fix the Impulse direction indicator
-  - [x] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
-- [x] Fix combat 
-  - [x] torpedo strikes don't seem to be working well
-  - close range manuvering is required for phasers
-- [x] Captains log
-  - [x] Get a captain's log displaying when the main viewer initiates
-- [x] Cooperative Mission Profile
-  - [x] We need environmental and internal science screens
-    - [x] Environmental
-    - [x] Internal
-  - [-] We'll need subsystem targetting for weapons
-    - Move this to the tactical refactor
-  - [-] We'll need engineering and tactical to have a better shield status display
-    - It's kind of nice that they have to check with engineering, and that engineering has to click around
-  - [x] Create a scenario where two teams must cooperate
-    - [x] Make it possible to win solo
-  - [x] Create game level events to trigger actions
-- [-] Engineer minigame miracle fixes
-  - This may still be needed later on, but shouldn't strictly be neccessary
-- [x] Engineering power allocation fixes
-- [x] Music/sound (Theme music, and red alerts. Phasers and torpedo hits.)
-  - [x] https://www.youtube.com/watch?v=7J-y2rFfny8 (red alert)
-  - [x] Enterprise-B bridge sounds from Generations
-  - [x] Theme from Original Motion picture
-  - [-] Explosions
-    - Save this for developing the bridge system and handling broken screens etc.
-  - [x] Transporters
-  - [x] Alerts
-  - [x] Torpedo firing
-  - [x] Phaser firing
+
 - [ ] Hotfix
   - [x] Torpedoes are loading with illegal yeild values...
   - [x] Can't seem to blow up a station
@@ -407,7 +374,6 @@ Feedback taken from real user testing
     - [x] We need to display the text outputs
   - [x] We need to display power readouts
 
-
 ## v 0.12 [Sidetracked and reprioritized]
 - [x] Battle Ratios
   - [x] Balance the torpedo hits, sheild balances and hull strengths required for accurate combat simulation
@@ -431,3 +397,39 @@ Feedback taken from real user testing
     - [-] Handles the routing of extra power to manage the warp drive systems
   - [ ] Have the current operation and speed be displayed on the nav screen
 - [ ] Need the ability to see the current sheild levels
+
+## v 0.13 [COMPLETE]
+- [x] Fix Transporters
+- [x] Fix Operations / Internal crew movement
+  - [x] Where are the rest of the crews?
+- [x] Fix the Impulse direction indicator
+  - [x] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
+- [x] Fix combat 
+  - [x] torpedo strikes don't seem to be working well
+  - close range manuvering is required for phasers
+- [x] Captains log
+  - [x] Get a captain's log displaying when the main viewer initiates
+- [x] Cooperative Mission Profile
+  - [x] We need environmental and internal science screens
+    - [x] Environmental
+    - [x] Internal
+  - [-] We'll need subsystem targetting for weapons
+    - Move this to the tactical refactor
+  - [-] We'll need engineering and tactical to have a better shield status display
+    - It's kind of nice that they have to check with engineering, and that engineering has to click around
+  - [x] Create a scenario where two teams must cooperate
+    - [x] Make it possible to win solo
+  - [x] Create game level events to trigger actions
+- [-] Engineer minigame miracle fixes
+  - This may still be needed later on, but shouldn't strictly be neccessary
+- [x] Engineering power allocation fixes
+- [x] Music/sound (Theme music, and red alerts. Phasers and torpedo hits.)
+  - [x] https://www.youtube.com/watch?v=7J-y2rFfny8 (red alert)
+  - [x] Enterprise-B bridge sounds from Generations
+  - [x] Theme from Original Motion picture
+  - [-] Explosions
+    - Save this for developing the bridge system and handling broken screens etc.
+  - [x] Transporters
+  - [x] Alerts
+  - [x] Torpedo firing
+  - [x] Phaser firing
