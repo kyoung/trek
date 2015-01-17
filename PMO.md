@@ -42,7 +42,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - close range manuvering is required for phasers
 - [x] Captains log
   - [x] Get a captain's log displaying when the main viewer initiates
-- [ ] Cooperative Mission Profile
+- [x] Cooperative Mission Profile
   - [x] We need environmental and internal science screens
     - [x] Environmental
     - [x] Internal
@@ -56,15 +56,16 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [-] Engineer minigame miracle fixes
   - This may still be needed later on, but shouldn't strictly be neccessary
 - [x] Engineering power allocation fixes
-- [ ] Music/sound (Theme music, and red alerts. Phasers and torpedo hits.)
+- [x] Music/sound (Theme music, and red alerts. Phasers and torpedo hits.)
   - [x] https://www.youtube.com/watch?v=7J-y2rFfny8 (red alert)
   - [x] Enterprise-B bridge sounds from Generations
   - [x] Theme from Original Motion picture
-  - [ ] Explosions
+  - [-] Explosions
+    - Save this for developing the bridge system and handling broken screens etc.
   - [x] Transporters
   - [x] Alerts
   - [x] Torpedo firing
-  - [ ] Phaser firing
+  - [x] Phaser firing
 - [ ] Hotfix
   - [x] Torpedoes are loading with illegal yeild values...
   - [x] Can't seem to blow up a station

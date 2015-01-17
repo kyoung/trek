@@ -106,32 +106,25 @@ var trek = (function($, _, Mustache, io) {
     });
 
 
-    // Bridge Sound
-    function playBridgeSound () {
-
-        var sound = document.createElement( "audio" );
-        sound.setAttribute( "loop", "" );
-        sound.setAttribute( "autoplay", "" );
-        sound.src = "static/sound/bridge.mp3";
-
-    }
-
-    t.playBridgeSound = playBridgeSound;
-
-
-    // One-off Audio
-    function playAudio ( path ) {
+    // Audio
+    function playAudio ( path, loop ) {
 
         var sound = document.createElement( "audio" );
         sound.setAttribute( "autoplay", "" );
+        if ( arguments.length == 2 && loop ) {
+
+            sound.setAttribute( "loop", "" );
+
+        }
         sound.src = path;
 
     }
 
-
+    t.playBridgeSound = function () { playAudio( "static/sound/bridge.mp3", true ); };
     t.playKlaxon = function () { playAudio( "static/sound/redalert.mp3" ); };
     t.playAlarm = function () { playAudio( "static/sound/critical.mp3" ); };
     t.playTorpedo = function () { playAudio( "static/sound/fire_torpedo.mp3" ); };
+    t.playPhaser = function () { playAudio( "static/sound/phaser1.mp3" ); };
     t.playTransporter = function () { playAudio( "static/sound/transporter.mp3" ); };
     t.playShipHit = function () { playAudio( "static/sound/damage1.mp3" ); };
     t.playHail = function () { playAudio( "static/sound/hailing.mp3" ); };
