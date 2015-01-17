@@ -147,6 +147,8 @@ trek.socket.on( "hail", function(data){
     $comDisplay.removeClass( "offline" );
     $comDisplay.addClass( "blink" );
 
+    trek.playHail();
+
 });
 
 
