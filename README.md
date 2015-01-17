@@ -44,7 +44,7 @@ Star Trek bridge simulator
 # Running the Server
 `npm start`
 
-The output from the startup script will give you the Prefix codes needed for crews to loging
+The output from the startup script will give you the Prefix codes needed for crews to login.
 
 # Game Design
 The idea behind Trek was that we wanted a bridge simulator that could work on OSx (or any modern web browser). 

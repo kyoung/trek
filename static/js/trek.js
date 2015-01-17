@@ -129,10 +129,19 @@ var trek = (function($, _, Mustache, io) {
     }
 
 
-    t.playKlaxon = function () { playAudio( "static/sound/redalert.mp3" ); }
-    t.playAlarm = function () { playAudio( "static/sound/critical.mp3" ); }
-    t.playTorpedo = function () { playAudio( "static/sound/fire_torpedo.mp3" ); }
-    t.playTransporter = function () { playAudio( "static/sound/transporter.mp3" ); }
+    t.playKlaxon = function () { playAudio( "static/sound/redalert.mp3" ); };
+    t.playAlarm = function () { playAudio( "static/sound/critical.mp3" ); };
+    t.playTorpedo = function () { playAudio( "static/sound/fire_torpedo.mp3" ); };
+    t.playTransporter = function () { playAudio( "static/sound/transporter.mp3" ); };
+    t.playShipHit = function () { playAudio( "static/sound/damage1.mp3" ); };
+    t.playHail = function () { playAudio( "static/sound/hailing.mp3" ); };
+    t.playConsoleBlast = function () {
+
+        var coin = Math.random() > 0.5;
+        var sound = coin ? "static/sound/console_explo_01.mp3" : "static/sound/console_explo_02.mp3";
+        playAudio( sound );
+
+    };
 
 
     // Draw Fancy Types
