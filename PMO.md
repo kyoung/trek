@@ -32,6 +32,12 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - Rely more on class variables for these things
 
 # Current Sprint
+- [ ] Engineering warning on dangerous power level bumps
+  - [ ] Refresh the side screen when power levels are no longer critical
+  - [ ] Risks to systems should be made clear
+  - [ ] Systems should be damaged more than they currently are from over use
+  - [ ] EPS blowout status needs much better visual representation
+    - [ ] include sound effect and cracked screen as well
 
 - [ ] Hotfix
   - [x] Torpedoes are loading with illegal yeild values...
@@ -54,15 +60,12 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Navigation status display
 - [ ] Tactical
   - [ ] Breakout the phaser, torpedo, targeting, and comms screens
+  - [ ] Phaser screen should indicate charge buildup of each bank
+  - [ ] Targeting will need to have subsection targeting
 - [ ] Crew interactions
   - [x] Healing from medics
   - [x] Heal crews in sickbay
   - [ ] Game over if crew is dead
-- [ ] Engineering warning on dangerous power level bumps
-  - [ ] Risks to systems should be made clear
-  - [ ] Systems should be damaged more than they currently are from over use
-  - [ ] EPS blowout status needs much better visual representation
-    - [ ] include sound effect and cracked screen as well
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
 ## Backlog For Breakout

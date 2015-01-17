@@ -35,35 +35,35 @@
 <script type="text/template" id="relayTemplate">
 <div id="powerSystem">
     <p>Power Input:
-        <span class='{{power_color}}'>{{power}} Megadynes</span>
+        <span class='{{power_color}}'>{{power}} Megadynes ({{ power_percent }} pct.)</span>
     </p>
     <ul class="eng-power-bars">
-        {{#subsystems}}
+        {{ #subsystems }}
         <li id="{{name}}">
-            <span class='eng-sys-name'>{{name}}</span>
+            <span class='eng-sys-name'>{{ name }}</span>
             <span class='eng-sys-bar-frame' id='{{ name }}'>
-                <span class='eng-sys-bar-dark' style='width:{{min_percent}}%'>
+                <span class='eng-sys-bar-dark' style='width:{{ min_percent }}%'>
                     &nbsp;
-                </span><span class='eng-sys-bar-active' style='width:{{op_percent}}%'>
+                </span><span class='eng-sys-bar-active' style='width:{{ op_percent }}%'>
                     &nbsp;
-                </span><span class='eng-sys-bar-red' style='width:{{max_percent}}%'>
+                </span><span class='eng-sys-bar-red' style='width:{{ max_percent }}%'>
                     &nbsp;
-                </span><span class='eng-sys-marker' style='margin-left:{{power_percent}}%'>
+                </span><span class='eng-sys-marker' style='margin-left:{{ power_percent }}%'>
                     &nbsp;
                 </span>
             </span>
-            <span>{{power}}</span>
-            {{#charge}}
+            <span>{{ power }}</span>
+            {{ #charge }}
             <div class='eng-charge-meter'>
                 <span
                     class='eng-charge-meter-bar'
-                    id='{{id}}'
+                    id='{{ id }}'
                     style='width:{{charge_percent}}%'>
                 </span>
             </div>
-            {{/charge}}
+            {{ /charge }}
         </li>
-        {{/subsystems}}
+        {{ /subsystems }}
     </ul>
 </div>
 </script>
@@ -80,17 +80,19 @@
 </script>
 
 <script>
+
 // Do nothing on red alert... the parent page will get the notification
-trek.on_alert(function() {});
+trek.on_alert( function () {} );
 
 var power_report;
 
-var $system_display = $("#system_display");
+var $system_display = $( "#system_display" );
 
-var reactor_template = $("#reactorTemplate").html();
-var relay_template = $("#relayTemplate").html();
-var reroute_template = $("#rerouteTemplate").html();
+var reactorTemplate = $( "#reactorTemplate" ).html();
+var relayTemplate = $( "#relayTemplate" ).html();
+var rerouteTemplate = $( "#rerouteTemplate" ).html();
 
+// Templated in values
 var component = "<%= component %>";
 var power_type = "<%= power_type %>";
 
@@ -122,7 +124,7 @@ function loadPowerReport( powerJSON ) {
 
     var component_json = _.find(
         powerJSON[ power_type ],
-        function(e) {
+        function (e) {
             return e.name == component;
         }
     );
@@ -150,13 +152,13 @@ function loadPowerReport( powerJSON ) {
         component_json[ 'power_percent' ] = component_json.output_level / component_json.max_level * 100;
 
         system_html = Mustache.render(
-            reactor_template,
+            reactorTemplate,
             component_json
         )
 
         $system_display.append( system_html );
 
-        $(".eng-sys-bar-frame").click( function( e ) {
+        $( ".eng-sys-bar-frame" ).click( function( e ) {
 
             var $this = $( this );
             var offset = $this.offset();
@@ -166,7 +168,7 @@ function loadPowerReport( powerJSON ) {
 
             var system = _.find(
                 power_report.subsystems,
-                function (e) {
+                function ( e ) {
                     return e.name == clicked_id;
                 }
             );
@@ -186,6 +188,8 @@ function loadPowerReport( powerJSON ) {
 
     else {
 
+        console.log( component_json );
+
         _.each( component_json.subsystems, function( e ) {
 
             e[ 'power_percent' ] = e.current_power_level / e.max_power_level * 100;
@@ -204,21 +208,15 @@ function loadPowerReport( powerJSON ) {
 
         });
 
-        power_color = 'lightblue';
-        if ( component_json.current_power_level > 1 ) {
-            power_color = 'red';
-        };
-
+        power_color = component_json.current_power_level > 1 ? 'red' : 'lightblue';
         component_json[ 'power_color' ] = power_color;
         component_json.power = parseInt( component_json.power );
+        component_json[ 'power_percent' ] = Math.floor( component_json.current_power_level * 100 );
 
-        system_html = Mustache.render(
-            relay_template,
-            component_json
-        );
+        system_html = Mustache.render( relayTemplate, component_json );
         $system_display.append( system_html );
 
-        $(".eng-sys-bar-frame").click( function(e) {
+        $( ".eng-sys-bar-frame" ).click( function ( e ) {
 
             var $this = $( this );
             var offset = $this.offset();
@@ -228,17 +226,14 @@ function loadPowerReport( powerJSON ) {
 
             var system = _.find(
                 power_report.subsystems,
-                function (e) {
-                    return e.name == clicked_id;
-                }
-            );
+                function ( e ) { return e.name == clicked_id; } );
 
             var max = system.max_power_level;
             var level = x / ( width / max );
 
             trek.api(
                 "engineering/power",
-                { system_name: clicked_id, level: level },
+                { system_name : clicked_id, level : level },
                 'POST',
                 loadScreen
             );
@@ -247,27 +242,21 @@ function loadPowerReport( powerJSON ) {
 
     }
 
-    if (power_type == 'eps_relays') {
+    if ( power_type == 'eps_relays' ) {
 
         var primary_relays = _.map(
             powerJSON.primary_relays,
-            function(e) { return e.name; }
+            function ( e ) { return e.name; }
         );
 
         var current_relay = _.find(
             powerJSON.primary_relays,
-            function(e) {
+            function ( e ) {
                 sys = _.find(
                     e.subsystems,
-                    function(f) {
-                        return f.name == component;
-                    }
+                    function ( f ) { return f.name == component; }
                 )
-                if ( sys ) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return sys ? true : false
             }
         );
 
@@ -275,31 +264,27 @@ function loadPowerReport( powerJSON ) {
 
             primary_relays: _.map(
                 primary_relays,
-                function(i) {
-                    class_color = "green";
+                function ( i ) {
 
-                    if (i == current_relay.name) {
-                        class_color = "lightgreen";
-                    };
+                    class_color = i == current_relay.name ? "lightgreen" : "green";
+                    return { name : i, class : class_color };
 
-                    return {name: i, class: class_color};
                 }
             )
 
         }
 
         reroute_html = Mustache.render(
-            reroute_template,
-            reroute_json
-        );
+            rerouteTemplate,
+            reroute_json );
 
         $system_display.append( reroute_html );
 
-        $( ".reroute_id" ).click( function( c ) {
+        $( ".reroute_id" ).click( function ( c ) {
 
             data = {
-                eps_relay: component,
-                primary_power_relay: this.id
+                eps_relay : component,
+                primary_power_relay : this.id
             };
 
             trek.api(
@@ -318,20 +303,13 @@ function updatePowerReport ( powerJSON ) {
 
     var component_json = _.find(
         powerJSON[ power_type ],
-        function(e) {
-            return e.name == component;
-        }
-    );
+        function ( e ) { return e.name == component; } );
 
-    if ( power_type == 'reactors' ) {
-        return;
-    }
+    if ( power_type == 'reactors' ) { return; }
 
-    _.each( component_json.subsystems, function( e ) {
+    _.each( component_json.subsystems, function ( e ) {
 
-        if ( !e.hasOwnProperty( 'charge' ) ) {
-            return;
-        }
+        if ( !e.hasOwnProperty( 'charge' ) ) { return; }
 
         var width = e.charge * 100;
         width = width + '%';
@@ -339,7 +317,7 @@ function updatePowerReport ( powerJSON ) {
 
         $( '#' + id ).css( 'width', width );
 
-    });
+    } );
 
 }
 
