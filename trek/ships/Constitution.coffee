@@ -34,7 +34,54 @@ class Constitution extends BaseShip
     SECTIONS: SECTIONS
     DECKS: DECKS
 
+    @REGISTRY = [
+        { name : "Ahwahnee", registry : "2048" }
+        { name : "Eagle", registry : "956" }
+        { name : "Emden", registry : "1856" }
+        { name : "Endeavour", registry : "1895" }
+        { name : "Excalibur", registry : "1664" }
+        { name : "Exeter", registry : "1672" }
+        { name : "Hood", registry : "1703" }
+        { name : "Korolev", registry : "2014" }
+        { name : "Lexington", registry : "1709" }
+        { name : "Potemkin", registry : "1657" }
+        { name : "Merrimac", registry : "1715" }
+        { name : "Kongo", registry : "1710" }
+        { name : "Enterprise", registry : "1701-A" }
+    ]
+
+
+    @get_ship_name: ->
+
+        if @REGISTRY.length is 0
+            # Start making up dummy names, as this is probably a test
+            n = Math.floor( 1e3 * do Math.random )
+            return { name : "Zulu", registry : "X-#{ n }" }
+
+        coin = Math.floor( @REGISTRY.length * do Math.random )
+        ship_details = @REGISTRY[ coin ]
+        @REGISTRY.splice coin, 1
+        return ship_details
+
+
+    @launch_ship: ( name, serial ) ->
+
+        ship_record = ( i for i in @REGISTRY when i.name is name )[ 0 ]
+        if not ship_record?
+            return
+        idx = @REGISTRY.indexOf ship_record
+        @REGISTRY.splice idx, 1
+
+
     constructor: ( @name, @serial="" ) ->
+
+        if @name?
+            Constitution.launch_ship @name
+        else
+            # Choose a random name to go with
+            { name, registry } = do Constitution.get_ship_name
+            @name = name
+            @serial = registry
 
         super @name, @serial
         @model_url = "constitution.js"

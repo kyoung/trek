@@ -36,21 +36,25 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [x] Fix Operations / Internal crew movement
   - [x] Where are the rest of the crews?
 - [ ] Fix the Impulse direction indicator
+  - [ ] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
 - [x] Fix combat 
   - [x] torpedo strikes don't seem to be working well
   - close range manuvering is required for phasers
 - [x] Captains log
   - [x] Get a captain's log displaying when the main viewer initiates
 - [ ] Cooperative Mission Profile
-  - [ ] We need environmental and internal science screens
+  - [x] We need environmental and internal science screens
     - [x] Environmental
-    - [ ] Internal
-  - [ ] We'll need subsystem targetting for weapons
-  - [ ] We'll need engineering and tactical to have a better shield status display
+    - [x] Internal
+  - [-] We'll need subsystem targetting for weapons
+    - Move this to the tactical refactor
+  - [-] We'll need engineering and tactical to have a better shield status display
+    - It's kind of nice that they have to check with engineering, and that engineering has to click around
   - [x] Create a scenario where two teams must cooperate
     - [x] Make it possible to win solo
   - [x] Create game level events to trigger actions
 - [-] Engineer minigame miracle fixes
+  - This may still be needed later on, but shouldn't strictly be neccessary
 - [x] Engineering power allocation fixes
 - [ ] Music/sound (Theme music, and red alerts. Phasers and torpedo hits.)
   - [x] https://www.youtube.com/watch?v=7J-y2rFfny8 (red alert)
@@ -74,6 +78,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 
 # Backlog
 ## Next Sprint
+- [ ] Develope station-cross-talk matrix
+  - We want to know why Station A needs to talk to Station B, and create as many of those cross-talk opportunities as possible, like Space Team
 - [ ] Navigation
   - [ ] Thruster manuvering
     - required for phaser combat
@@ -84,6 +90,12 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [x] Healing from medics
   - [x] Heal crews in sickbay
   - [ ] Game over if crew is dead
+- [ ] Engineering warning on dangerous power level bumps
+  - [ ] Risks to systems should be made clear
+  - [ ] Systems should be damaged more than they currently are from over use
+  - [ ] EPS blowout status needs much better visual representation
+    - [ ] include sound effect and cracked screen as well
+- [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
 ## For Breakout
 - Pretty Renders

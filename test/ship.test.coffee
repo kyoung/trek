@@ -18,7 +18,7 @@ exports.ShipTest =
 
     'test instantiation': ( test ) ->
 
-        s = new Constitution 'Enterprise', 1701
+        s = new Constitution
         test.ok s, 'Ship was not OK'
         power_sys_names = ( subsys?.name for subsys in s.power_systems )
 
@@ -43,7 +43,7 @@ exports.ShipTest =
         test.expect 2
 
         C.TIME_FOR_FULL_ROTATION /= 10
-        s = new Constitution 'Icarus', 'NX-091'
+        s = new Constitution
 
         s.set_warp 1
 
@@ -60,7 +60,7 @@ exports.ShipTest =
 
     'test turning': ( test ) ->
 
-        s = new Constitution 'Munnin', 'x28'
+        s = new Constitution
 
         s.bearing.bearing = 0
         do s.turn_port
@@ -81,8 +81,8 @@ exports.ShipTest =
 
     'test targetting ability': ( test ) ->
 
-        s = new Constitution 'Enterprise', 1701
-        target = new Constitution 'Reliant', 1864
+        s = new Constitution
+        target = new Constitution
 
         s.set_target target
         test.ok s.weapons_target.position?,
@@ -93,61 +93,11 @@ exports.ShipTest =
         do test.done
 
 
-    'test can plot intercept courses': ( test ) ->
-
-        test.expect 3
-        original_rotation_time = C.TIME_FOR_FULL_ROTATION
-        C.TIME_FOR_FULL_ROTATION = 1
-
-        s = new Constitution 'Delta', 'x001'
-        target = new Constitution 'Epsilon', 'x002'
-
-        s.bearing.bearing = 0.5
-
-        s.set_coordinate {
-            x: -1e5,
-            y: -1e5,
-            z: 0
-        }
-
-        target.set_coordinate {
-            x: 1e5,
-            y: 1e7,
-            z: 0
-        }
-
-        t = s.intercept target, {
-            warp: 2,
-            impulse: 0
-        }
-
-        console.log "Estimated time to intercept #{t}"
-
-        check_interception = () ->
-            do s.calculate_state
-
-            console.log s.navigation_log
-
-            test.ok s.bearing.bearing % 1 == target.bearing.bearing % 1, "Failed to match course:
-            #{ s.bearing.bearing } mark #{ s.bearing.mark } vs.
-            #{ target.bearing.bearing } mark #{ target.bearing.mark }"
-
-            test.ok s.impulse == target.impulse, "Failed to match impulse:
-            #{ s.impulse } vs #{ target.impulse }"
-
-            test.ok s.warp_speed == target.warp_speed, "Failed to match warp:
-            #{ s.warp_speed } vs #{ target.warp_speed }"
-
-            do test.done
-            C.TIME_FOR_FULL_ROTATION = original_rotation_time
-
-        setTimeout check_interception, 1000 + t + C.TIME_FOR_FULL_ROTATION * 2
-
 
     'test firing ability': ( test ) ->
 
-        s = new Constitution 'E', 1701
-        target = new Constitution 'R', 1864
+        s = new Constitution
+        target = new Constitution
 
         # Line them up with the Torpedo tubes
         target.set_coordinate { x : 10000, y : 0, z : 0 }
@@ -169,8 +119,8 @@ exports.ShipTest =
         FFWD_MS = 5000
         EMPTY_CALLBACK = undefined
 
-        s = new Constitution 'E', 1701
-        console.log "Ship has #{s.shields.length} shields"
+        s = new Constitution
+        console.log "Ship has #{ s.shields.length } shields"
         s.set_shields true
         # FFWD
         s.calculate_state EMPTY_CALLBACK, FFWD_MS
@@ -185,8 +135,8 @@ exports.ShipTest =
 
     'test scanning ability': ( test ) ->
 
-        e = new Constitution 'E', 1701
-        r = new Constitution 'R', 1702
+        e = new Constitution
+        r = new Constitution
 
         e.set_coordinate { x : 0, y : 0, z : 0 }
         r.set_coordinate { x : C.SYSTEM_SCAN_RANGE - 1, y : 0, z : 0 }
@@ -205,7 +155,7 @@ exports.ShipTest =
 
     'test cargo transport ability': ( test ) ->
 
-        e = new Constitution 'E', 1701
+        e = new Constitution
         e.set_coordinate { x : 0, y : 0, z : 0 }
         e.get_cargo_bay( 1 ).add_cargo 'special-x', 10
 
@@ -228,7 +178,7 @@ exports.ShipTest =
 
     'test internal crew sensors': ( test ) ->
 
-        e = new Constitution 'E'
+        e = new Constitution
         r = do e.get_internal_lifesigns_scan
         test.ok e.internal_personnel.length > 0, "Ship shows no internale personnel"
         test.ok r.length > 0, "Internal Scanner arent working: #{r}"
@@ -237,8 +187,8 @@ exports.ShipTest =
 
     'test boarding parties': ( test ) ->
 
-        e = new Constitution 'Alpha'
-        r = new Constitution 'Beta'
+        e = new Constitution
+        r = new Constitution
 
         e.set_alignment 'Federation'
         r.set_alignment 'Federation'
@@ -276,31 +226,35 @@ exports.ShipTest =
     'test repair crews': ( test ) ->
 
         test.expect 3
-        e = new Constitution 'e', 1701
+        e = new Constitution
 
         # Pick a system on the same deck to avoid transit time
         # The first available repair crews happen to be on F deck
         e.impulse_drive.repair 1
         e.impulse_drive.damage 0.001
-        starting_inventory = e.get_cargo_status()
+        starting_inventory = do e.get_cargo_status
         starting_computer = 0
         starting_eps = 0
         for bay, inventory of starting_inventory
-            starting_computer += inventory[Cargo.COMPUTER_COMPONENTS]
-            starting_eps += inventory[Cargo.EPS_CONDUIT]
-        e.assign_repair_crews(e.impulse_drive.name, 1, true)
-        final_inventory = e.get_cargo_status()
+            starting_computer += inventory[ Cargo.COMPUTER_COMPONENTS ]
+            starting_eps += inventory[ Cargo.EPS_CONDUIT ]
+
+        e.assign_repair_crews e.impulse_drive.name, 1, true
+        final_inventory = do e.get_cargo_status
+
         final_computer = 0
         final_eps = 0
         for bay, inventory of final_inventory
-            final_computer += inventory[Cargo.COMPUTER_COMPONENTS]
-            final_eps += inventory[Cargo.EPS_CONDUIT]
-        test.ok(final_computer < starting_computer)
-        test.ok(final_eps < starting_eps)
+            final_computer += inventory[ Cargo.COMPUTER_COMPONENTS ]
+            final_eps += inventory[ Cargo.EPS_CONDUIT ]
+
+        test.ok final_computer < starting_computer
+        test.ok final_eps < starting_eps
+
         check_repair = ->
-            test.ok(e.impulse_drive.state == 1,
-                "Impulse drive failed to repair. State: #{e.impulse_drive.state}")
+            test.ok e.impulse_drive.state == 1, "Impulse drive failed to repair. State: #{e.impulse_drive.state}"
             do test.done
+
         time_out = 0.002 * System.REPAIR_TIME
         setTimeout check_repair, time_out
 
@@ -308,9 +262,9 @@ exports.ShipTest =
     'test internal team movement': ( test ) ->
 
         test.expect 1
-        e = new Constitution 'e', 1701
+        e = new Constitution
 
-        t = e.security_teams[0]
+        t = e.security_teams[ 0 ]
         t.deck = 'G'
         t.section = 'Aft'
 
@@ -323,21 +277,13 @@ exports.ShipTest =
         setTimeout check_movement, 11*1000
 
 
-    'test transporter ability': ( test ) ->
-
-        e = new Constitution 'E', 1701
-        t = do e.transportable
-        test.ok t.name == 'E'
-        do test.done
-
-
     'test beam guests': ( test ) ->
 
-        e = new Constitution 'Alpha', 1701
+        e = new Constitution
         e.set_coordinate { x : 0, y : 0, z : 0 }
 
         s1 = new Station 'Beta', { x : 1000, y : 0, z : 0 }
-        target_crew = s1.crew[0]
+        target_crew = s1.crew[ 0 ]
 
         e.transport_crew target_crew.id, s1, target_crew.deck, target_crew.section, e
 
@@ -348,7 +294,7 @@ exports.ShipTest =
 
     'test hull damage': ( test ) ->
 
-        e = new Constitution 'E', 1701
+        e = new Constitution
         e.set_coordinate { x : 0, y : 0, z : 0 }
         e.set_shields true
         e.process_phaser_damage { x : 0, y : 100, z : 0 }, PhaserSystem.DAMAGE
@@ -370,7 +316,7 @@ exports.ShipTest =
 
         ###
 
-        e = new Constitution 'E', 1701
+        e = new Constitution
         e.set_coordinate { x : 0, y : 0, z : 0 }
         destruction_message = ( prefix, type, message ) ->
 
@@ -386,32 +332,35 @@ exports.ShipTest =
 
     'test can increase power to systems': ( test ) ->
 
-        e = new Constitution 'E', 1701
+        e = new Constitution
         init_power_level = e.warp_core.output
         e.set_power_to_system 'Primary SIF', 2
         post_power_level = e.warp_core.output
         test.ok init_power_level < post_power_level,
             "Failed to increase warp reactor load:
-            #{init_power_level} -> #{post_power_level}"
+            #{ init_power_level } -> #{ post_power_level }"
+
         do test.done
 
 
     'test can go to warp': ( test ) ->
 
-        e = new Constitution 'E', 1701
+        e = new Constitution
         e.set_warp 1
+
         do test.done
 
 
     'test can reroute EPS relay': ( test ) ->
 
-        e = new Constitution 'E', 1701
-        e.reroute_power_relay('Port EPS', 'Impulse Relays')
+        e = new Constitution
+        e.reroute_power_relay 'Port EPS', 'Impulse Relays'
         port_eps = e.port_eps
         impulse_relay = e.impulse_relay
         warp_relay = e.warp_relay
         test.ok port_eps in impulse_relay.attached_systems, "Failed to migrate EPS grid"
         test.ok port_eps not in warp_relay.attached_systems, "Failed to remove EPS grid"
+
         do test.done
 
 
@@ -419,38 +368,39 @@ exports.ShipTest =
 
         test.expect 2
         SensorSystem.DURATION /= 1000
-        s = new Constitution 'Munnin', 'x27'
+        s = new Constitution
         s.bearing = { bearing : 0, mark : 0 }
 
         world_scan = ( type, position, bearing_from, bearing_to, range ) ->
             all = [
-                {bearing: {bearing: 0.15, mark:0}, reading: 1}
-                {bearing: {bearing: 0.45, mark:0}, reading: 2}
+                { bearing : { bearing : 0.15, mark : 0 }, reading : 1 }
+                { bearing : { bearing : 0.45, mark : 0 }, reading : 2 }
             ]
             # Dumb condition... need to handle the possibility of a cross
             if bearing_from > bearing_to
                 bearing_from -= 1
             r =
-                readings: (m for m in all when bearing_from <= m.bearing.bearing < bearing_to)
+                readings: ( m for m in all when bearing_from <= m.bearing.bearing < bearing_to )
                 classifications:
-                    ({
+                    ( {
                         classification: 'Test Object',
-                        coordinate: {x: 10, y: 10, z: 0},
-                        } for m in all when bearing_from <= m.bearing.bearing < bearing_to)
+                        coordinate: { x : 10, y : 10, z : 0 },
+                        } for m in all when bearing_from <= m.bearing.bearing < bearing_to )
             # console.log "returning #{r.readings.length} for bearing #{bearing_from} to #{bearing_to}"
             return r
 
         s.run_scan world_scan, 'test', 0, 63, true, 0.2, 4
-        area = Math.PI * (SensorSystem.RANGE * 0.2)**2
+        area = Math.PI * ( SensorSystem.RANGE * 0.2 )**2
         timeout = SensorSystem.DURATION * 64 * area * SensorSystem.SCANNER_DIVISOR
         # console.log "Scan will take #{timeout} at this resolution..."
 
         check_result = ->
-            results = s.get_scan_results('test')
+            results = s.get_scan_results 'test'
             scan_sum = 0
             scan_sum += bucket.reading for bucket in results.results
             test.ok scan_sum == 3, "Failed to find 3 targets: found #{scan_sum}"
             test.ok results.classifications.length == 2, "Failed to get the expected classifications."
+
             do test.done
 
         setTimeout check_result, timeout
@@ -458,24 +408,25 @@ exports.ShipTest =
 
     'test power signature': ( test ) ->
 
-        s = new Constitution 'Munnin', 'x28'
+        s = new Constitution
 
-        p = s.get_system_scan()
+        p = do s.get_system_scan
         power_readings = p.power_readings
         test.ok power_readings.length == 5, "Failed to get expected power signature"
 
         # console.log power_readings
 
-        warp_coil = power_readings[0]
+        warp_coil = power_readings[ 0 ]
         sum_of_output = 0
-        ( sum_of_output += n for n in warp_coil )
+        sum_of_output += n for n in warp_coil
         test.ok sum_of_output > 0, "Failed to detect warp coil power signature"
+
         do test.done
 
 
     'test radiation exposure': ( test ) ->
 
-        s = new Constitution 'Test Ship 1', 1
+        s = new Constitution
         s.set_shields true
 
         # Accelerate shield charging
@@ -499,7 +450,7 @@ exports.ShipTest =
 
     'test medical facilities': ( test ) ->
 
-        s = new Constitution 'Munnin'
+        s = new Constitution
 
         # find a team on the ship
         c = ( i for i in s.internal_personnel when i.deck isnt s.sick_bay.deck and i.alignment is s.alignment )[ 0 ]
@@ -528,7 +479,7 @@ exports.ShipTest =
 
     'test security teams': ( test ) ->
 
-        s = new Constitution 'Munnin'
+        s = new Constitution
 
         # find a security team
         c = ( i for i in s.internal_personnel when i.description is "Security Team" )[ 0 ]
@@ -555,3 +506,47 @@ exports.ShipTest =
 
         do test.done
 
+
+    'test alert setting': ( test ) ->
+
+        s = new Constitution
+        tic = 250
+        dummy_worldscan_callback = ->
+
+        is_close = ( n1, n2 ) ->
+            n1 * 0.99 < n2 < n1 * 1.01
+
+        shields_are_up = ( ship ) ->
+            r = true
+            r = r and h.online and h.active for h in ship.shields
+            return r
+
+        sifs_are_powered = ( ship ) -> is_close ship.primary_SIF.power, ship.primary_SIF.power_thresholds.dyn
+
+        phasers_are_charging = ( ship ) -> ship.phasers[ 0 ].active and ship.phasers[ 0 ].online
+
+        tubes_are_autoloading = ( ship ) -> ship.torpedo_banks[ 0 ]._autoload
+
+        s.set_alert "red"
+        s.calculate_state dummy_worldscan_callback, tic
+
+        #console.log "Shields: #{ shields_are_up s  }"
+        #console.log "Phasers: #{ phasers_are_charging s }"
+        #console.log "SIFs: #{ sifs_are_powered s }"
+        #console.log "Tubes: #{ tubes_are_autoloading s }"
+
+        test.ok shields_are_up( s ) and phasers_are_charging( s ) and sifs_are_powered( s ) and tubes_are_autoloading( s ), "Failed to set condition one"
+
+        s.set_alert "yellow"
+        s.calculate_state dummy_worldscan_callback, tic
+        test.ok shields_are_up( s ) and not phasers_are_charging( s ) and sifs_are_powered( s ) and not tubes_are_autoloading( s ), "Failed to set condition two"
+
+        s.set_alert "blue"
+        s.calculate_state dummy_worldscan_callback, tic
+        test.ok not shields_are_up( s ) and not phasers_are_charging( s ) and not tubes_are_autoloading( s ) and sifs_are_powered( s ), "Failed to set condition three"
+
+        s.set_alert "clear"
+        s.calculate_state dummy_worldscan_callback, tic
+        test.ok not shields_are_up( s ) and not phasers_are_charging( s ) and not tubes_are_autoloading( s ) and not sifs_are_powered( s ), "Failed to stand down"
+
+        do test.done

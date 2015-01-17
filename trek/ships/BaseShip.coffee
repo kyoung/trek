@@ -208,27 +208,35 @@ class BaseShip extends BaseObject
     set_alert: ( status ) ->
 
         @alert = status
-        # TODO: Red alert is charge shields and weapons
-        # # Yellow alert is just charge shields
-        # # Clear is decharge everything
-        if status == 'red'
-            @_power_sheilds()
-            @_power_phasers()
-            @_auto_load_torpedoes()
-            # Power up SIFs to full charge
-            @set_power_to_system @primary_SIF.name, 1
-            @set_power_to_system @secondary_SIF.name, 1
 
-        if status == 'yellow'
-            @_power_sheilds()
-            @set_power_to_system @primary_SIF.name, 1
-            @set_power_to_system @secondary_SIF.name, 1
+        switch status
+            when 'red'
+                do @_power_shields
+                do @_power_phasers
+                do @_auto_load_torpedoes
+                @set_power_to_system @primary_SIF.name, 1
+                @set_power_to_system @secondary_SIF.name, 1
 
-        else
-            # If clear, drain weapons and shields
-            @_power_down_shields()
-            @_power_down_phasers()
-            @_disable_torpedeo_autoload()
+            when 'yellow'
+                do @_power_shields
+                do @_power_down_phasers
+                do @_disable_torpedeo_autoload
+                @set_power_to_system @primary_SIF.name, 1
+                @set_power_to_system @secondary_SIF.name, 1
+
+            when 'blue'
+                do @_power_down_shields
+                do @_power_down_phasers
+                do @_disable_torpedeo_autoload
+                @set_power_to_system @primary_SIF.name, 1
+                @set_power_to_system @secondary_SIF.name, 1
+
+            else
+                do @_power_down_shields
+                do @_power_down_phasers
+                do @_disable_torpedeo_autoload
+                @set_power_to_system @primary_SIF.name, SIFSystem.PRIMARY_POWER_PROFILE.min * 1.1
+                @set_power_to_system @secondary_SIF.name, SIFSystem.SECONDARY_POWER_PROFILE.min * 1.1
 
 
     set_target: ( target ) ->
@@ -361,7 +369,7 @@ class BaseShip extends BaseObject
     set_shields: ( state ) ->
 
         if state
-            do @_power_sheilds
+            do @_power_shields
         else
             do @_power_down_shields
 
@@ -494,7 +502,7 @@ class BaseShip extends BaseObject
         do @_rebuild_crew_checks
 
 
-    _power_sheilds: -> s.power_on() for s in @shields
+    _power_shields: -> s.power_on() for s in @shields
 
 
     _power_phasers: -> p.power_on() for p in @phasers
@@ -1374,7 +1382,7 @@ class BaseShip extends BaseObject
         # appropriately.
         system = ( s for s in @systems when s.name == system_name )[ 0 ]
         if not system?
-            throw new Error "Unable to locate system #{system_name}"
+            throw new Error "Unable to locate system #{ system_name }"
 
         { min_power_level, max_power_level, power,
             current_power_level, operational_dynes } = system.power_report()
@@ -1390,14 +1398,12 @@ class BaseShip extends BaseObject
 
         primary_power_relays = ( r for r in @primary_power_relays when r.is_attached( system ) or r.is_attached( parent_eps_relay ) )
         if primary_power_relays.length isnt 1
-            throw new Error "Unable to trace primary power relay for
-                #{ system_name }"
+            throw new Error "Unable to trace primary power relay for #{ system_name }"
         primary_power_relay = primary_power_relays[ 0 ]
 
         reactors = ( r for r in @reactors when r.is_attached primary_power_relay )
         if reactors.length isnt 1
-            throw new Error "Unable to trace reactor power for
-                #{ primary_power_relay.name }"
+            throw new Error "Unable to trace reactor power for #{ primary_power_relay.name }"
 
         reactor = reactors[ 0 ]
 
