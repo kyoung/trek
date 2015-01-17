@@ -1,5 +1,6 @@
 {Constitution} = require '../trek/ships/Constitution'
 {PhaserSystem, TorpedoSystem, ShieldSystem} = require '../trek/systems/WeaponSystems'
+{Torpedo} = require '../trek/Torpedo'
 
 C = require '../trek/Constants'
 
@@ -29,25 +30,25 @@ exports.BattleTest =
             y: 0
             z: 0
 
-        s.process_blast_damage blast_point, TorpedoSystem.MAX_DAMAGE, ->
+        s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
         test.ok s.alive, "Ship failed to survive single blast"
 
         #console.log s.shield_report()
 
-        s.process_blast_damage blast_point, TorpedoSystem.MAX_DAMAGE, ->
+        s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
         # console.log s.damage_report true
         test.ok s.alive, "Ship failed to survive second blast"
 
         #console.log s.shield_report()
 
-        s.process_blast_damage blast_point, TorpedoSystem.MAX_DAMAGE, ->
+        s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
         # console.log s.damage_report true
         test.ok s.alive, "Ship failed to survive third blast"
 
         #console.log s.shield_report()
 
         for i in [0...15]
-            s.process_blast_damage blast_point, TorpedoSystem.MAX_DAMAGE, ->
+            s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
 
         # console.log s.damage_report true
         test.ok not s.alive, "Ship failed to be destroyed by torpedo barage"
@@ -150,8 +151,5 @@ exports.BattleTest =
         to lower shield charge: #{ initial_shield_charge } vs #{ post_shield_charge }"
 
         do test.done
-
-
-
 
 

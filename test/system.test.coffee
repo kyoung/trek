@@ -4,6 +4,7 @@
 {ReactorSystem, PowerSystem} = require '../trek/systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../trek/systems/SensorSystems'
 {SIFSystem} = require '../trek/systems/SIFSystems'
+{Torpedo} = require '../trek/Torpedo'
 C = require '../trek/Constants'
 util = require 'util'
 
@@ -168,7 +169,7 @@ exports.SystemTest =
 		# A shield should be able to withstand 5 direct torpedo hits before the charge fails
 		# (ST VI)
 
-		torpedo_blast = TorpedoSystem.MAX_DAMAGE / Math.pow( 500, 2 )
+		torpedo_blast = Torpedo.MAX_DAMAGE / Math.pow( 500, 2 )
 
 		for i in [0...9]
 			s.hit torpedo_blast
