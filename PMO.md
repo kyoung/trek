@@ -34,8 +34,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 # Current Sprint
 - [ ] Tactical
   - [x] Breakout the phaser, torpedo, targeting, alert, and comms screens
-  - [ ] Phaser screen should indicate charge buildup of each bank
-    - [ ] *Bug* Phasers won't fire
+  - [x] Phaser screen should indicate charge buildup of each bank
+    - [x] *Bug* Phasers won't fire
   - [ ] Targeting will need to have subsection targeting
   - [ ] Shield screen should indicate the strength, charge, and status of each shield
 
@@ -43,7 +43,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
   - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
   - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
-
+  - [ ] Engineering primary relay charge readout fails to auto-updated
+  - [ ] Tactical screen has stopped displaying names
 
 # Backlog
 ## Next Sprint
@@ -111,14 +112,10 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 # Alpha Test Issues
 Feedback taken from real user testing
 
-- [ ] Need radiological alarms to let everyone know when something bad is happening
 - [ ] Need some kind of "cadet" mode to teach each pannel
-- [ ] Better failure states for Engineering: it's a bit frustrating when the fuses blow without clear indication of what's wrong
 - [ ] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
-  - It was just the science station... we never got around to that before
 - [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
 - [ ] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
-- [ ] Damage indication (screen cracking should be working)
 
 
 # Bug log

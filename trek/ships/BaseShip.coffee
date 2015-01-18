@@ -261,14 +261,10 @@ class BaseShip extends BaseObject
             # TODO: Can fire within 5km; correct
             throw new Error "Firing phasers at warp requires close proximity. Close to within 5km."
 
-        quad = @calculate_quadrant(target.position)
+        quad = @calculate_quadrant target.position
 
         if quad == @SECTIONS.FORWARD
-            coin = do Math.random
-            if do @forward_phaser_bank_a.is_online
-                phaser = @forward_phaser_bank_a
-            else
-                phaser = @forward_phaser_bank_b
+            phaser = if @forward_phaser_bank_a.charge > @forward_phaser_bank_b.charge then @forward_phaser_bank_a else @forward_phaser_bank_b
         else if quad == @SECTIONS.PORT
             phaser = @port_phaser_bank
         else if quad == @SECTIONS.STARBOARD
@@ -344,6 +340,10 @@ class BaseShip extends BaseObject
 
         r = ( do s.shield_report for s in @shields )
 
+
+    phaser_report: ->
+
+        r = ( do s.power_report for s in @phasers )
 
     tactical_report: ->
 

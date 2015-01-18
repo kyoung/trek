@@ -73,7 +73,7 @@
             <div class="clear"></div>
             <div>
                 <ul class="menu x1">
-                    <li class="lightGreen" id="fireTorpedo">Fire Torpedo</li>
+                    <li class="green" id="fireTorpedo">Fire Torpedo</li>
                 </ul>
             </div>
         </div>
@@ -99,9 +99,13 @@
                 <div id="16" class="zoomBar selected"></div>
             </div>
             <div class="clear"></div>
+            <p class="descriptiveText">Phaser Charge Status:</p>
+            <div id="phaserStatus">
+
+            </div>
             <div>
                 <ul class="menu x1">
-                    <li class="lightGreen" id="firePhasers">Fire Phasers</li>
+                    <li class="green" id="firePhasers">Fire Phasers</li>
                 </ul>
             </div>
         </div>
@@ -318,6 +322,53 @@ function displayCom () {
 $comDisplay.click( displayCom );
 
 
+
+/* Phaser management
+------------------------------------------------*/
+
+$firePhasers.click( function () {
+
+    var onFire = function () {
+
+        trek.playPhaser();
+        getPhaserStatus();
+
+    }
+
+    trek.api( "tactical/phasers", {}, 'POST', onFire );
+
+} );
+
+
+function getPhaserStatus () {
+
+    trek.api( "tactical/phasers", displayPhaserStatus );
+
+}
+
+
+function displayPhaserStatus ( data ) {
+
+    console.log( data );
+
+    var tmpl = "<div><p class='descriptiveText'>{{ name }}</p><div class='tactical-phaser-charge-frame'><span class='tactical-phaser-charge' style='width: {{ width }}%;'>&nbsp;</span></div></div>";
+
+    var $status = $("#phaserStatus");
+    $status.empty();
+
+    _.each( data, function ( e ) {
+
+        e.width = e.charge * 100;
+
+        var $e = Mustache.render( tmpl, e );
+        $status.append( $e );
+
+    } );
+}
+
+setInterval( getPhaserStatus, 1000 );
+
+
 /* Torpedo management
 ------------------------------------------------*/
 
@@ -467,14 +518,10 @@ function getTargets () {
 $setTarget.click( getTargets );
 
 
-$firePhasers.click( function () {
-
-    trek.api( "tactical/firePhasers", trek.playPhaser );
-
-} );
 
 
-
+/* Tactical display management
+------------------------------------------------*/
 
 
 $zoomBars.mouseover( function () {

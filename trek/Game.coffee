@@ -293,6 +293,9 @@ class Game
     fire_phasers: ( prefix ) -> do @ships[ prefix ].fire_phasers
 
 
+    get_phaser_status: ( prefix ) -> do @ships[ prefix ].phaser_report
+
+
     detonation_event: ( position, blast_power ) =>
 
         console.log "Blast event at #{ position.x } #{ position.y } #{ position.z }: yield #{ blast_power }"
