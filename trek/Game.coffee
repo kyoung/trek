@@ -41,7 +41,7 @@ class Game
         console.log "Connecting socket messaging..."
         @message = message_function
         for prefix, s of @ships
-            s.set_message_function @message
+            s.set_message_function message_function
 
 
     load_level: ( level ) ->
@@ -331,7 +331,7 @@ class Game
     set_alert: ( prefix, color ) ->
 
         m = @ships[ prefix ].set_alert color
-        @message( prefix, "alert", color )
+        # @message( prefix, "alert", color )
         return m
 
 

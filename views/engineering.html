@@ -183,10 +183,20 @@ function selectPowerComponent ( c ) {
 
 }
 
+trek.socket.on( "power-blowout", function ( msg ) {
+
+    console.log( "Power blowout!" );
+    console.log( msg );
+
+    trek.playConsoleBlast();
+    trek.displayBlastDamage();
+
+} );
 
 $status.click();
 
 trek.playBridgeSound();
+trek.checkBlastDamage();
 
 </script>
 <% include footer.html %>
