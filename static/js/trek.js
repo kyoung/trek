@@ -162,8 +162,34 @@ var trek = (function($, _, Mustache, io) {
         $bg.css( 'visibility', 'visible' );
 
     }
-
     t.displayRed = displayRed;
+
+
+    function confirm ( message, callback ) {
+
+        var $bg = $( "<div class='blackout'></div>" );
+        var $errorWrap = $( "<div class='errorWrap red'></div>" );
+
+        $errorWrap.html( message );
+
+        var $div = $( "<div></div>" );
+        var $confirm = $( "<button class='confirmation'>Override</button>" );
+        var $cancel = $( "<button class='confirmation'>Cancel</button>" );
+
+        $confirm.click( function () {
+            callback();
+            $bg.remove() } );
+
+        $cancel.click( function () { $bg.remove(); } );
+
+        $errorWrap.append( $div.append($confirm ).append( $cancel ) );
+        $bg.append( $errorWrap );
+
+        $( "body" ).append( $bg );
+        $bg.css( "visibility", "visible" );
+
+    }
+    t.confirm = confirm;
 
 
     // Game Over

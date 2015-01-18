@@ -34,9 +34,9 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 # Current Sprint
 - [ ] Engineering warning on dangerous power level bumps
   - [x] Refresh the side screen when power levels are no longer critical
-  - [ ] Risks to systems should be made clear
+  - [x] Risks to systems should be made clear
     - [x] Include EPS percentage
-    - [ ] Force a confirmation popup when above safety line
+    - [x] Force a confirmation popup when above safety line
   - [x] Systems should be damaged more than they currently are from over use
   - [ ] EPS blowout status needs much better visual representation
     - [ ] include sound effect and cracked screen as well

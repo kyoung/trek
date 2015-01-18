@@ -84,6 +84,18 @@ hr {
     border-color: #0F8AA6;
 }
 
+button.confirmation {
+    background-color: #B30900;
+    width: 230px;
+    height: 33px;
+    border-radius: 10px;
+    color: #000;
+    border-style: none;
+    padding: 10px 0 10px 0;
+    margin: 20px 10px 0 10px;
+    font-family: 'Michroma', sans-serif;
+}
+
 ul.menu {
     list-style-type: none;
     padding: 0;
