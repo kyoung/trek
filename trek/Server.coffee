@@ -24,7 +24,9 @@ game = new Game program.level, program.teams
 app.engine 'html', require( 'ejs' ).renderFile
 
 landingPage = ( req, res ) ->
+
     res.render "index.html", { ships : do game.get_ships }
+
 
 ### Utilities
 ___________________________________________________###
@@ -471,11 +473,17 @@ get_postfix_code = ( req, res ) ->
     prefix = req.query.prefix
     ship_name = req.query.ship
     console.log "Getting postfix code"
+
     for ship in game.get_startup_stats()
         if ship.name == ship_name and ship.prefix.toString() == prefix
             res.cookie "postfix", ship.postfix
             res.cookie "ship", ship.name
+
+            # Allow resetting a damaged console on start of new game
+            res.cookie "cracked", false
+
             res.json { status: "OK" }
+
     res.json {status: "FAIL"}
 
 
