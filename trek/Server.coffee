@@ -235,8 +235,12 @@ tactical_api = ( prefix, method, command, params ) ->
         when 'loadTorpedo'
             game.load_torpedo_tube prefix, q.tube
 
-        when 'firePhasers'
-            game.fire_phasers prefix
+        when 'phasers'
+            switch method
+                when 'post'
+                    game.fire_phasers prefix
+                when 'get'
+                    game.get_phaser_status prefix
 
 
 communications_api = ( prefix, method, command, params ) ->

@@ -555,6 +555,22 @@ svg.conn-arrow.left, svg.conn-arrow.right {
     color: #B30900;
 }
 
+.tactical-phaser-charge-frame {
+    width: 200px;
+    height: 10px;
+    margin-left: 20px;
+    border: 1px solid rgba(96, 221, 247, 0.7);
+    display: inline-block;
+}
+
+.tactical-phaser-charge {
+    background-color: rgb(96, 221, 247);
+    display: inline-block;
+    line-height: 0.6em;
+    position: relative;
+    top: -6px;
+}
+
 
 /* Scanners & Science
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
