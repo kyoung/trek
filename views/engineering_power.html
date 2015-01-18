@@ -89,7 +89,7 @@
 <script>
 
 // Do nothing on red alert... the parent page will get the notification
-trek.on_alert( function () {} );
+trek.onAlert( function () {} );
 
 var power_report;
 
@@ -238,12 +238,26 @@ function loadPowerReport( powerJSON ) {
             var max = system.max_power_level;
             var level = x / ( width / max );
 
-            trek.api(
-                "engineering/power",
-                { system_name : clicked_id, level : level },
-                'POST',
-                loadScreen
-            );
+            var action = function () {
+
+                trek.api(
+                    "engineering/power",
+                    { system_name : clicked_id, level : level },
+                    'POST',
+                    loadScreen
+                );
+
+            };
+
+            if ( level > 1 ) {
+
+                trek.confirm( "WARNING: Setting power to " + clicked_id + " above reommended levels.", action );
+
+            } else {
+
+                action();
+
+            }
 
         });
 
