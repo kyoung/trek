@@ -3,84 +3,133 @@
 <div id="leftSide" class="fleft">
     <div id="tacticalMenu" class="tactical">
         <div>
-            <ul class="menu horizontal small x2">
+            <ul class="menu horizontal small x2" id="submenuSelectors">
                 <li class="blue offline" id="comms">Comms</li>
-                <li class="lightblue" id="tactical">Tactical</li>
+                <li class="blue" id="targetingMenu">Target</li>
+                <li class="blue" id="torpedoMenu">Torp</li>
+                <li class="blue" id="phaserMenu">Phasers</li>
+                <li class="blue" id="alertMenu">Alerts</li>
+                <li class="blue" id="shieldMenu">Shields</li>
             </ul>
         </div>
         <div class="clear"></div>
-    	<div>
-    		<ul class="menu x1">
-    			<li class="blue" id="raiseShields">Raise Shields</li>
-    			<li class="blue" id="redAlert">Red Alert</li>
-    			<li class="blue" id="setTarget">Select Target</li>
-    		</ul>
-        </div>
-        <div id="flyoutMenu" class="tactical-flyout">
-        </div>
-    	<div>
-    		<p class="descriptiveText">Current target:</p>
-    		<p id="targetName">None</p>
-    	</div>
-        <div>
-            <p class="descriptiveText">Scale and Zoom:</p>
-            <ul class="menu x2 small horizontal">
-                <li class="blue lightBlue" id="torpedoZoom">Torpedo</li>
-                <li class="blue" id="phaserZoom">Phaser</li>
-            </ul>
-        </div>
-        <div id="zoomSelector" class="tactical-bar-selector">
-            <div id="1" class="zoomBar selected"></div>
-            <div id="2" class="zoomBar selected"></div>
-            <div id="3" class="zoomBar selected"></div>
-            <div id="4" class="zoomBar selected"></div>
-            <div id="5" class="zoomBar selected"></div>
-            <div id="6" class="zoomBar selected"></div>
-            <div id="7" class="zoomBar selected"></div>
-            <div id="8" class="zoomBar selected"></div>
-            <div id="9" class="zoomBar selected"></div>
-            <div id="10" class="zoomBar selected"></div>
-            <div id="11" class="zoomBar selected"></div>
-            <div id="12" class="zoomBar selected"></div>
-            <div id="13" class="zoomBar selected"></div>
-            <div id="14" class="zoomBar selected"></div>
-            <div id="15" class="zoomBar selected"></div>
-            <div id="16" class="zoomBar selected"></div>
-        </div>
-        <div class="clear"></div>
-        <p class="descriptiveText">Torpedo Count: <span id="torpCount"></span></p>
-        <p class="descriptiveText">Torpedo Yield:</p>
-        <div id="yieldSelector" class="tactical-bar-selector">
-            <div id="1" class="yieldBar selected"></div>
-            <div id="2" class="yieldBar"></div>
-            <div id="3" class="yieldBar"></div>
-            <div id="4" class="yieldBar"></div>
-            <div id="5" class="yieldBar"></div>
-            <div id="6" class="yieldBar"></div>
-            <div id="7" class="yieldBar"></div>
-            <div id="8" class="yieldBar"></div>
-            <div id="9" class="yieldBar"></div>
-            <div id="10" class="yieldBar"></div>
-            <div id="11" class="yieldBar"></div>
-            <div id="12" class="yieldBar"></div>
-            <div id="13" class="yieldBar"></div>
-            <div id="14" class="yieldBar"></div>
-            <div id="15" class="yieldBar"></div>
-            <div id="16" class="yieldBar"></div>
-        </div>
-        <div class="clear"></div>
-        <p class="descriptiveText">Torpedo Bays:</p>
-        <div id="torpedoBays" class="tactical-torpedo-bays">
 
+        <div class="tactical-submenu" id="targetingSubmenu">
+            <div>
+                <p class="descriptiveText">Current target:</p>
+                <p id="targetName">None</p>
+            </div>
+            <ul class="menu x1">
+                <li class="blue" id="setTarget">Select Target</li>
+            </ul>
         </div>
+
+        <div class="tactical-submenu" id="torpedoSubmenu">
+            <p class="descriptiveText">Zoom:</p>
+            <div id="zoomSelector" class="tactical-bar-selector">
+                <div id="1" class="zoomBar selected"></div>
+                <div id="2" class="zoomBar selected"></div>
+                <div id="3" class="zoomBar selected"></div>
+                <div id="4" class="zoomBar selected"></div>
+                <div id="5" class="zoomBar selected"></div>
+                <div id="6" class="zoomBar selected"></div>
+                <div id="7" class="zoomBar selected"></div>
+                <div id="8" class="zoomBar selected"></div>
+                <div id="9" class="zoomBar selected"></div>
+                <div id="10" class="zoomBar selected"></div>
+                <div id="11" class="zoomBar selected"></div>
+                <div id="12" class="zoomBar selected"></div>
+                <div id="13" class="zoomBar selected"></div>
+                <div id="14" class="zoomBar selected"></div>
+                <div id="15" class="zoomBar selected"></div>
+                <div id="16" class="zoomBar selected"></div>
+            </div>
+            <div class="clear"></div>
+            <p class="descriptiveText">Torpedo Count: <span id="torpCount"></span></p>
+            <p class="descriptiveText">Torpedo Yield:</p>
+            <div id="yieldSelector" class="tactical-bar-selector">
+                <div id="1" class="yieldBar selected"></div>
+                <div id="2" class="yieldBar"></div>
+                <div id="3" class="yieldBar"></div>
+                <div id="4" class="yieldBar"></div>
+                <div id="5" class="yieldBar"></div>
+                <div id="6" class="yieldBar"></div>
+                <div id="7" class="yieldBar"></div>
+                <div id="8" class="yieldBar"></div>
+                <div id="9" class="yieldBar"></div>
+                <div id="10" class="yieldBar"></div>
+                <div id="11" class="yieldBar"></div>
+                <div id="12" class="yieldBar"></div>
+                <div id="13" class="yieldBar"></div>
+                <div id="14" class="yieldBar"></div>
+                <div id="15" class="yieldBar"></div>
+                <div id="16" class="yieldBar"></div>
+            </div>
+            <div class="clear"></div>
+            <p class="descriptiveText">Torpedo Bays:</p>
+            <div id="torpedoBays" class="tactical-torpedo-bays">
+
+            </div>
+            <div class="clear"></div>
+            <div>
+                <ul class="menu x1">
+                    <li class="lightGreen" id="fireTorpedo">Fire Torpedo</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tactical-submenu" id="phaserSubmenu">
+            <p class="descriptiveText">Zoom:</p>
+            <div id="zoomSelector" class="tactical-bar-selector">
+                <div id="1" class="zoomBar selected"></div>
+                <div id="2" class="zoomBar selected"></div>
+                <div id="3" class="zoomBar selected"></div>
+                <div id="4" class="zoomBar selected"></div>
+                <div id="5" class="zoomBar selected"></div>
+                <div id="6" class="zoomBar selected"></div>
+                <div id="7" class="zoomBar selected"></div>
+                <div id="8" class="zoomBar selected"></div>
+                <div id="9" class="zoomBar selected"></div>
+                <div id="10" class="zoomBar selected"></div>
+                <div id="11" class="zoomBar selected"></div>
+                <div id="12" class="zoomBar selected"></div>
+                <div id="13" class="zoomBar selected"></div>
+                <div id="14" class="zoomBar selected"></div>
+                <div id="15" class="zoomBar selected"></div>
+                <div id="16" class="zoomBar selected"></div>
+            </div>
+            <div class="clear"></div>
+            <div>
+                <ul class="menu x1">
+                    <li class="lightGreen" id="firePhasers">Fire Phasers</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tactical-submenu" id="alertSubmenu">
+            <ul class="menu x1">
+                <li class="blue" id="clearAlert">Clear</li>
+                <li class="blue" id="blueAlert">Blue Alert</li>
+                <li class="blue" id="yellowAlert">Yellow Alert</li>
+                <li class="blue" id="redAlert">Red Alert</li>
+            </ul>
+        </div>
+
+        <div class="tactical-submenu" id="shieldSubmenu">
+            <ul class="menu x1">
+                <li class="green" id="raiseShields">Raise Shields</li>
+            </ul>
+        </div>
+
+        <div id="flyoutMenu" class="tactical-flyout"></div>
+
         <div class="clear"></div>
-    	<div>
-    		<ul class="menu x1">
-    			<li class="lightGreen" id="fireTorpedo">Fire Torpedo</li>
-    			<li class="lightGreen" id="firePhasers">Fire Phasers</li>
-                <li class="blue" id="mainscreen">Main Screen</li>
-    		</ul>
-    	</div>
+        <div>
+            <ul class="menu x1">
+                <li class="yellow" id="mainscreen">Main Screen</li>
+            </ul>
+        </div>
+
     </div>
 </div>
 
@@ -92,56 +141,163 @@
 
 var shipName = "<%= ship.name %>";
 var $comDisplay = $("#comms");
-var $tacticalDisplay = $("#tactical");
 
-var $torpedoBays = $("#torpedoBays");
-var weaponsTarget = '';
-var $yieldBars = $('.yieldBar');
-var $zoomBars = $('.zoomBar');
-var $shieldSwitch = $("#raiseShields");
-var $targetName = $("#targetName");
-var $alertStatus = $("#redAlert");
+// Top level menu selection
+var $menues = $( "#submenuSelectors li" );
+var $torpedoMenu = $( "#torpedoMenu" );
+var $phaserMenu = $( "#phaserMenu" );
+var $targetingMenu = $( "#targetingMenu" );
+var $shieldMenu = $( "#shieldMenu" );
+var $alertMenu = $( "#alertMenu" );
+
+// Submenues
+var $submenues = $( ".tactical-submenu" );
+var $torpedoSubmenu = $( "#torpedoSubmenu" );
+var $phaserSubmenu = $( "#phaserSubmenu" );
+var $targetingSubmenu = $( "#targetingSubmenu" );
+var $shieldSubmenu = $( "#shieldSubmenu" );
+var $alertSubmenu = $( "#alertSubmenu" );
+
+var $alerts = $( "#alertSubmenu li" );
+
+var $torpedoBays = $( "#torpedoBays" );
+var $yieldBars = $( '.yieldBar' );
+var $zoomBars = $( '.zoomBar' );
+var $shieldSwitch = $( "#raiseShields" );
+var $targetName = $( "#targetName" );
+var $alertStatus = $( "#redAlert" );
+var $torpCount = $( "#torpCount" );
+var $torpedoZoom = $( "#torpedoZoom" );
+var $phaserZoom = $( "#phaserZoom" );
+var $viewScreen = $( "#viewScreen" );
+var $mainscreen = $( "#mainscreen" );
+var $setTarget = $( "#setTarget" );
+var $flyoutMenu = $( "#flyoutMenu" );
+var $firePhasers = $( "#firePhasers" );
+var $fireTorpedoes = $( "#fireTorpedo" );
+
 var torpedoYield = 1;
 var zoomLevel = 16;
 var torpedoInventory = 96;
-var $torpCount = $("#torpCount");
+var weaponsTarget = '';
 var zoom = "torpedo";
-var $torpedoZoom = $("#torpedoZoom");
-var $phaserZoom = $("#phaserZoom");
-var $viewScreen = $("#viewScreen");
-var $mainscreen = $("#mainscreen");
-var $setTarget = $("#setTarget");
-var $flyoutMenu = $("#flyoutMenu");
-var $firePhasers = $("#firePhasers");
-var $fireTorpedoes = $("#fireTorpedo");
 
 
+/* Menu action
+----------------------------------------------------*/
+$menues.click( function () {
 
-$torpedoZoom.click(function(){
+    $menues.removeClass( 'lightblue' );
+    $( this ).addClass( 'lightblue' );
 
-    $(this).addClass( "lightBlue" );
-    $phaserZoom.removeClass( "lightBlue" );
-    zoom = "torpedo";
+} );
+
+$torpedoMenu.click( showTorpedoMenu );
+function showTorpedoMenu () {
+
+    setTacticalDisplay();
+    $submenues.css( 'display', 'none' );
+    $torpedoSubmenu.css( 'display', 'block' );
+    zoom = 'torpedo';
     $viewScreen.attr(
         'src',
         'tactical_screen?zoom=' + zoom + '&zoom_level=' + zoomLevel
     );
 
-});
+};
 
-$phaserZoom.click(function(){
+$phaserMenu.click( showPhaserMenu );
+function showPhaserMenu () {
 
-    $(this).addClass( "lightBlue" );
-    $torpedoZoom.removeClass( "lightBlue" );
-    zoom = "phasers";
+    setTacticalDisplay();
+    $submenues.css( 'display', 'none' );
+    $phaserSubmenu.css( 'display', 'block' );
+    zoom = 'phasers'
     $viewScreen.attr(
         'src',
         'tactical_screen?zoom=' + zoom + '&zoom_level=' + zoomLevel
     );
 
-});
+};
 
-// Notify the window that there is Comms activity
+
+$alertMenu.click( showAlertMenu );
+function showAlertMenu () {
+
+    $submenues.css( 'display', 'none' );
+    $alertSubmenu.css( 'display', 'block' );
+
+    getAlertState();
+
+};
+
+
+$shieldMenu.click( showShieldMenu );
+function showShieldMenu () {
+
+    $submenues.css( 'display', 'none' );
+    $shieldSubmenu.css( 'display', 'block' );
+    getShieldStatus();
+
+};
+
+
+$targetingMenu.click( showTargetingMenu );
+function showTargetingMenu () {
+
+    $submenues.css( 'display', 'none' );
+    $targetingSubmenu.css( 'display', 'block' );
+
+}
+
+/* Alert management
+------------------------------------------------*/
+
+function getAlertState () {
+
+    updateAlertStatus = function ( alert ) {
+
+        console.log( alert );
+
+        $alerts.removeClass( 'lightblue' );
+
+        switch ( alert ) {
+
+            case 'red':
+                $("#redAlert").addClass( 'lightblue' );
+                break;
+
+            case 'yellow':
+                $("#yellowAlert").addClass( 'lightblue' );
+                break;
+
+            case 'blue':
+                $("#blueAlert").addClass( 'lightblue' );
+                break;
+
+            case 'clear':
+                $("#clearAlert").addClass( 'lightblue' );
+                break;
+
+        }
+
+    };
+
+    trek.api( 'tactical/alert', updateAlertStatus );
+
+}
+
+$alerts.click( function () {
+
+    var color = this.id.replace( /Alert/g, "" );
+    trek.api( 'tactical/alert', { status : color }, 'POST', getAlertState );
+
+} );
+
+
+/* Comms
+------------------------------------------------*/
+
 trek.socket.on( "hail", function(data){
 
     $comDisplay.removeClass( "offline" );
@@ -151,6 +307,19 @@ trek.socket.on( "hail", function(data){
 
 });
 
+function displayCom () {
+
+    $viewScreen.attr( 'src', 'comm_screen' );
+    $comDisplay.removeClass( "blink" );
+    $comDisplay.addClass( "offline" );
+
+};
+
+$comDisplay.click( displayCom );
+
+
+/* Torpedo management
+------------------------------------------------*/
 
 function loadTorpedoBay( bayName ) {
 
@@ -161,6 +330,9 @@ function loadTorpedoBay( bayName ) {
     );
 
 };
+
+
+function updateTorpedo () { $torpCount.html( torpedoInventory ); };
 
 
 function displayTorpedoBayStatus( status ) {
@@ -182,7 +354,7 @@ function displayTorpedoBayStatus( status ) {
         var $torpBay = $( Mustache.render( bayTmpl, render ) );
 
         if ( e.status == "Empty" ) {
-            $torpBay.click( function() {
+            $torpBay.click( function () {
                 loadTorpedoBay( e.name );
             });
         }
@@ -194,80 +366,49 @@ function displayTorpedoBayStatus( status ) {
 };
 
 
-function parseTacticalState( data ){
+$fireTorpedoes.click( function () {
 
-    weaponsTarget = data.weapons_target;
-    torpedoInventory = data.torpedo_inventory;
+    kapla = function () {
 
-    displayTorpedoBayStatus( data.torpedo_bay_status );
+        trek.playTorpedo();
+        updateState();
 
-    if (data.shields_status){
-        $shieldSwitch.addClass( "lightBlue" );
-    } else {
-        $shieldSwitch.removeClass( "lightBlue" );
-    };
-
-    if ( data.alertStatus == "red" ) {
-        $alertStatus.addClass( "red" );
-    } else {
-        $alertStatus.removeClass("red");
-    };
-
-    updateTarget();
-    updateTorpedo();
-
-};
-
-function updateState() {
+    }
 
     trek.api(
-        "tactical/status",
-        parseTacticalState
-    );
-
-}
-
-$mainscreen.click( function () {
-
-    trek.api(
-        "command/mainViewer",
-        {
-            screen: "tactical_screen",
-            zoom: zoom,
-            zoom_level: zoomLevel
-        },
-        'POST',
-        updateState
-    );
+        "tactical/fireTorpedo",
+        { yield : torpedoYield },
+        kapla );
 
 } );
 
 
-$alertStatus.click( function () {
+$yieldBars.mouseover( function () {
 
-    var alertState;
+    torpedoYield = parseInt( $( this ).attr( "id" ) );
 
-	if ( $(this).hasClass("red") ) {
+    _.each( $yieldBars, function( e ) {
 
-		$(this).removeClass( "red" );
-        alertState = "clear";
+        if ( parseInt( e.id ) <= torpedoYield ) {
 
-	} else {
+            $( e ).addClass( "selected" );
 
-		$(this).addClass( "red" );
-		$shieldSwitch.addClass( "lightBlue" );
-        alertState = "red";
+        } else {
 
-	}
+            $( e ).removeClass( "selected" );
 
-    trek.api(
-        "tactical/alert",
-        { status : alertState },
-        'PUT',
-        updateState );
+        }
+
+    } );
 
 } );
 
+
+
+
+
+/* Target management
+------------------------------------------------*/
 
 function updateTarget () {
 
@@ -279,12 +420,6 @@ function updateTarget () {
 
 };
 
-
-function updateTorpedo () {
-
-    $torpCount.html( torpedoInventory );
-
-};
 
 
 function buildTargetMenu ( scanData ) {
@@ -339,42 +474,7 @@ $firePhasers.click( function () {
 } );
 
 
-$fireTorpedoes.click( function () {
 
-    kapla = function () {
-
-        trek.playTorpedo();
-        updateState();
-
-    }
-
-    trek.api(
-        "tactical/fireTorpedo",
-        { yield : torpedoYield },
-        kapla );
-
-} );
-
-
-$yieldBars.mouseover( function () {
-
-    torpedoYield = parseInt( $( this ).attr( "id" ) );
-
-    _.each( $yieldBars, function( e ) {
-
-        if ( parseInt( e.id ) <= torpedoYield ) {
-
-            $( e ).addClass( "selected" );
-
-        } else {
-
-            $( e ).removeClass( "selected" );
-
-        }
-
-    } );
-
-} );
 
 
 $zoomBars.mouseover( function () {
@@ -395,52 +495,133 @@ $zoomBars.mouseover( function () {
 
     } );
 
-    setDisplay();
+    setTacticalDisplay();
 
 } );
 
 
-function setDisplay () {
+function setTacticalDisplay () {
 
     var q_string = "?zoom=" + zoom + "&zoom_level=" + zoomLevel;
     $viewScreen.attr( 'src', 'tactical_screen' + q_string );
 
 };
 
-$tacticalDisplay.click( setDisplay );
 
+/* Shield management
+------------------------------------------------*/
 
 function toggleShields () {
 
-    var set_online = $shieldSwitch.hasClass( "lightblue" ) ? false: true;
+    var set_online = $shieldSwitch.hasClass( "lightgreen" ) ? false: true;
 
     console.log( "Setting shields: " + set_online );
 
     trek.api(
         "tactical/shields",
         { online : set_online },
-        "PUT",
-        updateState );
+        "POST",
+        getShieldStatus );
 
-};
+}
+
+
+function parseShieldState ( data ) {
+
+    console.log( data );
+
+    var are_online = false;
+    _.each( data, function ( e ) {
+
+        are_online = are_online || ( e.online && e.active )
+
+    } );
+
+    var text = are_online ? "Lower Shields" : "Raise Shields";
+
+    if ( are_online ) {
+
+        $shieldSwitch.addClass( "lightgreen" );
+
+    } else {
+
+        $shieldSwitch.removeClass( "lightgreen" );
+
+    }
+
+    $shieldSwitch.html( text );
+
+}
+
+
+function getShieldStatus () {
+
+    trek.api( "tactical/shields", parseShieldState );
+
+}
+
 
 $shieldSwitch.click( toggleShields );
 
 
-function displayCom () {
 
-    $viewScreen.attr( 'src', 'comm_screen' );
-    $comDisplay.removeClass( "blink" );
-    $comDisplay.addClass( "offline" );
+/* Misc
+------------------------------------------------*/
+
+
+function parseTacticalState( data ){
+
+    weaponsTarget = data.weapons_target;
+    torpedoInventory = data.torpedo_inventory;
+
+    displayTorpedoBayStatus( data.torpedo_bay_status );
+
+    if (data.shields_status){
+        $shieldSwitch.addClass( "lightBlue" );
+    } else {
+        $shieldSwitch.removeClass( "lightBlue" );
+    };
+
+    if ( data.alertStatus == "red" ) {
+        $alertStatus.addClass( "red" );
+    } else {
+        $alertStatus.removeClass("red");
+    };
+
+    updateTarget();
+    updateTorpedo();
 
 };
 
-$comDisplay.click( displayCom );
+function updateState() {
+
+    trek.api(
+        "tactical/status",
+        parseTacticalState
+    );
+
+}
 
 
-setDisplay();
+$mainscreen.click( function () {
+
+    trek.api(
+        "command/mainViewer",
+        {
+            screen: "tactical_screen",
+            zoom: zoom,
+            zoom_level: zoomLevel
+        },
+        'POST',
+        updateState
+    );
+
+} );
+
+
+$torpedoMenu.click();
+
 updateState();
-
 setInterval( updateState, 1000 );
 
 trek.playBridgeSound();

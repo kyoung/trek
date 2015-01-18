@@ -183,6 +183,8 @@ class ShieldSystem extends ChargedSystem
             charge : @charge
             status : @state
             name : @name
+            active: @active
+            online: @online
 
 
     get_required_power: ->
