@@ -20,11 +20,6 @@ iframe {
     border: 0;
 }
 
-iframe#viewScreen {
-    height: 100%;
-    width: 100%;
-}
-
 .hidden {
     display: none;
 }
@@ -33,7 +28,7 @@ iframe#viewScreen {
     pointer-events: none;
 }
 
-.fullscreen {
+iframe#viewScreen, .fullscreen {
     width: 100%;
     height: 100%;
 }
@@ -839,43 +834,51 @@ path.scan-result-grid-void {
     visibility: visible;
 }
 
-.eng span.spacer {
+.eng .spacer {
     margin-left: 10px;
 }
 
-span.eng-sys-name {
+.eng-sys-name {
     display: inline-block;
     width: 300px;
 }
 
-span.eng-sys-bar {
+.eng-sys-bar {
     display: inline-block;
     background-color: rgba(96, 221, 247, 0.4);
 }
 
-span.eng-sys-bar-frame {
+.eng-sys-bar-frame {
     position: relative;
     display: inline-block;
     border: 1px solid rgba(96, 221, 247, 0.4);
     width: 500px;
 }
 
-span.eng-sys-bar-dark {
+.eng-sys-bar-blowout {
+    position: relative;
+    display: inline-block;
+    border: 1px solid rgba(179, 9, 0, 0.8);
+    background-color: rgba(179, 9, 0, 0.2);
+    width: 500px;
+}
+
+.eng-sys-bar-dark {
   display: inline-block;
   background-color: rgba(15, 138, 166, 0.4);
 }
 
-span.eng-sys-bar-active {
+.eng-sys-bar-active {
   display: inline-block;
   background-color: rgba(96, 221, 247, 0.6);
 }
 
-span.eng-sys-bar-red {
+.eng-sys-bar-red {
   display: inline-block;
   background-color: rgba(179, 9, 0, 0.8);
 }
 
-span.eng-sys-marker {
+.eng-sys-marker {
     position: absolute;
     top: -5px;
     left: 0px;
@@ -892,7 +895,7 @@ span.eng-sys-marker {
     width: 500px;
 }
 
-span.eng-charge-meter-bar {
+.eng-charge-meter-bar {
     position: absolute;
     height: 100%;
     left: 0px;

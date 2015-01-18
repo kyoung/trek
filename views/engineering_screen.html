@@ -51,7 +51,7 @@ function drawStatus( data ) {
 
             if ( systemObj.integrity < 1 ){
 
-                color = 'lightBlue';
+                color = 'lightblue';
             }
 
             if ( systemObj.operability != 'Operable' ) {
@@ -122,7 +122,7 @@ function drawStatus( data ) {
         trek.api(
             "engineering/online",
             data,
-            'PUT',
+            'POST',
             loadScreen
         )
 
@@ -165,6 +165,7 @@ trek.onAlert( function( data ){ return; } );
 
 // Make it so
 loadScreen();
+setInterval( loadScreen, 250 );
 
 
 </script>

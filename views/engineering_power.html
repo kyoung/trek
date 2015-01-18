@@ -41,6 +41,7 @@
         {{ #subsystems }}
         <li id="{{name}}">
             <span class='eng-sys-name'>{{ name }}</span>
+            {{ #power_system_operational }}
             <span class='eng-sys-bar-frame' id='{{ name }}'>
                 <span class='eng-sys-bar-dark' style='width:{{ min_percent }}%'>
                     &nbsp;
@@ -52,6 +53,12 @@
                     &nbsp;
                 </span>
             </span>
+            {{ /power_system_operational }}
+            {{ ^power_system_operational }}
+            <span class='eng-sys-bar-blowout' id='{{ name }}'>
+                &nbsp;
+            </span>
+            {{ /power_system_operational }}
             <span>{{ power }}</span>
             {{ #charge }}
             <div class='eng-charge-meter'>

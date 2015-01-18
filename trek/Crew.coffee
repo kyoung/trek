@@ -61,6 +61,9 @@ class BaseTeam
     is_onboard: -> @status == STATUS.ONBOARD or @status == STATUS.ENROUTE
 
 
+    is_enroute: -> @status == STATUS.ENROUTE
+
+
     goto: ( new_deck, new_section, on_arrival=NaN ) ->
 
         @status = STATUS.ENROUTE
