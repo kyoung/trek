@@ -226,6 +226,17 @@ ul.menu li.red:hover {
     background-color: #000;
 }
 
+ul.menu li.yellow {
+    background-color: #CCC463;
+    border-color: #CCC463;
+    color: #000;
+}
+
+ul.menu li.yellow:hover {
+    color: #CCC463;
+    background-color: #000;
+}
+
 ul.informational {
     padding: 0;
 }
@@ -453,6 +464,10 @@ svg.conn-arrow.left, svg.conn-arrow.right {
 
 /* Tactical Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.tactical-submenu {
+    display: none;
+}
 
 .tactical .descriptiveText {
     margin-bottom: 0;

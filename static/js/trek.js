@@ -1,4 +1,5 @@
 var trek = (function($, _, Mustache, io) {
+
     var t = {};
     t.socket = io.connect( window.location.protocol + "//" + window.location.host );
 
@@ -25,20 +26,20 @@ var trek = (function($, _, Mustache, io) {
 
         var drawAlert = function ( svg ) {
 
-            var $alert_svg = $( svg.children[0] );
+            var $alert_svg = $( svg.children[ 0 ] );
             var $bg = $( "<div class='blackout'></div>" );
             var $alert_wrap = $( "<div class='alert-wrap'></div>" );
 
             $alert_wrap.append( $alert_svg );
             $bg.append( $alert_wrap );
 
-            $bg.click( function( c ) {
+            $bg.click( function () {
 
                 $bg.remove();
 
             });
 
-            $("body").append( $bg );
+            $( "body" ).append( $bg );
             $bg.css( 'visibility', 'visible' );
 
         };
@@ -47,7 +48,7 @@ var trek = (function($, _, Mustache, io) {
 
     }
 
-    function clearAlerts() {
+    function clearAlerts () {
 
         var $bgs = $( ".blackout" );
         $bgs.remove();
@@ -55,25 +56,35 @@ var trek = (function($, _, Mustache, io) {
     }
 
 
-    t.socket.on("alert", function(data) {
+    t.socket.on( "alert", function ( data ) {
 
         // allow screens to handle alerts their own way
         if ( alertCallbacks.length > 0 ) {
 
-            _.each( alertCallbacks, function( e ) {
-                e(data);
+            _.each( alertCallbacks, function ( e ) {
+                e( data );
             } );
+
             return;
 
         }
 
         // TODO: Handle "alert: data=yellow"
-        if ( data == "red" ) {
-            displayRedAlert();
-        }
+        switch ( data ) {
 
-        if ( data == "clear" ) {
-            clearAlerts();
+            case 'red':
+                displayRedAlert();
+                break;
+
+            case 'clear':
+                clearAlerts();
+                break;
+
+            case 'blue':
+                break;
+
+            case 'yellow':
+                break;
         }
 
     });
@@ -117,8 +128,8 @@ var trek = (function($, _, Mustache, io) {
     t.checkBlastDamage = function () {
         // catch people trying to reset their window
         var crackedCookie = document.cookie.replace(/(?:(?:^|.*;\s*)cracked\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        if ( crackedCookie == 'true' ) { displayBlastDamage(); };
-    }
+        if ( crackedCookie == 'true' ) { displayBlastDamage(); }
+    };
 
     // Audio
     function playAudio ( path, loop ) {
@@ -290,7 +301,7 @@ var trek = (function($, _, Mustache, io) {
 
 
     // Utility
-    t.prettyDistanceKM = function( meters ) {
+    t.prettyDistanceKM = function ( meters ) {
 
         var x = Math.round( parseInt( meters ) / 1000 );
         var rgx = /(\d+)(\d{3})/;
@@ -303,7 +314,7 @@ var trek = (function($, _, Mustache, io) {
     };
 
 
-    t.prettyDistanceAU = function( meters ) {
+    t.prettyDistanceAU = function ( meters ) {
 
         var au = Math.round( meters / 149597870700 );
         if (au < 1) {
@@ -315,7 +326,7 @@ var trek = (function($, _, Mustache, io) {
     };
 
 
-    t.prettyBearing = function( bearing ) {
+    t.prettyBearing = function ( bearing ) {
 
         var x = Math.round( bearing * 1000 );
         return x.toString();
@@ -323,7 +334,7 @@ var trek = (function($, _, Mustache, io) {
     };
 
 
-    t.secondsToMinuteString = function( seconds ) {
+    t.secondsToMinuteString = function ( seconds ) {
 
         var minutes = Math.floor( seconds/60 );
         var secondRemaining = Math.round( seconds % 60 );
@@ -333,7 +344,7 @@ var trek = (function($, _, Mustache, io) {
     };
 
 
-    t.parseQueryString = function() {
+    t.parseQueryString = function () {
 
         var qs = window.location.search.substr(1);
         if ( qs === "" ){ return {}; }
@@ -351,6 +362,6 @@ var trek = (function($, _, Mustache, io) {
 
     };
 
-
     return t;
+
 }(jQuery, _, Mustache, io));

@@ -207,10 +207,10 @@ class BaseShip extends BaseObject
     set_alert: ( status ) ->
 
         @alert = status
+        @message @prefix_code, "alert", status
 
         switch status
             when 'red'
-                @message @prefix_code, "alert", status
                 do @_power_shields
                 do @_power_phasers
                 do @_auto_load_torpedoes
@@ -342,7 +342,7 @@ class BaseShip extends BaseObject
 
     shield_report: ->
 
-        r = ( s.shield_report() for s in @shields )
+        r = ( do s.shield_report for s in @shields )
 
 
     tactical_report: ->
@@ -502,19 +502,19 @@ class BaseShip extends BaseObject
         do @_rebuild_crew_checks
 
 
-    _power_shields: -> s.power_on() for s in @shields
+    _power_shields: -> do s.power_on for s in @shields
 
 
-    _power_phasers: -> p.power_on() for p in @phasers
+    _power_phasers: -> do p.power_on for p in @phasers
 
 
     _auto_load_torpedoes: -> t.autoload( true ) for t in @torpedo_banks
 
 
-    _power_down_shields: -> s.power_down() for s in @shields
+    _power_down_shields: -> do s.power_down for s in @shields
 
 
-    _power_down_phasers: -> p.power_down() for p in @phasers
+    _power_down_phasers: -> do p.power_down for p in @phasers
 
 
     _disable_torpedeo_autoload: -> t.autoload( false ) for t in @torpedo_banks
@@ -1619,10 +1619,13 @@ class BaseShip extends BaseObject
     _are_all_shields_up: ->
 
         for s in @shields
-            if not s.active
+
+            if not s.active || not s.online || s.charge <= 0.01
                 return false
+
             if s.charge <= 0.01
                 return false
+
         return true
 
 

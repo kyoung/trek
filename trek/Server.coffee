@@ -204,8 +204,10 @@ tactical_api = ( prefix, method, command, params ) ->
     resp = switch command
         when 'alert'
             switch method
-                when 'put'
+                when 'post'
                     game.set_alert prefix, q.status
+                when 'get'
+                    game.get_alert prefix
 
         when 'scan'
             game.scan prefix
@@ -215,8 +217,10 @@ tactical_api = ( prefix, method, command, params ) ->
 
         when 'shields'
             switch method
-                when 'put'
-                    game.set_shields prefix, ( q.online == "true" )
+                when 'post'
+                    game.set_shields prefix, q.online
+                when 'get'
+                    game.get_shield_status prefix
 
         when 'target'
             switch method
@@ -439,12 +443,12 @@ plot_intercept = ( prefix, target, impulse, warp ) ->
     return { timeToIntercept: intTime }
 
 
-set_main_viewer = ( prefix, query ) ->
+set_main_viewer = ( prefix, params ) ->
 
     url = params.screen
     params = ""
 
-    for k, v of query
+    for k, v of params
         if k is "screen"
             continue
         params_str = '&' + k + '=' + v
@@ -452,10 +456,10 @@ set_main_viewer = ( prefix, query ) ->
 
     url += "?" + params
 
-    for consoleSocket in shipSockets[prefix]
-        consoleSocket.emit "setScreen", { screen: url }
+    for consoleSocket in shipSockets[ prefix ]
+        consoleSocket.emit "setScreen", { screen : url }
 
-    return { status: 'OK' }
+    return { status : 'OK' }
 
 
 ###

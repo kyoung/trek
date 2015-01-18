@@ -281,6 +281,9 @@ class Game
     set_shields: ( prefix, is_online ) -> @ships[ prefix ].set_shields is_online
 
 
+    get_shield_status: ( prefix ) -> do @ships[ prefix ].shield_report
+
+
     target: ( prefix, name ) ->
 
         target = (s for s in @game_objects when s.name == name)[0]
@@ -333,6 +336,8 @@ class Game
         m = @ships[ prefix ].set_alert color
         # @message( prefix, "alert", color )
         return m
+
+    get_alert: ( prefix ) -> @ships[ prefix ].alert
 
 
     get_damage_report: ( prefix ) -> @ships[ prefix ].damage_report()

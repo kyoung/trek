@@ -120,11 +120,16 @@ exports.ShipTest =
         EMPTY_CALLBACK = undefined
 
         s = new Constitution
-        console.log "Ship has #{ s.shields.length } shields"
+
+        #console.log "Ship has #{ s.shields.length } shields"
+
         s.set_shields true
         # FFWD
         s.calculate_state EMPTY_CALLBACK, FFWD_MS
         test.ok do s._are_all_shields_up, "Failed to raise shields"
+        for shield in s.shields
+            test.ok shield.online and shield.active, "Shield failed to be both online (#{ shield.online }) and active (#{ shield.active })"
+
         s.set_shields false
         # FFWD
         s.calculate_state EMPTY_CALLBACK, FFWD_MS
