@@ -1384,6 +1384,9 @@ class BaseShip extends BaseObject
         if not system?
             throw new Error "Unable to locate system #{ system_name }"
 
+        if not system.power_report().power_system_operational
+            throw new Error "#{ system_name } system has blown it's EPS coupling. Please Repair."
+
         { min_power_level, max_power_level, power,
             current_power_level, operational_dynes } = system.power_report()
 
@@ -1691,7 +1694,7 @@ class BaseShip extends BaseObject
         # Any crew in sickbay should get better
         health_locaitons[ @sick_bay.deck ] = [ @sick_bay.section ]
         # Any crew near a medical team member should get better
-        for crew in @internal_personnel when crew.description == "Medical Team"
+        for crew in @internal_personnel when crew.description == "Medical Team" and not do crew.is_enroute
 
             if health_locaitons[ crew.deck ]?
                 health_locaitons[ crew.deck ].push crew.section

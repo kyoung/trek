@@ -166,11 +166,11 @@ class ReactorSystem extends System
 class PowerSystem extends System
     # Class for systems that route power
 
-    @WARP_RELAY_POWER = { min : 0, max : 4, dyn : 1e6 }
-    @IMPULSE_RELAY_POWER = { min : 0, max : 1.1, dyn : 1e3 }
-    @EMERGENCY_RELAY_POWER = { min : 0, max : 4, dyn : 1e2 }
+    @WARP_RELAY_POWER = { min : 0, max : 4, dyn : 1.211e6 }
+    @IMPULSE_RELAY_POWER = { min : 0, max : 1.1, dyn : 1.3e3 }
+    @EMERGENCY_RELAY_POWER = { min : 0, max : 4, dyn : 1.7e2 }
 
-    @EPS_RELAY_POWER = { min : 0, max : 4, dyn : 1e5 }
+    @EPS_RELAY_POWER = { min : 0, max : 4, dyn : 1.1234e5 }
 
     constructor: ( @name, @deck, @section, @power_thresholds ) ->
 
@@ -290,20 +290,24 @@ class PowerSystem extends System
 
     power_distribution_report: ->
 
-        r = {'name': @name}
+        r = { name : @name }
+
         subsystems = []
         for sys, i in @attached_systems
-            sys_report = sys.power_report()
+            sys_report = do sys.power_report
             if sys.power_distribution_report?
                 # If you are a sub relay...
-                sys_report = sys.power_distribution_report()
+                sys_report = do sys.power_distribution_report
             subsystems.push sys_report
+
         r['subsystems'] = subsystems
         r['power_distribution'] = @power_distribution
         r['power'] = @input_power
         r['max_power_level'] = @power_thresholds.max
         r['min_power_level'] = 0
         r['current_power_level'] = @input_power / @power_thresholds.dyn
+        r['power_system_operational'] = @_fuse_on
+
         return r
 
 
@@ -316,6 +320,7 @@ class PowerSystem extends System
             max_power_level: @power_thresholds.max
             min_power_level: @power_thresholds.min
             operational_dynes: @power_thresholds.dyn
+            power_system_operational: @_fuse_on
 
 
     push_power: ( input_power ) ->
@@ -328,6 +333,7 @@ class PowerSystem extends System
 
         if input_power?
             @input_power = input_power
+            @power = @input_power
 
         max_power = @power_thresholds.max * @power_thresholds.dyn
 
@@ -345,12 +351,12 @@ class PowerSystem extends System
 
         for s, i in @attached_systems
 
-            power_level = @power_distribution[i]
+            power_level = @power_distribution[ i ]
             power_to_push = power_level * @input_power
             power_pushed = s.push_power power_to_push
 
             if not power_pushed?
-                throw new Error "Failed to push power to #{s.name}"
+                throw new Error "Failed to push power to #{ s.name }"
 
             if power_pushed == 0 and power_to_push > 0
                 # Blowout condition

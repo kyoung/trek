@@ -83,10 +83,9 @@ class System
             # Otherwise you're just leaking plasma into the system and causing damage
             return 0
 
+        # Normal operation
         if relative_power <= @power_thresholds.max
-            # Normal operation
-            @power = power
-            return @power
+            return @power = power
 
         # Ya blew it
         console.log "#{ @name }: Too much power: #{ relative_power }x above operational levels."
@@ -113,12 +112,13 @@ class System
     _calculate_overdrive_damage: ( delta_t_ms ) ->
 
         # power levels exceeding recommended operational levels
-        diff = @power_thresholds.dyn * @power_thresholds.max - @power
-        diff_pct = diff / ((@power_thresholds.max - 1) * @power_thresholds.dyn)
+        diff = @power - @power_thresholds.dyn
+        diff_pct = diff / ( ( @power_thresholds.max - 1 ) * @power_thresholds.dyn )
+
         # For every minute this system is running at this power level
-        # the status should be damage accordingly
-        minutes = delta_t_ms / (60 * 1000)
-        damage_from_overdrive = diff_pct * minutes
+        # the status should be damaged accordingly
+        minutes = delta_t_ms / ( 60 * 1000 )
+        damage_from_overdrive = diff_pct * minutes * System.STRENGTH
         @damage damage_from_overdrive
 
 
@@ -166,20 +166,21 @@ class System
         time_to_operability = do @_time_to_operability
         repair_requirements = []
         for k, v of @_repair_reqs
-            repair_requirements.push({
-                material: k,
-                quantity: Utility.round_up(v * (1 - @state), 2)
-            })
+            repair_requirements.push {
+                material : k,
+                quantity : Utility.round_up( v * ( 1 - @state ), 2 )
+            }
 
         state =
             name: @name
             deck: @deck
             section: @section
-            integrity: Utility.round(@state, 2)
+            integrity: Utility.round @state, 2
             repair_requirements: repair_requirements
-            time_to_repair: @_time_to_repair()
+            time_to_repair: do @_time_to_repair
             operability: operability
             online: @online
+            power_system_operational: @_fuse_on
 
         if time_to_operability > 0
             state['time_to_operability'] = time_to_operability
@@ -191,8 +192,8 @@ class System
 
         @online = true
 
-        {min, max, dyn} = @power_thresholds
-        sufficient_power  = (dyn * min) <= @power <= (dyn * max)
+        { min, max, dyn } = @power_thresholds
+        sufficient_power  = ( dyn * min ) <= @power <= ( dyn * max )
         if not sufficient_power
             @online = false
 
@@ -203,10 +204,7 @@ class System
         return @online
 
 
-    deactivate: ->
-
-        @online = false
-        return @online
+    deactivate: -> @online = false
 
 
     power_off: ->
@@ -216,8 +214,10 @@ class System
 
 
     get_required_power: ->
+
         if @online
             return @power_thresholds.dyn * ( @power_thresholds.min + 0.1 )
+
         return 0
 
 

@@ -33,9 +33,11 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 
 # Current Sprint
 - [ ] Engineering warning on dangerous power level bumps
-  - [ ] Refresh the side screen when power levels are no longer critical
+  - [x] Refresh the side screen when power levels are no longer critical
   - [ ] Risks to systems should be made clear
-  - [ ] Systems should be damaged more than they currently are from over use
+    - [x] Include EPS percentage
+    - [ ] Force a confirmation popup when above safety line
+  - [x] Systems should be damaged more than they currently are from over use
   - [ ] EPS blowout status needs much better visual representation
     - [ ] include sound effect and cracked screen as well
 
@@ -101,6 +103,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - Enter and leave systems when your delta to a system closes within 80AU
 - Tractor Beam
 - Shuttles
+  - If transporters and related systems are down, you'll need to be able to ferry cargo
 - The ability for engineering to salvage parts from non-essential systems during an emergency
 - All the render delay is in the loader... if we're going to cache anything in the display, it should be in the parent frame, and then into local storage...
 - Use this for animating transporters:
