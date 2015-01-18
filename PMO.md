@@ -32,18 +32,12 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - Rely more on class variables for these things
 
 # Current Sprint
-- [ ] Engineering warning on dangerous power level bumps
-  - [x] Refresh the side screen when power levels are no longer critical
-  - [x] Risks to systems should be made clear
-    - [x] Include EPS percentage
-    - [x] Force a confirmation popup when above safety line
-  - [x] Systems should be damaged more than they currently are from over use
-  - [ ] EPS blowout status needs much better visual representation
-    - [ ] include sound effect and cracked screen as well
+- [ ] Tactical
+  - [ ] Breakout the phaser, torpedo, targeting, and comms screens
+  - [ ] Phaser screen should indicate charge buildup of each bank
+  - [ ] Targeting will need to have subsection targeting
 
 - [ ] Hotfix
-  - [x] Torpedoes are loading with illegal yeild values...
-  - [x] Can't seem to blow up a station
   - [ ] Phasers won't fire
   - [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
   - [ ] "Set to mainview" functionality seems to be completely broken
@@ -60,13 +54,10 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Thruster manuvering
     - required for phaser combat
   - [ ] Navigation status display
-- [ ] Tactical
-  - [ ] Breakout the phaser, torpedo, targeting, and comms screens
-  - [ ] Phaser screen should indicate charge buildup of each bank
-  - [ ] Targeting will need to have subsection targeting
 - [ ] Crew interactions
   - [x] Healing from medics
   - [x] Heal crews in sickbay
+  - [ ] Repair teams should be able to fix bridge damage
   - [ ] Game over if crew is dead
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
@@ -439,3 +430,13 @@ Feedback taken from real user testing
   - [x] Alerts
   - [x] Torpedo firing
   - [x] Phaser firing
+
+## v 0.14 [Engineering/COMPLETE]
+- [x] Engineering warning on dangerous power level bumps
+  - [x] Refresh the side screen when power levels are no longer critical
+  - [x] Risks to systems should be made clear
+    - [x] Include EPS percentage
+    - [x] Force a confirmation popup when above safety line
+  - [x] Systems should be damaged more than they currently are from over use
+  - [x] EPS blowout status needs much better visual representation
+    - [x] include sound effect and cracked screen as well

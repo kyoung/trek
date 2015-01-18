@@ -102,6 +102,8 @@ sendToSockets = ( prefix, type, content ) ->
     if not shipSockets?
         throw new Error "The shipSockets object has been disappeared"
 
+    # console.log prefix, type, content
+
     sockets = shipSockets[ prefix ]
     if sockets?
         s.emit( type, content ) for s in sockets
@@ -201,7 +203,7 @@ tactical_api = ( prefix, method, command, params ) ->
     q = params
     resp = switch command
         when 'alert'
-            switch 'put'
+            switch method
                 when 'put'
                     game.set_alert prefix, q.status
 

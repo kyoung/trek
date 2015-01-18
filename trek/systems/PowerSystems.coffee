@@ -68,13 +68,13 @@ class ReactorSystem extends System
             @power_signature.push p
 
 
-    push_power: ( power ) -> @relay.push_power power
+    push_power: ( power, message_interface ) -> @relay.push_power power, message_interface
 
 
     output_level: -> @output / @output_profile.dyn
 
 
-    activate: ( level ) ->
+    activate: ( level, message_interface ) ->
 
         if isNaN level
             throw new Error("Invalid power level for #{@name}: #{level}")
@@ -83,8 +83,8 @@ class ReactorSystem extends System
         @online = true
 
         # Turns on the power source, operating a the percentage level
-        @output = (Math.min level, @output_profile.max) * @output_profile.dyn
-        @push_power @output
+        @output = Math.min( level, @output_profile.max ) * @output_profile.dyn
+        @push_power @output, message_interface
 
 
     is_online: ->
@@ -227,19 +227,19 @@ class PowerSystem extends System
         Math.min p, @power_thresholds.dyn * @power_thresholds.max
 
 
-    set_system_balance: ( power_balance ) ->
+    set_system_balance: ( power_balance, message_interface ) ->
 
         if power_balance?.length isnt @power_distribution.length
-            throw new Error "Invalid power balance for #{@name}: #{ power_balance }"
+            throw new Error "Invalid power balance for #{ @name }: #{ power_balance }"
 
         if not @is_online() or not @_fuse_on
-            throw new Error "#{@name} Fused: Cannot reallocate power."
+            throw new Error "#{ @name } Fused: Cannot reallocate power."
 
         sum = 0
         sum += p for p in power_balance
         # Rounding errors
         if sum < 0.999999
-            console.log "#{@name}: Power levels don't sum (#{sum})--rebalancing"
+            console.log "#{ @name }: Power levels don't sum (#{ sum })--rebalancing"
             power_balance = (p/sum for p in power_balance)
 
         if sum == 0
@@ -247,13 +247,13 @@ class PowerSystem extends System
                 all zero"
 
         @power_distribution = power_balance
-        @push_power()
+        @push_power undefined, message_interface
 
 
     calculate_new_balance: ( system, power ) ->
 
         i = @attached_systems.indexOf system
-        power_dist = (@input_power * p for p in @power_distribution)
+        power_dist = ( @input_power * p for p in @power_distribution )
         power_dist[ i ] += power
         new_sum = 0
         new_sum += pwr for pwr in power_dist
@@ -323,13 +323,14 @@ class PowerSystem extends System
             power_system_operational: @_fuse_on
 
 
-    push_power: ( input_power ) ->
+    push_power: ( input_power, message_interface ) ->
         ###
         Use the last input power if not given so that the
         function can be called from either a refresh or push
         method
 
         ###
+
 
         if input_power?
             @input_power = input_power
@@ -351,9 +352,13 @@ class PowerSystem extends System
 
         for s, i in @attached_systems
 
+            # power already blown
+            if not s._fuse_on
+                continue
+
             power_level = @power_distribution[ i ]
             power_to_push = power_level * @input_power
-            power_pushed = s.push_power power_to_push
+            power_pushed = s.push_power power_to_push, message_interface
 
             if not power_pushed?
                 throw new Error "Failed to push power to #{ s.name }"
@@ -364,8 +369,7 @@ class PowerSystem extends System
                 #{ power_to_push } MDyn, power report:"
                 console.log do s.power_report
 
-                # This system blew up, cannot push power to it.
-                # Presumably it's now pouring plasma all over itself
+                message_interface "Power blowout to #{ s.name }."
 
 
     is_online: -> @state > System.OPERABILITY_CUTOFF

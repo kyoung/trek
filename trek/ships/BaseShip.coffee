@@ -75,11 +75,10 @@ class BaseShip extends BaseObject
         @_scan_density[ SensorSystem.SCANS.HIGHRES ] = Math.random() * 4
         @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = Math.random() * 4
 
-
-    message: ( type, content ) ->
-
-        console.log "Message to #{ @name } [#{ type }]:"
-        console.log content
+        # Socket messaging wonder
+        @message = ( prefix, type, content ) ->
+            console.log "Message from #{ @name } [#{ type }]:"
+            console.log content
 
 
     set_message_function: ( new_message_function ) -> @message = new_message_function
@@ -211,6 +210,7 @@ class BaseShip extends BaseObject
 
         switch status
             when 'red'
+                @message @prefix_code, "alert", status
                 do @_power_shields
                 do @_power_phasers
                 do @_auto_load_torpedoes
@@ -1419,14 +1419,18 @@ class BaseShip extends BaseObject
             new_primary_balance = primary_power_relay.calculate_new_balance(
                 system, delta_power )
 
+        message = @message
+        prefix = @prefix_code
+        message_interface = ( msg ) -> message prefix, 'power-blowout', msg
+
         # If it's an increase in power, we need to set the new balance first
         # Else we need to dial down the power first
 
         set_new_balance = ->
 
             if parent_eps_relay?
-                parent_eps_relay.set_system_balance new_eps_balance
-            primary_power_relay.set_system_balance new_primary_balance
+                parent_eps_relay.set_system_balance new_eps_balance, message_interface
+            primary_power_relay.set_system_balance new_primary_balance, message_interface
 
 
         power_reactor = ->
@@ -1437,7 +1441,7 @@ class BaseShip extends BaseObject
                 throw new Error "Reactor failed to calculate power requirement
                     for #{ system_name } to #{ pct }, (#{ delta_power })"
 
-            reactor.activate new_level
+            reactor.activate new_level, message_interface
 
         if delta_power > 0
             do set_new_balance

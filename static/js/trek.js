@@ -84,27 +84,41 @@ var trek = (function($, _, Mustache, io) {
 
     function displayBlastDamage () {
 
+        // don't show damage if it's already there
+        var $damageOverlay = $( ".damageOverlay" );
+        if ( $damageOverlay.length > 0 ) { return; }
+
         var $overlay = $( "<div class='damageOverlay overlay'></div>" );
         var $crack = $( "<img src='static/textures/broken-glass0.png' />" );
 
         $overlay.append( $crack );
 
+        document.cookie = "cracked=true";
+
         $( "body" ).append( $overlay );
 
     }
 
-    t.testDamage = displayBlastDamage;
+    t.displayBlastDamage = displayBlastDamage;
 
     t.socket.on( "Display", function( data ) {
 
-        if ( data == "Blast Damage!" ) {
+        switch ( data ) {
+            case "Blast Damage!":
+                displayBlastDamage();
+                break;
+            case "Repair":
 
-            displayBlastDamage();
-
+                break;
         }
 
-    });
+    } );
 
+    t.checkBlastDamage = function () {
+        // catch people trying to reset their window
+        var crackedCookie = document.cookie.replace(/(?:(?:^|.*;\s*)cracked\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        if ( crackedCookie == 'true' ) { displayBlastDamage(); };
+    }
 
     // Audio
     function playAudio ( path, loop ) {
