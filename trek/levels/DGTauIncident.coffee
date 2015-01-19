@@ -305,7 +305,7 @@ class DGTauIncident extends Level
         e.set_coordinate ent_entry_point
         e.set_bearing initial_bearing
         e.set_alignment C.ALIGNMENT.FEDERATION
-        e.set_shields true
+        e.set_alert 'yellow'
         for s in e.shields
             s.charge = 1
         e.set_impulse 0.5
@@ -320,7 +320,7 @@ class DGTauIncident extends Level
         x.set_coordinate lex_entry_point
         x.set_bearing initial_bearing
         x.set_alignment C.ALIGNMENT.FEDERATION
-        x.set_shields true
+        x.set_alert 'yellow'
         for s in x.shields
             s.charge = 1
         x.set_impulse 0.5

@@ -28,9 +28,9 @@ class PhaserSystem extends ChargedSystem
 
         super @name, @deck, @section, PhaserSystem.POWER
         @_repair_reqs = []
-        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = up_to 5
-        @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 30
-        @_repair_reqs[Cargo.WEAPONS_SYSTEMS] = 10
+        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = up_to 2.5
+        @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 15
+        @_repair_reqs[Cargo.WEAPONS_SYSTEMS] = 5
         @charge_time = PhaserSystem.CHARGE_TIME
 
 
@@ -55,7 +55,7 @@ class TorpedoSystem extends System
 
         super @name, @deck, @section, TorpedoSystem.POWER
         @_repair_reqs = []
-        @_repair_reqs[ Cargo.WEAPONS_SYSTEMS ] = 20
+        @_repair_reqs[ Cargo.WEAPONS_SYSTEMS ] = up_to 10
         @loaded = false
         @torpedo_state = TORPEDO_STATUS.EMPTY
         @_autoload = false
@@ -134,9 +134,9 @@ class ShieldSystem extends ChargedSystem
 
         super @name, @deck, @section, @power_thresholds
         @_repair_reqs = []
-        @_repair_reqs[ Cargo.COMPUTER_COMPONENTS ] = up_to 5
-        @_repair_reqs[ Cargo.EPS_CONDUIT ] = up_to 50
-        @_repair_reqs[ Cargo.PHASE_COILS ] = 40
+        @_repair_reqs[ Cargo.COMPUTER_COMPONENTS ] = up_to 2.5
+        @_repair_reqs[ Cargo.EPS_CONDUIT ] = up_to 20
+        @_repair_reqs[ Cargo.PHASE_COILS ] = up_to 10
         @charge_time = ShieldSystem.CHARGE_TIME
 
 

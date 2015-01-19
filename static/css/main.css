@@ -363,6 +363,7 @@ svg.conn-arrow.left, svg.conn-arrow.right {
     background-color: #0F8AA6;
     color: #000;
 }
+
 .ops-crew-beacon.selected {
     -webkit-animation: blink 1s step-end infinite;
     animation: blink 1s step-end infinite;
@@ -405,7 +406,7 @@ svg.conn-arrow.left, svg.conn-arrow.right {
     border: 1px solid #83E589;
 }
 
-.ops-crew-beacon.prisoner {
+.ops-crew-beacon.prisoner, .ops-crew-beacon.prisoner.injured {
     border: 1px solid #7F0600;
     background-color: #7F0600;
 }
@@ -419,7 +420,7 @@ svg.conn-arrow.left, svg.conn-arrow.right {
     background-color: #000;
 }
 
-.ops-crew-beacon.intruder {
+.ops-crew-beacon.intruder, .ops-crew-beacon.intruder.injured {
     border: 1px solid #B30900;
     background-color: #B30900;
 }
@@ -571,6 +572,21 @@ svg.conn-arrow.left, svg.conn-arrow.right {
     top: -6px;
 }
 
+.tactical-shield-charge-frame {
+    width: 200px;
+    height: 10px;
+    margin-left: 20px;
+    border: 1px solid rgba(96, 221, 247, 0.7);
+    display: inline-block;
+}
+
+.tactical-shield-charge {
+    background-color: rgb(96, 221, 247);
+    display: inline-block;
+    line-height: 0.6em;
+    position: relative;
+    top: -6px;
+}
 
 /* Scanners & Science
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
