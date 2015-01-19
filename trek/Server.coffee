@@ -226,8 +226,10 @@ tactical_api = ( prefix, method, command, params ) ->
 
         when 'target'
             switch method
-                when 'put'
-                    game.target prefix, q.target
+                when 'post'
+                    game.target prefix, q.target, q.deck, q.section
+                when 'get'
+                    game.get_target_subsystems prefix
 
         when 'fireTorpedo'
             game.fire_torpedo prefix, q.yield

@@ -2,7 +2,7 @@
 
 {System, ChargedSystem} = require '../BaseSystem'
 {Transporters} = require '../systems/TransporterSystems'
-{ShieldSystem, PhaserSystem, TorpedoSystem} = require '../systems/WeaponSystems'
+{ShieldSystem, PhaserSystem, TorpedoSystem, WeaponsTargetingSystem} = require '../systems/WeaponSystems'
 {WarpSystem} = require '../systems/WarpSystems'
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
@@ -155,11 +155,10 @@ class Constitution extends BaseShip
             System.SICKBAY_POWER )
 
         # Forward Phasers, Deck H
-        @weapons_targeting = new System(
+        @weapons_targeting = new WeaponsTargetingSystem(
             'Weapons Targeting',
             @DECKS.H,
-            @SECTIONS.FORWARD,
-            System.SENSOR_POWER )
+            @SECTIONS.FORWARD )
 
         @communication_array = new CommunicationsSystems(
             'Communications',

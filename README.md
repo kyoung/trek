@@ -174,3 +174,40 @@ Yellow Alert indicates the potential for crisis, and automatically powers up shi
 ### Blue Alert
 A Blue Alert indicates an environmental or operational hazard. In the event of Main Power failure, docking conditions, or radiation hazards, a blue alert indicates hightened caution and operational readiness.
 
+## Gameplay
+Much like SpaceTeam, which inspires Trek, the idea is to require each station to hectically communicate with each other in order accomplish a mission and get everything done. The following should help illustrate:
+
+### Conn
+#### to Tactical
+Conn and Tactical need to speed to coordinate evasive manuovers in battles, as well as alignment for optimal torpedo and phaser strikes, as well as helping turn the ship to avoid excess shield degradation.
+
+#### to Engineering
+Conn and Engineering speak when there's insufficient power to the warp systems, if the inertials dampeners, navigation deflectors, or any of the other systems are offline or insufficiently powered.
+
+#### to Ops
+Conn can let Ops know when destinations are within transporter range, or of approaching hostile vessels, which might prompt Ops to monitor for intruders.
+
+#### to Science
+Conn will need to consult with the Science station for bearings to and sort of sensor reading, as well as local environmental conditions which may impact propulsion.
+
+### Tactical
+#### to Engineering
+Tactical and Engineering need to work together to ensure that shield, phaser, and SIF power are appropriately allocated during emergencies. If one of these systems are inoperable, then tactical will need to know to plan accordingly.
+
+#### to Ops
+Tactical also controls communications, and will need to coordinate with Ops for matters of transporter control.
+
+#### to Science
+In order to cary out sub-system scanning, tactical requires science officers to perform detailed scans of targets.
+
+### Engineering
+#### to Ops
+Engineering and Ops will have to work closely together to coordinate system repairs. Although engineering can identify damaged systems, ops has to assign repair teams to them.
+
+#### to Science
+Science officers let Engineering know of changes to environmental conditions, which might impact the need for power balancing. Additionally, if science officers are intending to perform long-range scans, they should let Engineering know to boost power to sensor arrays.
+
+### Ops
+#### to Science
+If science detects an environmental hazard onboard the ship, it falls to Ops to evacuate the affected decks. Additionally, if Ops intends to transport personnel or cargo, Science stations will have to first perform a detailed scan.
+

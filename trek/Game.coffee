@@ -284,10 +284,13 @@ class Game
     get_shield_status: ( prefix ) -> do @ships[ prefix ].shield_report
 
 
-    target: ( prefix, name ) ->
+    target: ( prefix, name, deck, section ) ->
 
-        target = (s for s in @game_objects when s.name == name)[0]
-        @ships[ prefix ].set_target target
+        target = ( s for s in @game_objects when s.name == name )[ 0 ]
+        @ships[ prefix ].set_target target, deck, section
+
+
+    get_target_subsystems: ( prefix ) -> do @ships[ prefix ].get_target_subsystems
 
 
     fire_phasers: ( prefix ) -> do @ships[ prefix ].fire_phasers
@@ -555,7 +558,9 @@ class Game
         # NM. It has to be, or you wouldn't have gotten the passive scan
         # TODO: validate that assumption later
 
-        s.add_scanned_object target
+        # TODO: Demeter says don't do this... expose a public method to get this info
+        if not target._are_all_shields_up? or not do target._are_all_shields_up
+            s.add_scanned_object target
 
         if target.get_system_scan?
             return do target.get_system_scan

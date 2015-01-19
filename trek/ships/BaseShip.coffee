@@ -59,7 +59,6 @@ class BaseShip extends BaseObject
 
         @impulse = 0
         @warp_speed = 0
-        @weapons_target = null
         @navigation_target = null
         @set_shields false
         @alive = true
@@ -239,16 +238,31 @@ class BaseShip extends BaseObject
                 @set_power_to_system @secondary_SIF.name, SIFSystem.SECONDARY_POWER_PROFILE.min * 1.1
 
 
-    set_target: ( target ) ->
+    set_target: ( target, deck, section ) ->
 
-        if not @weapons_targeting.is_online()
+        if not do @weapons_targeting.is_online
             throw new Error "Weapons Targeting systems offline."
 
-        @weapons_target = target
+        @weapons_targeting.set_target target, deck, section
 
 
+    get_target_subsystems: ->
 
-    fire_phasers: (target=@weapons_target) ->
+        ###
+        Returns the name, deck, and section of all systems on a weapon's target
+
+        ###
+
+        if not @weapons_targeting.target?
+            throw new Error "No weapons target selected."
+
+        if not ( @weapons_targeting.target in @_logged_scanned_items )
+            throw new Error "Cannot target subsystems until a detailed scan has been completed."
+
+        ( { name : s.name, deck : s.deck, section: s.section } for s in @weapons_targeting.target.systems )
+
+
+    fire_phasers: ( target=@weapons_targeting.target ) ->
 
         if target is null
             throw new Error 'No target selected'
@@ -279,7 +293,7 @@ class BaseShip extends BaseObject
         intensity = PhaserSystem.DAMAGE * do phaser.energy_level
         phaser.charge_down phaser.energy_level(), true
 
-        target.process_phaser_damage @position, intensity
+        target.process_phaser_damage @position, intensity, @weapons_targeting.target_deck, @weapons_targeting.target_section
 
         return 'OK'
 
@@ -299,10 +313,10 @@ class BaseShip extends BaseObject
 
     fire_torpedo: ( yield_level='16' ) ->
 
-        if @weapons_target is null
+        if @weapons_targeting.target is null
             throw new Error 'Cannot fire without a target: Set target first'
 
-        bearing_to_target = U.bearing @, @weapons_target
+        bearing_to_target = U.bearing @, @weapons_targeting.target
         quadrant = @calculate_quadrant_from_bearing bearing_to_target
         loaded_tubes = ( tube for tube in @torpedo_banks when tube.is_loaded() and tube.section_bearing == quadrant )
         if loaded_tubes.length == 0
@@ -316,7 +330,7 @@ class BaseShip extends BaseObject
         if @torpedo_inventory <= 0
             throw new Error 'Torpedo inventory depleted'
 
-        torpedo = tube.fire( @weapons_target, yield_level, @position )
+        torpedo = tube.fire( @weapons_targeting.target, yield_level, @position )
 
         if @warp_speed > 0
             torpedo.fire_at_warp @warp_speed
@@ -356,7 +370,7 @@ class BaseShip extends BaseObject
 
         report =
             torpedo_inventory: @torpedo_inventory
-            weapons_target: @weapons_target?.name
+            weapons_target: @weapons_targeting.target?.name
             shields_status: shield_up
             shield_report: report
             alert_status: @alert
@@ -1612,8 +1626,8 @@ class BaseShip extends BaseObject
 
     clear_ships: ( ship_prefix ) ->
 
-        if @weapons_target.prefix_code == ship_prefix
-            @weapons_target = null
+        if @weapons_targeting.target.prefix_code == ship_prefix
+            do @weapons_targeting.clear
 
 
     _are_all_shields_up: ->

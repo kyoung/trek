@@ -21,6 +21,7 @@
             </div>
             <ul class="menu x1">
                 <li class="blue" id="setTarget">Select Target</li>
+                <li class="blue" id="setSubTarget">System Targeting</li>
             </ul>
         </div>
 
@@ -264,8 +265,6 @@ function getAlertState () {
 
     updateAlertStatus = function ( alert ) {
 
-        console.log( alert );
-
         $alerts.removeClass( 'lightblue' );
 
         switch ( alert ) {
@@ -351,8 +350,6 @@ function getPhaserStatus () {
 
 
 function displayPhaserStatus ( data ) {
-
-    console.log( data );
 
     var tmpl = "<div><p class='descriptiveText'>{{ name }}</p><div class='tactical-phaser-charge-frame'><span class='tactical-phaser-charge' style='width: {{ width }}%;'>&nbsp;</span></div></div>";
 
@@ -464,30 +461,82 @@ $yieldBars.mouseover( function () {
 /* Target management
 ------------------------------------------------*/
 
-function updateTarget () {
+function updateTarget ( subsystem ) {
+
+    var system = arguments.length > 0 ? " (" + subsystem + ")" : "";
 
     if ( typeof weaponsTarget != 'undefined' ) {
 
-        $targetName.html( weaponsTarget.replace( /_/g, " " ) );
+        $targetName.html( weaponsTarget.replace( /_/g, " " ) + system );
 
     }
 
 };
 
 
+function getSubsystems () {
+
+    if ( typeof weaponsTarget == 'undefined' ) {
+
+        trek.displayRed( "Select a weapons target before subsystems" );
+        return;
+
+    }
+
+    trek.api( "tactical/target", parseTargetData );
+
+}
+$( "#setSubTarget" ).click( getSubsystems );
+
+
+function parseTargetData ( targetData ) {
+
+    console.log( targetData );
+    $flyoutMenu.empty();
+    var $submenu = $( "<ul class='menu x1'></ul>" );
+    var subTargetTemplate = "<li class='green' id='{{ name }}'>{{ name }}: Deck {{ deck }}, Section {{ section }}</li>";
+
+    _.each( targetData, function ( e ) {
+
+        var $subsystem = $( Mustache.render( subTargetTemplate, e ) );
+        $subsystem.click( function () {
+
+            updateTarget( e.name );
+
+            trek.api(
+                "tactical/target",
+                { target : this.id, deck : e.deck, section : e.section },
+                'POST',
+                updateState );
+
+            $flyoutMenu.empty();
+
+        } );
+
+        $submenu.append( $subsystem );
+
+    } );
+
+    $flyoutMenu.append( $submenu );
+
+}
+
 
 function buildTargetMenu ( scanData ) {
 
+
+    $flyoutMenu.empty();
     var submenu = $( "<ul class='menu x1'></ul>" );
+    var targetTemplate = "<li class='green' id='{{ name }}'>{{ prettyName }}</li>";
 
     _.each( scanData, function ( s ) {
 
         if ( s.name == shipName ) { return; }
 
-        var prettyName = s.name.replace( /_/g, " " );
-        var trgt = $("<li class='green' id='" + s.name + "'>" + prettyName + "</li>");
+        s.prettyName = s.name.replace( /_/g, " " );
+        var $target = $( Mustache.render( targetTemplate, s ) );
 
-        trgt.click( function () {
+        $target.click( function () {
 
             weaponsTarget = this.id;
             updateTarget();
@@ -495,14 +544,14 @@ function buildTargetMenu ( scanData ) {
             trek.api(
                 "tactical/target",
                 { target : this.id },
-                'PUT',
+                'POST',
                 updateState );
 
-            $flyoutMenu.html( "" );
+            $flyoutMenu.empty();
 
         } );
 
-        submenu.append( trgt );
+        submenu.append( $target );
 
     } );
 
@@ -511,11 +560,7 @@ function buildTargetMenu ( scanData ) {
 };
 
 
-function getTargets () {
-
-    trek.api( "tactical/scan", buildTargetMenu );
-
-}
+function getTargets () { trek.api( "tactical/scan", buildTargetMenu ); }
 
 
 $setTarget.click( getTargets );
@@ -565,8 +610,6 @@ function toggleShields () {
 
     var set_online = $shieldSwitch.hasClass( "lightgreen" ) ? false: true;
 
-    console.log( "Setting shields: " + set_online );
-
     trek.api(
         "tactical/shields",
         { online : set_online },
@@ -577,8 +620,6 @@ function toggleShields () {
 
 
 function parseShieldState ( data ) {
-
-    console.log( data );
 
     shieldTemplate = "<div><p class='descriptiveText'>{{ name }}</p><div class='tactical-shield-charge-frame'><span class='tactical-shield-charge' style='width: {{ width }}%;'>&nbsp;</span></div></div>";
     $shieldListing.empty();

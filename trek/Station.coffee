@@ -261,12 +261,74 @@ class Station extends BaseObject
         matching_teams[0].origin_party
 
 
-    get_lifesigns: ->
-        r = @crew
+    get_lifesigns: -> @crew
 
 
-    _are_all_shields_up: ->
-        false
+    _are_all_shields_up: -> false
+
+
+    process_phaser_damage: ( from_point, energy, target_level, target_section ) =>
+
+        sections = @calculate_sections from_point
+        if target_section? and target_section in sections
+            section = target_section
+        else
+            section = sections[ Math.floor( Math.random() * sections.length ) ]
+
+        if not target_level?
+            level_list = ( k for k, v of LEVELS )
+            level_i = Math.floor( Math.random() * level_list.length )
+            target_level = deck_list[ level_i ]
+
+        shield = @shields
+        damage = energy
+        if shield.active and do shield.is_online
+            damage = shield.hit energy
+        else
+            #console.log "Shields down!"
+
+        #console.log "Phaser damage on level #{ target_level } section #{ section }: energy level: #{ energy }. Passthrough damage: #{ damage }"
+
+        system_passthrough = @_damage_hull [ target_level ], section, damage
+
+        section_systems = ( s for s in @systems when s.section == section and s.deck == target_level )
+
+        for sys in section_systems
+            sys.damage system_passthrough
+
+        do @_check_if_still_alive
+
+
+    _damage_hull: ( levels, section, damage ) ->
+
+        #console.log "[#{ @name }] Hull damage: #{damage} deck #{ decks } section #{ section }"
+
+        hull_strength = C.STATION_HULL_STRENGTH
+        damage_as_pct = damage / hull_strength
+
+        # No SIFs on stations (?)
+
+        # Divide the damage among the decks
+        damage_per_deck = damage / levels.length
+        damage_pct_per_deck = damage_per_deck / hull_strength
+        for d in levels
+            @hull[ d ][ section ] -= damage_pct_per_deck * ( 0.5 + 0.5 * do Math.random )
+            @hull[ d ][ section ] = Math.max 0, @hull[ d ][ section ]
+
+            if @hull[ d ][ section ] == 0
+
+                #console.log "    Hull breach! Deck #{ d } Section #{ section }"
+                @process_casualties d, section
+
+                # the remaining damage applies to the other sections
+                other_sections = ( v for k, v of SECTIONS when v isnt section )
+                for s in other_sections
+                    @hull[ d ][ s ] -= damage_pct_per_deck / Object.keys( SECTIONS ).length
+                    @hull[ d ][ s ] = Math.max 0, @hull[ d ][ s ]
+                    if @hull[ d ][ s ] == 0
+                        @process_casualties d, s
+
+        return passed_damage
 
 
     process_blast_damage: ( position, power, message_callback ) ->

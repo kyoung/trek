@@ -14,6 +14,25 @@ TORPEDO_STATUS =
     OFFLINE: "Offline"
 
 
+class WeaponsTargetingSystem extends System
+
+    @POWER = { min : 0.1, max : 1.7, dyn : 1e4 }
+
+    constructor: ( @name, @deck, @section ) ->
+
+        super @name, @deck, @section, WeaponsTargetingSystem.POWER
+
+
+    set_target: ( @target, @target_deck, @target_section ) -> @target
+
+    clear: ->
+
+        @target = undefined
+        @target_deck = undefined
+        @target_section = undefined
+
+
+
 class PhaserSystem extends ChargedSystem
 
     @POWER = { min : 0.2, max : 1.8, dyn : 1e4 }
@@ -200,3 +219,4 @@ class ShieldSystem extends ChargedSystem
 exports.PhaserSystem = PhaserSystem
 exports.TorpedoSystem = TorpedoSystem
 exports.ShieldSystem = ShieldSystem
+exports.WeaponsTargetingSystem = WeaponsTargetingSystem

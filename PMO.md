@@ -17,7 +17,7 @@ Responses that involve a timeout (eg a system scan), will return response object
 ## Power Systems
 Power in Trek is measured units called Dynes. All major systems operate in Megadynes, and so all power units are expressed in MDyn.
 
-# Tech debt and refactoring
+# Tech debt and refactoring: TODO Before v.1.0 can be declared
 - [ ] Consolidated CSS
   - [ ] Also, refactor to use stylus
 - [ ] Class-selector CSS
@@ -30,6 +30,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Consolidate the endpoints so that it's not just one method per url
 - [x] Reduce the use of Constants
   - Rely more on class variables for these things
+- [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md
 
 # Current Sprint
 - [ ] Tactical
@@ -42,13 +43,14 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 ## Hotfix
 - [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
-  - [ ] Differentiating injurred prisonners from intruders gets tricky... this is bad in an emergency
 - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
 - [ ] Engineering primary relay charge readout fails to auto-updated
+- [ ] Resolution bar in science scans seems broken
+- [ ] Detailed scans of objects with their shields up is a little patchy... I fixed this I think, but it should be tested and refactored
 
 # Backlog
 ## Next Sprint
-- [ ] Develope station-cross-talk matrix
+- [x] Develope station-cross-talk matrix
   - We want to know why Station A needs to talk to Station B, and create as many of those cross-talk opportunities as possible, like Space Team
 - [ ] Navigation
   - [ ] Thruster manuvering
@@ -58,6 +60,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [x] Healing from medics
   - [x] Heal crews in sickbay
   - [ ] Repair teams should be able to fix bridge damage
+  - [ ] Engineering teams should limit/prevent overdrive damage
+  - [ ] Science teams should ...
   - [ ] Game over if crew is dead
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
