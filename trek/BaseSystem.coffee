@@ -55,8 +55,8 @@ class System
 
         # materials required to repair
         @_repair_reqs = []
-        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = 10
-        @_repair_reqs[Cargo.EPS_CONDUIT] = 5
+        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = up_to 5
+        @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 2
         # Power to the system, in megadynes
         @power = 0
 
@@ -115,9 +115,9 @@ class System
         diff = @power - @power_thresholds.dyn
         diff_pct = diff / ( ( @power_thresholds.max - 1 ) * @power_thresholds.dyn )
 
-        # For every minute this system is running at this power level
+        # For every five minutes this system is running at this power level
         # the status should be damaged accordingly
-        minutes = delta_t_ms / ( 60 * 1000 )
+        minutes = delta_t_ms / ( 5 * 60 * 1000 )
         damage_from_overdrive = diff_pct * minutes * System.STRENGTH
         @damage damage_from_overdrive
 
@@ -268,9 +268,9 @@ class ChargedSystem extends System
         @active = false
 
         @_repair_reqs = []
-        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = up_to 20
-        @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 40
-        @_repair_reqs[Cargo.PHASE_COILS] = 30
+        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = up_to 10
+        @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 20
+        @_repair_reqs[Cargo.PHASE_COILS] = up_to 10
 
 
     bring_online: ->

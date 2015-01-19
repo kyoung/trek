@@ -37,14 +37,14 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [x] Phaser screen should indicate charge buildup of each bank
     - [x] *Bug* Phasers won't fire
   - [ ] Targeting will need to have subsection targeting
-  - [ ] Shield screen should indicate the strength, charge, and status of each shield
+  - [x] Shield screen should indicate the strength, charge, and status of each shield
 
-- [ ] Hotfix
-  - [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
-  - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
-  - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
-  - [ ] Engineering primary relay charge readout fails to auto-updated
-  - [ ] Tactical screen has stopped displaying names
+## Hotfix
+- [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
+- [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
+  - [ ] Differentiating injurred prisonners from intruders gets tricky... this is bad in an emergency
+- [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
+- [ ] Engineering primary relay charge readout fails to auto-updated
 
 # Backlog
 ## Next Sprint

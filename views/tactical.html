@@ -123,6 +123,8 @@
             <ul class="menu x1">
                 <li class="green" id="raiseShields">Raise Shields</li>
             </ul>
+            <div id="shieldListing">
+            </div>
         </div>
 
         <div id="flyoutMenu" class="tactical-flyout"></div>
@@ -164,6 +166,7 @@ var $alertSubmenu = $( "#alertSubmenu" );
 
 var $alerts = $( "#alertSubmenu li" );
 
+var $shieldListing = $( "#shieldListing" );
 var $torpedoBays = $( "#torpedoBays" );
 var $yieldBars = $( '.yieldBar' );
 var $zoomBars = $( '.zoomBar' );
@@ -577,10 +580,16 @@ function parseShieldState ( data ) {
 
     console.log( data );
 
+    shieldTemplate = "<div><p class='descriptiveText'>{{ name }}</p><div class='tactical-shield-charge-frame'><span class='tactical-shield-charge' style='width: {{ width }}%;'>&nbsp;</span></div></div>";
+    $shieldListing.empty();
+
     var are_online = false;
     _.each( data, function ( e ) {
 
         are_online = are_online || ( e.online && e.active )
+        e.width = e.charge * 100;
+        var $shieldReading = $( Mustache.render( shieldTemplate, e ) );
+        $shieldListing.append( $shieldReading );
 
     } );
 
@@ -608,6 +617,7 @@ function getShieldStatus () {
 }
 
 
+setInterval( getShieldStatus, 1000 );
 $shieldSwitch.click( toggleShields );
 
 
