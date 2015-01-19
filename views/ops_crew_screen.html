@@ -56,8 +56,15 @@ function determineCrewClass ( crew ) {
     // Invader or Prisoner
     if ( crew.alignment != alignment ) {
 
-        // Prisoner itself is already a status, and thus already set
-        if ( crew.status != "prisoner" ) { class_ = "intruder"; }
+        if ( crew.status != "prisoner" ) {
+
+            class_ = "intruder";
+
+        } else {
+
+            class_ = "prisoner";
+
+        }
         return class_;
 
     }
