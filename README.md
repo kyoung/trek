@@ -202,7 +202,7 @@ In order to cary out sub-system scanning, tactical requires science officers to 
 
 ### Engineering
 #### to Ops
-Engineering and Ops will have to work closely together to coordinate system repairs. Although engineering can identify damaged systems, ops has to assign repair teams to them.
+Engineering and Ops will have to work closely together to coordinate system repairs. Although engineering can identify damaged systems, ops has to assign repair teams to them. Additionally, if Engineering intends to push a system into override, they had best get engineering teams assigned to those systems to mitigate damage.
 
 #### to Science
 Science officers let Engineering know of changes to environmental conditions, which might impact the need for power balancing. Additionally, if science officers are intending to perform long-range scans, they should let Engineering know to boost power to sensor arrays.

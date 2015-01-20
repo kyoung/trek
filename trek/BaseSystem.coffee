@@ -105,6 +105,9 @@ class System
 
     update_system: ( delta_t_ms, engineering_locations ) ->
 
+        if not engineering_locations?
+            engineering_locations = []
+
         engineers_in_position = ( c for c in engineering_locations when c.deck is @deck and c.section is @section )
 
         if @power > @power_thresholds.dyn and engineers_in_position.length is 0
@@ -316,6 +319,9 @@ class ChargedSystem extends System
 
 
     update_system: ( delta_t_ms, engineering_locations ) ->
+
+        if not engineering_locations?
+            engineering_locations = []
 
         super delta_t_ms, engineering_locations
         @charge_up delta_t_ms

@@ -37,8 +37,12 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [x] Healing from medics
   - [x] Heal crews in sickbay
   - [ ] Repair teams should be able to fix bridge damage
-  - [ ] Engineering teams should limit/prevent overdrive damage
+    - [ ] The bridge has to be a system
+    - [ ] Damage to consoles gets dolled out from here
+  - [x] Engineering teams should limit/prevent overdrive damage
   - [ ] Science teams should ...
+    - [ ] Figure out what science teams should be able to actually do
+      - Should be required for the mission profile: this is in keeping with cannon
   - [ ] Game over if crew is dead
 
 ## Hotfix
