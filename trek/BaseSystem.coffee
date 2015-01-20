@@ -103,9 +103,11 @@ class System
         return 0
 
 
-    update_system: ( delta_t_ms ) ->
+    update_system: ( delta_t_ms, engineering_locations ) ->
 
-        if @power > @power_thresholds.dyn
+        engineers_in_position = ( c for c in engineering_locations when c.deck is @deck and c.section is @section )
+
+        if @power > @power_thresholds.dyn and engineers_in_position.length is 0
             @_calculate_overdrive_damage delta_t_ms
 
 
@@ -313,9 +315,9 @@ class ChargedSystem extends System
         return 0
 
 
-    update_system: ( delta_t_ms ) ->
+    update_system: ( delta_t_ms, engineering_locations ) ->
 
-        super delta_t_ms
+        super delta_t_ms, engineering_locations
         @charge_up delta_t_ms
 
 

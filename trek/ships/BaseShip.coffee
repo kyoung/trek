@@ -1664,7 +1664,10 @@ class BaseShip extends BaseObject
 
         @_calculate_motion delta
         @_calculate_environment delta
-        @_update_system_state delta
+
+        engineering_locations = ( { deck : c.deck, section : c.section } for c in @internal_personnel when c.description is "Engineering Team" and not do c.is_enroute )
+        @_update_system_state delta, engineering_locations
+
         @_update_crew delta
 
         if world_scan?
@@ -1707,7 +1710,7 @@ class BaseShip extends BaseObject
         ## subspace warping signals to the nav computer to stop warp
 
 
-    _update_system_state: ( delta_t ) -> s.update_system( delta_t ) for s in @systems
+    _update_system_state: ( delta_t, eng_locations ) -> s.update_system( delta_t, eng_locations ) for s in @systems
 
 
     _update_crew: ( delta_t ) ->
