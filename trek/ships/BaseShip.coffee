@@ -1665,7 +1665,7 @@ class BaseShip extends BaseObject
         @_update_system_state delta
         @_update_crew delta
 
-        if world_scan isnt undefined
+        if world_scan?
             @_update_scanners world_scan, now
 
 

@@ -369,7 +369,7 @@ class PowerSystem extends System
                 #{ power_to_push } MDyn, power report:"
                 console.log do s.power_report
 
-                message_interface "Power blowout to #{ s.name }."
+                if message_interface? then message_interface "Power blowout to #{ s.name }."
 
 
     is_online: -> @state > System.OPERABILITY_CUTOFF

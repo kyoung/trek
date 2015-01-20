@@ -30,7 +30,7 @@ exports.GameTest =
 
         # fire torpedoes
         game.target ent.prefix_code, rel.name
-        test.ok ent.weapons_target, 'Enterprise target not set'
+        test.ok ent.weapons_targeting.target, 'Enterprise target not set'
 
         t1 = new Date().getTime()
         # # Set course to bear on target

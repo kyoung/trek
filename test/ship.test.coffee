@@ -85,9 +85,9 @@ exports.ShipTest =
         target = new Constitution
 
         s.set_target target
-        test.ok s.weapons_target.position?,
+        test.ok s.weapons_targeting.target.position?,
             "Failed to read target position"
-        test.ok s.weapons_target.velocity?,
+        test.ok s.weapons_targeting.target.velocity?,
             "Failed to read target velocity"
 
         do test.done
@@ -211,19 +211,19 @@ exports.ShipTest =
 
         #console.log "Sending initial crew over to #{ r.name }"
         e.transport_crew bp.id, e, bp.deck, bp.section, r, 'E', 'Forward'
-        test.ok bp in r.guests, "Failed to send a boarding party to #{ r.name }"
+        test.ok bp in r.internal_personnel, "Failed to send a boarding party to #{ r.name }"
 
         #console.log "Retrieving boarding party from r"
         e.transport_crew bp.id, r, 'E', 'Forward', e
-        test.ok bp in e.security_teams && bp not in r.guests, 'Failed to retrieve away team from #{ r.name }'
+        test.ok bp in e.internal_personnel && bp not in r.internal_personnel, 'Failed to retrieve away team from #{ r.name }'
 
         #console.log "Beaming crew to Station"
         e.transport_crew bp.id, e, bp.deck, bp.section, s, '1', '1'
-        test.ok bp not in e.security_teams && bp in s.crew, "Failed to send over boarding party to #{ s.name }"
+        test.ok bp not in e.internal_personnel && bp in s.crew, "Failed to send over boarding party to #{ s.name }"
 
         #console.log "Retrieving crew from station"
         e.transport_crew bp.id, s, '1', '1', e
-        test.ok bp in e.security_teams && bp not in s.crew, 'Failed to retrieve away team from station #{ s.name }'
+        test.ok bp in e.internal_personnel && bp not in s.crew, 'Failed to retrieve away team from station #{ s.name }'
 
         do test.done
 
@@ -245,16 +245,16 @@ exports.ShipTest =
             starting_eps += inventory[ Cargo.EPS_CONDUIT ]
 
         e.assign_repair_crews e.impulse_drive.name, 1, true
-        final_inventory = do e.get_cargo_status
 
+        final_inventory = do e.get_cargo_status
         final_computer = 0
         final_eps = 0
         for bay, inventory of final_inventory
             final_computer += inventory[ Cargo.COMPUTER_COMPONENTS ]
             final_eps += inventory[ Cargo.EPS_CONDUIT ]
 
-        test.ok final_computer < starting_computer
-        test.ok final_eps < starting_eps
+        test.ok final_computer < starting_computer, "Failed to consume computer components"
+        test.ok final_eps < starting_eps, "Failed to consume EPS components"
 
         check_repair = ->
             test.ok e.impulse_drive.state == 1, "Impulse drive failed to repair. State: #{e.impulse_drive.state}"
