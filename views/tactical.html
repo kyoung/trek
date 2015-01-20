@@ -201,6 +201,7 @@ $menues.click( function () {
 } );
 
 $torpedoMenu.click( showTorpedoMenu );
+
 function showTorpedoMenu () {
 
     setTacticalDisplay();
@@ -467,7 +468,6 @@ function updateTarget ( deck, section ) {
 
     if ( deck == 'undefined' || deck == undefined ) { system = ""; } else { console.log( deck ) }
 
-
     if ( typeof weaponsTarget != 'undefined' ) {
 
         $targetName.html( weaponsTarget.replace( /_/g, " " ) + system );
@@ -503,6 +503,7 @@ function parseTargetData ( targetData ) {
 
         var $subsystem = $( Mustache.render( subTargetTemplate, e ) );
         $subsystem.click( function () {
+
 
             updateTarget( e.deck, e.section );
 
@@ -690,6 +691,7 @@ function parseTacticalState( data ){
     };
 
     updateTarget( data.weapons_target_deck, data.weapons_target_section );
+
     updateTorpedo();
 
 };

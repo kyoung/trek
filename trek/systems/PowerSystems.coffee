@@ -372,6 +372,7 @@ class PowerSystem extends System
                 if message_interface? then message_interface "Power blowout to #{ s.name }."
 
 
+
     is_online: -> @state > System.OPERABILITY_CUTOFF
 
 

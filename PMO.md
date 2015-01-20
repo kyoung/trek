@@ -50,8 +50,11 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Detailed scans of objects with their shields up is a little patchy... I fixed this I think, but it should be tested and refactored
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
 
+
 # Backlog
 ## Next Sprint
+- [x] Develope station-cross-talk matrix
+  - We want to know why Station A needs to talk to Station B, and create as many of those cross-talk opportunities as possible, like Space Team
 - [ ] Navigation
   - [ ] Thruster manuvering
     - required for phaser combat
@@ -433,7 +436,7 @@ Feedback taken from real user testing
   - [x] Systems should be damaged more than they currently are from over use
   - [x] EPS blowout status needs much better visual representation
     - [x] include sound effect and cracked screen as well
- 
+
 ## v 0.15 Tactical Upgrade [COMPLETE]
 - [x] Tactical
   - [x] Breakout the phaser, torpedo, targeting, alert, and comms screens

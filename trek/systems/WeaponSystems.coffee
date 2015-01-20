@@ -23,10 +23,8 @@ class WeaponsTargetingSystem extends System
         super @name, @deck, @section, WeaponsTargetingSystem.POWER
 
 
-    set_target: ( @target, @target_deck, @target_section ) ->
+    set_target: ( @target, @target_deck, @target_section ) -> @target
 
-        console.log "#{ @name } setting target: #{ @target.name } ( #{ @target_deck }, #{ @target_section } )"
-        @target
 
     clear: ->
 

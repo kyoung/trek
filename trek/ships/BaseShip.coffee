@@ -350,14 +350,11 @@ class BaseShip extends BaseObject
         return r
 
 
-    shield_report: ->
-
-        r = ( do s.shield_report for s in @shields )
+    shield_report: -> ( do s.shield_report for s in @shields )
 
 
-    phaser_report: ->
+    phaser_report: -> ( do s.power_report for s in @phasers )
 
-        r = ( do s.power_report for s in @phasers )
 
     tactical_report: ->
 
