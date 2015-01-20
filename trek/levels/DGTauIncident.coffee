@@ -308,7 +308,7 @@ class DGTauIncident extends Level
         e.set_alert 'yellow'
         for s in e.shields
             s.charge = 1
-        e.set_impulse 0.5
+        # e.set_impulse 0.5
         e.enter_captains_log @enterprise_logs[ 0 ]
         @ships[ e.prefix_code ] = e
 
@@ -334,7 +334,10 @@ class DGTauIncident extends Level
 
         @stations = []
         for i in [1..10]
-            s = new Station "Outpost_#{i}", do @_random_start_position
+            true for pre, e of @ships
+            p = if i == 1 then e.position else do @_random_start_position
+            p = { x : p.x + 3000, y : p.y, z : 0 }
+            s = new Station "Outpost_#{i}", p
             s.star_system = system
             s.set_alignment C.ALIGNMENT.FEDERATION
             do s.shields.power_on

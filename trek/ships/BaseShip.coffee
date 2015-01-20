@@ -371,6 +371,8 @@ class BaseShip extends BaseObject
         report =
             torpedo_inventory: @torpedo_inventory
             weapons_target: @weapons_targeting.target?.name
+            weapons_target_deck: @weapons_targeting.target_deck
+            weapons_target_section: @weapons_targeting.target_section
             shields_status: shield_up
             shield_report: report
             alert_status: @alert

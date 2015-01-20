@@ -270,7 +270,7 @@ class Station extends BaseObject
     process_phaser_damage: ( from_point, energy, target_level, target_section ) =>
 
         sections = @calculate_sections from_point
-        if target_section? and target_section in sections
+        if target_section?
             section = target_section
         else
             section = sections[ Math.floor( Math.random() * sections.length ) ]
@@ -285,9 +285,9 @@ class Station extends BaseObject
         if shield.active and do shield.is_online
             damage = shield.hit energy
         else
-            #console.log "Shields down!"
+            console.log "Shields down!"
 
-        #console.log "Phaser damage on level #{ target_level } section #{ section }: energy level: #{ energy }. Passthrough damage: #{ damage }"
+        console.log "Phaser damage on level #{ target_level } section #{ section }: energy level: #{ energy }. Passthrough damage: #{ damage }"
 
         system_passthrough = @_damage_hull [ target_level ], section, damage
 
@@ -328,7 +328,7 @@ class Station extends BaseObject
                     if @hull[ d ][ s ] == 0
                         @process_casualties d, s
 
-        return passed_damage
+        return damage
 
 
     process_blast_damage: ( position, power, message_callback ) ->

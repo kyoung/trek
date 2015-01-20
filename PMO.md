@@ -33,29 +33,6 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md
 
 # Current Sprint
-- [ ] Tactical
-  - [x] Breakout the phaser, torpedo, targeting, alert, and comms screens
-  - [x] Phaser screen should indicate charge buildup of each bank
-    - [x] *Bug* Phasers won't fire
-  - [ ] Targeting will need to have subsection targeting
-  - [x] Shield screen should indicate the strength, charge, and status of each shield
-
-## Hotfix
-- [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
-- [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
-- [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
-- [ ] Engineering primary relay charge readout fails to auto-updated
-- [ ] Resolution bar in science scans seems broken
-- [ ] Detailed scans of objects with their shields up is a little patchy... I fixed this I think, but it should be tested and refactored
-
-# Backlog
-## Next Sprint
-- [x] Develope station-cross-talk matrix
-  - We want to know why Station A needs to talk to Station B, and create as many of those cross-talk opportunities as possible, like Space Team
-- [ ] Navigation
-  - [ ] Thruster manuvering
-    - required for phaser combat
-  - [ ] Navigation status display
 - [ ] Crew interactions
   - [x] Healing from medics
   - [x] Heal crews in sickbay
@@ -63,6 +40,22 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Engineering teams should limit/prevent overdrive damage
   - [ ] Science teams should ...
   - [ ] Game over if crew is dead
+
+## Hotfix
+- [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
+- [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
+- [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
+- [ ] Engineering primary relay charge readout fails to auto-updated
+- [ ] Resolution bar in science scans is broken
+- [ ] Detailed scans of objects with their shields up is a little patchy... I fixed this I think, but it should be tested and refactored
+- [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
+
+# Backlog
+## Next Sprint
+- [ ] Navigation
+  - [ ] Thruster manuvering
+    - required for phaser combat
+  - [ ] Navigation status display
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
 ## Backlog For Breakout
@@ -440,3 +433,11 @@ Feedback taken from real user testing
   - [x] Systems should be damaged more than they currently are from over use
   - [x] EPS blowout status needs much better visual representation
     - [x] include sound effect and cracked screen as well
+ 
+## v 0.15 Tactical Upgrade [COMPLETE]
+- [x] Tactical
+  - [x] Breakout the phaser, torpedo, targeting, alert, and comms screens
+  - [x] Phaser screen should indicate charge buildup of each bank
+    - [x] *Bug* Phasers won't fire
+  - [x] Targeting will need to have subsection targeting
+  - [x] Shield screen should indicate the strength, charge, and status of each shield

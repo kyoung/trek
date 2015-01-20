@@ -461,9 +461,12 @@ $yieldBars.mouseover( function () {
 /* Target management
 ------------------------------------------------*/
 
-function updateTarget ( subsystem ) {
+function updateTarget ( deck, section ) {
 
-    var system = arguments.length > 0 ? " (" + subsystem + ")" : "";
+    var system = arguments.length > 0 ? " (deck " + deck + " section " + section + ")" : "";
+
+    if ( deck == 'undefined' || deck == undefined ) { system = ""; } else { console.log( deck ) }
+
 
     if ( typeof weaponsTarget != 'undefined' ) {
 
@@ -501,11 +504,11 @@ function parseTargetData ( targetData ) {
         var $subsystem = $( Mustache.render( subTargetTemplate, e ) );
         $subsystem.click( function () {
 
-            updateTarget( e.name );
+            updateTarget( e.deck, e.section );
 
             trek.api(
                 "tactical/target",
-                { target : this.id, deck : e.deck, section : e.section },
+                { target : weaponsTarget, deck : e.deck, section : e.section },
                 'POST',
                 updateState );
 
@@ -686,7 +689,7 @@ function parseTacticalState( data ){
         $alertStatus.removeClass("red");
     };
 
-    updateTarget();
+    updateTarget( data.weapons_target_deck, data.weapons_target_section );
     updateTorpedo();
 
 };
