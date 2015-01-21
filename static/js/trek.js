@@ -91,7 +91,23 @@ var trek = (function($, _, Mustache, io) {
 
 
     // Battle damage
-    var damageHandlers = [];
+
+    var screenName = "";
+
+    function registerDisplay ( screenName ) {
+
+        // set the screenName var
+
+    }
+
+    t.registerDisplay = registerDisplay;
+
+    function clearBlastDamage () {
+
+        var $damageOverlays = $( ".damageOverlay" );
+        _.each( $damageOverlays, function ( e ) { e.remove(); } );
+
+    }
 
     function displayBlastDamage () {
 
@@ -110,26 +126,41 @@ var trek = (function($, _, Mustache, io) {
 
     }
 
-    t.displayBlastDamage = displayBlastDamage;
-
     t.socket.on( "Display", function( data ) {
 
-        switch ( data ) {
-            case "Blast Damage!":
-                displayBlastDamage();
-                break;
-            case "Repair":
+        args = data.split(":");
 
+        switch ( args[0] ) {
+
+            case "Blast Damage":
+                if ( args[1] == "All" || args[1] == screenName ) {
+
+                    displayBlastDamage();
+                    t.playConsoleBlast();
+
+                }
+                break;
+
+            case "Repair":
+                if ( args[1] == "All" || args[1] == screenName ) {
+
+                    clearBlastDamage();
+                    document.cookie = "cracked=false";
+
+                }
                 break;
         }
 
     } );
 
     t.checkBlastDamage = function () {
+
         // catch people trying to reset their window
         var crackedCookie = document.cookie.replace(/(?:(?:^|.*;\s*)cracked\s*\=\s*([^;]*).*$)|^.*$/, "$1");
         if ( crackedCookie == 'true' ) { displayBlastDamage(); }
+
     };
+
 
     // Audio
     function playAudio ( path, loop ) {

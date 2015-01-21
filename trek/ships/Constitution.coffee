@@ -9,6 +9,7 @@
 {SIFSystem} = require '../systems/SIFSystems'
 {Torpedo} = require '../Torpedo'
 {CommunicationsSystems} = require '../systems/CommunicationSystems'
+{BridgeSystem} = require '../systems/BridgeSystem'
 {BaseObject} = require '../BaseObject'
 {CargoBay} = require '../CargoBay'
 {Log} = require '../Log'
@@ -96,11 +97,16 @@ class Constitution extends BaseShip
         do @initialize_sensors
         do @initialize_power_systems
 
-        @bridge = new System(
+        message = @message
+        prefix = @prefix_code
+        bridge_message_interface = ( type, msg ) ->
+            message prefix, type, msg
+
+        @bridge = new BridgeSystem(
             'Bridge',
             @DECKS.A,
             @SECTIONS.FORWARD,
-            System.LIFESUPPORT_POWER )
+            bridge_message_interface )
 
         # Forward Sensors, Deck B
         @lifesupport = new System(

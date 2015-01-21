@@ -11,9 +11,10 @@ class BridgeSystem extends System
         SCIENCE : 'Science'
         TACTICAL : 'Tactical'
         OPS : 'Ops'
+        VIEWSCREEN : 'Viewscreen'
 
 
-    constructor: ( @name, @deck, @section ) ->
+    constructor: ( @name, @deck, @section, @messaging_inteface ) ->
 
         super @name, @deck, @section, BridgeSystem.POWER
 
@@ -22,19 +23,31 @@ class BridgeSystem extends System
             @station_damaged[ station_key ] = false
 
 
-    damage_station: ( station ) -> _set_station station, true
+    damage_station: ( station ) ->
+
+        @messaging_inteface 'Display', 'Blast Damage:#{ station }'
+        _set_station station, true
 
 
-    damage_all_stations: -> _set_all_stations true
+    damage_all_stations: ->
+
+        @messaging_inteface 'Display', 'Blast Damage:All'
+        _set_all_stations true
 
 
     get_damage: -> @station_damaged
 
 
-    repair_damage: ( station ) -> _set_station station, false
+    repair_damage: ( station ) ->
+
+        @messaging_inteface 'Display', 'Repair:#{ station }'
+        _set_station station, false
 
 
-    repair_all_damage: -> _set_all_stations false
+    repair_all_damage: ->
+
+        @messaging_inteface 'Display', 'Repair:All'
+        _set_all_stations false
 
 
     _set_station: ( station, value ) -> @station_damaged[ station ] = value

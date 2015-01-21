@@ -112,6 +112,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   + Thruster navigation for helm
   + Library / Logs
   + Working sector nav
+- Some kind of computer interface for querying and library functions
 
 # Alpha Test Issues
 Feedback taken from real user testing

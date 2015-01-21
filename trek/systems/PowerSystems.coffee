@@ -68,13 +68,13 @@ class ReactorSystem extends System
             @power_signature.push p
 
 
-    push_power: ( power, message_interface ) -> @relay.push_power power, message_interface
+    push_power: ( power, on_blowout ) -> @relay.push_power power, on_blowout
 
 
     output_level: -> @output / @output_profile.dyn
 
 
-    activate: ( level, message_interface ) ->
+    activate: ( level, on_blowout ) ->
 
         if isNaN level
             throw new Error("Invalid power level for #{@name}: #{level}")
@@ -84,7 +84,7 @@ class ReactorSystem extends System
 
         # Turns on the power source, operating a the percentage level
         @output = Math.min( level, @output_profile.max ) * @output_profile.dyn
-        @push_power @output, message_interface
+        @push_power @output, on_blowout
 
 
     is_online: ->
@@ -227,7 +227,7 @@ class PowerSystem extends System
         Math.min p, @power_thresholds.dyn * @power_thresholds.max
 
 
-    set_system_balance: ( power_balance, message_interface ) ->
+    set_system_balance: ( power_balance, on_blowout ) ->
 
         if power_balance?.length isnt @power_distribution.length
             throw new Error "Invalid power balance for #{ @name }: #{ power_balance }"
@@ -247,7 +247,7 @@ class PowerSystem extends System
                 all zero"
 
         @power_distribution = power_balance
-        @push_power undefined, message_interface
+        @push_power undefined, on_blowout
 
 
     calculate_new_balance: ( system, power ) ->
@@ -323,7 +323,7 @@ class PowerSystem extends System
             power_system_operational: @_fuse_on
 
 
-    push_power: ( input_power, message_interface ) ->
+    push_power: ( input_power, on_blowout ) ->
         ###
         Use the last input power if not given so that the
         function can be called from either a refresh or push
@@ -358,7 +358,7 @@ class PowerSystem extends System
 
             power_level = @power_distribution[ i ]
             power_to_push = power_level * @input_power
-            power_pushed = s.push_power power_to_push, message_interface
+            power_pushed = s.push_power power_to_push, on_blowout
 
             if not power_pushed?
                 throw new Error "Failed to push power to #{ s.name }"
@@ -369,7 +369,7 @@ class PowerSystem extends System
                 #{ power_to_push } MDyn, power report:"
                 console.log do s.power_report
 
-                if message_interface? then message_interface "Power blowout to #{ s.name }."
+                if on_blowout? then do on_blowout
 
 
 

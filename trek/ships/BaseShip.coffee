@@ -1434,7 +1434,8 @@ class BaseShip extends BaseObject
 
         message = @message
         prefix = @prefix_code
-        message_interface = ( msg ) -> message prefix, 'power-blowout', msg
+
+        on_blowout = -> @bridge.damage_station BridgeSystem.STATIONS.ENGINEERING
 
         # If it's an increase in power, we need to set the new balance first
         # Else we need to dial down the power first
@@ -1442,8 +1443,8 @@ class BaseShip extends BaseObject
         set_new_balance = ->
 
             if parent_eps_relay?
-                parent_eps_relay.set_system_balance new_eps_balance, message_interface
-            primary_power_relay.set_system_balance new_primary_balance, message_interface
+                parent_eps_relay.set_system_balance new_eps_balance, on_blowout
+            primary_power_relay.set_system_balance new_primary_balance, on_blowout
 
 
         power_reactor = ->
@@ -1454,7 +1455,7 @@ class BaseShip extends BaseObject
                 throw new Error "Reactor failed to calculate power requirement
                     for #{ system_name } to #{ pct }, (#{ delta_power })"
 
-            reactor.activate new_level, message_interface
+            reactor.activate new_level, on_blowout
 
         if delta_power > 0
             do set_new_balance
