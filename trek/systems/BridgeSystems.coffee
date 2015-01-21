@@ -1,4 +1,4 @@
-{System, ChargedSystem} = require '../BaseSystem'}
+{System, ChargedSystem} = require '../BaseSystem'
 
 
 class BridgeSystem extends System
@@ -54,3 +54,6 @@ class BridgeSystem extends System
 
 
     _set_all_stations: ( value ) -> @station_damaged[ s ] = value for s, _ of BridgeSystem.STATIONS
+
+
+exports.BridgeSystem = BridgeSystem
