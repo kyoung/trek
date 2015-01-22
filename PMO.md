@@ -33,17 +33,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 # Current Sprint
-- [ ] Crew interactions
-  - [x] Healing from medics
-  - [x] Heal crews in sickbay
-  - [x] Repair teams should be able to fix bridge damage
-    - [x] The bridge has to be a system
-    - [x] Damage to consoles gets dolled out from here
-  - [x] Engineering teams should limit/prevent overdrive damage
-  - [-] Science teams should ...
-    - [-] Figure out what science teams should be able to actually do
-      - Should be required for the mission profile: this is in keeping with cannon
-  - [ ] Game over if crew is dead
+
 
 ## Hotfix
 - [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
@@ -447,3 +437,16 @@ Feedback taken from real user testing
     - [x] *Bug* Phasers won't fire
   - [x] Targeting will need to have subsection targeting
   - [x] Shield screen should indicate the strength, charge, and status of each shield
+
+## v 0.16 Crew Magic [COMPLETE]
+- [x] Crew interactions
+  - [x] Healing from medics
+  - [x] Heal crews in sickbay
+  - [x] Repair teams should be able to fix bridge damage
+    - [x] The bridge has to be a system
+    - [x] Damage to consoles gets dolled out from here
+  - [x] Engineering teams should limit/prevent overdrive damage
+  - [-] Science teams should ...
+    - [-] Figure out what science teams should be able to actually do
+      - Should be required for the mission profile: this is in keeping with cannon
+  - [x] Game over if crew is dead
