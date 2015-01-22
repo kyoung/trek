@@ -224,6 +224,9 @@ class Game
     turn_starboard: ( prefix ) -> do @ships[ prefix ].turn_starboard
 
 
+    thrusters: ( prefix, direction ) -> @ships[ prefix ].fire_thrusters direction
+
+
     plot_course_and_engage: ( prefix, target_name, {impulse, warp} ) ->
 
         # TODO Move this internal to the ship--it belongs there

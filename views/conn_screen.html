@@ -195,7 +195,7 @@ function zoom ( click ) {
 
     setMinMaxVals();
 
-    // Set the window location appropriately
+    // Set the window location appropriately so the parent can query it
     window.location.search = "system=" + systemName + "&zoomLevel=" + zoomLevel + "&zoomCoordinateY=" + zoomCoordinateY + "&zoomCoordinateX=" + zoomCoordinateX;
 
 }

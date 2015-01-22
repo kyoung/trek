@@ -29,6 +29,8 @@ for deck_number in [ 65..85 ]
 
 class BaseShip extends BaseObject
 
+    @THRUSTER_DELTA_V_MPS = 200
+
     DECKS: DECKS
     SECTIONS: SECTIONS
 
@@ -648,92 +650,31 @@ class BaseShip extends BaseObject
         do @navigation_report
 
 
-    intercept: ( target, impulse_warp ) ->
-
-        if @_navigation_lock
-            throw new Error "Cannot plot intercept while manuvers are in progress."
-
-        if impulse_warp.warp > WarpSystem.MAX_WARP
-            throw new Error "Cannot exceed warp #{ WarpSystem.MAX_WARP }"
-
-        { bearing, time, final_position } = U.intercept @, target, impulse_warp
-
-        if not time > 0
-            throw new Error "Impossible intercept: More speed required"
-
-        @_navigation_lock = true
-        log_id = @_log_navigation_action "Plotting intercept to #{ target.name }"
-
-        self = @
+    fire_thrusters: ( direction ) ->
 
 
-        match_speed = () =>
+        check_safe_for_thrusters = =>
+            if @impulse == 0 and @warp_speed == 0
+                return
+            @impulse == 0
+            @warp_speed == 0
+            @velocity.x = 0
+            @velocity.y = 0
+            @velocity.z = 0
 
-            if target.warp_speed > 0
-                self._set_warp target.warp_speed
-            else
-                self._set_impulse target.impulse
-            @_navigation_lock = false
+        rotation = @bearing.bearing * Math.PI * 2
 
+        switch direction
 
-        intercept_cruise = () =>
+            when "forward"
+                do check_safe_for_thrusters
+                @velocity.x += Math.cos( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
+                @velocity.y += Math.sin( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
 
-            second_calculation = U.intercept self, target, impulse_warp
-            # Jump the heading instantaneously
-            intercept_heading = second_calculation.bearing
-            self.bearing.bearing = ( self.bearing.bearing + intercept_heading.bearing ) % 1
-            self.bearing.mark = ( self.bearing.mark + intercept_heading.mark ) % 1
-            final_position = second_calculation.final_position
-
-
-            halt_and_match = () =>
-
-                # check nav log
-                if self.navigation_log.length() != log_id
-                    return
-                @_navigation_lock = true
-
-                # Don't collide with things
-                final_position.x += 2e4
-                final_position.y += 2e4
-
-                self._set_impulse 0, ->
-                    self.set_coordinate final_position
-                    self._set_abs_course(
-                        target.bearing
-                        match_speed )
-
-
-            cruise = () =>
-
-                time = second_calculation.time
-                setTimeout halt_and_match, time
-
-            if impulse_warp.warp > 0
-                self._set_warp impulse_warp.warp, cruise
-            else
-                self._set_impulse impulse_warp.impulse, cruise
-
-            # Free the nav lock, but set the nav log for post-cruise check
-            @_navigation_lock = false
-
-
-        initial_turn = () =>
-
-            initial_calculation = U.intercept self, target, impulse_warp
-            initial_turn = initial_calculation.bearing
-
-            self._set_course(
-                initial_turn.bearing,
-                initial_turn.mark,
-                intercept_cruise )
-
-        do @_clear_rotation
-        @_set_impulse 0, initial_turn
-
-        # best guess on time to intercept
-        best_guess = U.intercept @, target, impulse_warp
-        return best_guess.time
+            when "reverse"
+                do check_safe_for_thrusters
+                @velocity.x -= Math.cos( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
+                @velocity.y -= Math.sin( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
 
 
     set_course: ( bearing, mark, callback ) =>

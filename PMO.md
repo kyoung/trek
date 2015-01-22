@@ -33,32 +33,27 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 # Current Sprint
-
+- [ ] Navigation
+  - [x] Thruster manuvering
+    - required for phaser combat
+  - [ ] Navigation status display
 
 ## Hotfix
-- [ ] Witnessed systems dying to the point of no repair (not even "0" displayed)
-- [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be become intruders somehow. Suspect this is due to improper crew selection.
+- [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
 - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
 - [ ] Engineering primary relay charge readout fails to auto-updated
 - [ ] Resolution bar in science scans is broken
-- [ ] Detailed scans of objects with their shields up is a little patchy... I fixed this I think, but it should be tested and refactored
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
+- [ ] Engineering power selectors suddenly have a fill to them
 
 
 # Backlog
 ## Next Sprint
-- [x] Develope station-cross-talk matrix
-  - We want to know why Station A needs to talk to Station B, and create as many of those cross-talk opportunities as possible, like Space Team
-- [ ] Navigation
-  - [ ] Thruster manuvering
-    - required for phaser combat
-  - [ ] Navigation status display
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
 ## Backlog For Breakout
+- Lifesupport loss should mean the crew dies in N minutes
 - Show warp fire, as we do phasers
-- Hotkeys
-  - Conn station especially
 - Pretty Renders
   - http://devlog-martinsh.blogspot.ca/2011/12/glsl-depth-of-field-with-bokeh-v24.html
   - Just putting a minor blur on the material might be enough

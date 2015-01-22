@@ -279,7 +279,7 @@ class Station extends BaseObject
         if not target_level?
             level_list = ( k for k, v of LEVELS )
             level_i = Math.floor( Math.random() * level_list.length )
-            target_level = deck_list[ level_i ]
+            target_level = level_list[ level_i ]
 
         shield = @shields
         damage = energy

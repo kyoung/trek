@@ -173,6 +173,11 @@ navigation_api = ( prefix, method, command, params ) ->
                     when 'port' then game.turn_port prefix
                     when 'starboard' then game.turn_starboard prefix
 
+        when 'thrust'
+            switch method
+                when 'post', 'put'
+                    game.thrusters prefix, params.direction
+
         when 'status'
             game.get_navigation_report prefix
 
@@ -637,6 +642,7 @@ conn = ( req, res ) ->
         ship :
             name : req.cookies.ship
         title : "#{ req.cookies.ship } Conn"
+        currentSystem : game.ships[ prefix ].star_system.name
     res.render "conn.html", render
 
 

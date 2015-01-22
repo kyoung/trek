@@ -52,6 +52,10 @@ a {
     color: inherit;
 }
 
+.hotkey {
+    text-decoration: underline;
+}
+
 .red {
     color: #B30900;
 }
@@ -102,10 +106,11 @@ ul.menu {
     margin: 0;
 }
 
-ul.menu.x1 li {
+ul.menu.x1 li, ul.menu.small.x1 li {
     width: 242px;
     padding: 10px;
     margin: 10px;
+    height: 20px;
 }
 
 ul.menu.small.x2 {
@@ -287,8 +292,13 @@ p#inputBox {
 svg.conn-arrow {
     width: 20px;
 }
+
 svg.conn-arrow.left, svg.conn-arrow.right {
     margin-left: 35px;
+}
+
+svg.conn-arrow.up, svg.conn-arrow.down {
+    margin-left: 110px;
 }
 
 .conn-scannerObject {

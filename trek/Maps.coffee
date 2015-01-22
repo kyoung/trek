@@ -16,15 +16,15 @@ class SpaceSector extends BaseMap
     add_star_system: ( star_system, sector_position ) ->
         if sector_position?
             star_system.set_position sector_position
-        @systems[star_system.name] = star_system
+        @systems[ star_system.name ] = star_system
 
     get_star_system: ( star_system_name ) ->
-        @systems[star_system_name]
+        @systems[ star_system_name ]
 
 
 class StarSystem extends BaseMap
     constructor: ( @name ) ->
-        super(@name)
+        super @name
         @width = C.SYSTEM_WIDTH
 
     set_position: ( @position ) ->

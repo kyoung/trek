@@ -63,7 +63,7 @@ class DGTauIncident extends Level
         # Is everyone dead?
         everyone_is_dead = true
         for prefix, ship of @ships
-            ship_ok = do ship._check_if_still_alive and do ship.get_crew_count > 0
+            ship_ok = ( do ship._check_if_still_alive ) #and 0 < do ship.get_crew_count )
             if ship_ok
                 everyone_is_dead = false
 
