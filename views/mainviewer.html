@@ -3,11 +3,13 @@
 <iframe id="viewscreen" class="fullscreen">
 </iframe>
 
+<!--
 <audio src="static/sound/theme.mp3" autoplay></audio>
+-->
 
 <script type="text/javascript">
 
-var $viewscreen = $("#viewscreen");
+var $viewscreen = $( "#viewscreen" );
 var displayingCaptainsLog = false;
 
 
@@ -55,7 +57,7 @@ function displayCaptainsLog ( log ) {
 
     $blackout.click( removeLog );
 
-    $("body").append( $blackout );
+    $( "body" ).append( $blackout );
     $blackout.css( 'visibility', 'visible' );
     displayCaptainsLog = true;
 

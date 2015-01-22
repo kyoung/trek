@@ -179,8 +179,9 @@ $( "#mainViewer" ).click( function () {
     var searchTerms = x.contentWindow.location.search.replace( "?", "" );
 
     trek.api(
-        "command/mainViewer",
-        { screen : "conn_screen&" + searchTerms },
+        "command/main-viewer",
+        { screen : "conn_screen?" + searchTerms },
+        'POST',
         updateNavigationData );
 
 });

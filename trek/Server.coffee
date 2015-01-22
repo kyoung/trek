@@ -429,7 +429,7 @@ command_api = ( prefix, method, command, params, res ) ->
         when 'getSystemScan'
             game.get_system_scan prefix, q.target
 
-        when 'getTargetsInVisualRange'
+        when 'targets-in-visual-range'
             game.get_targets_in_visual_range prefix
 
         when 'captains-log'
@@ -462,7 +462,8 @@ set_main_viewer = ( prefix, params ) ->
         params_str = '&' + k + '=' + v
         params += params_str
 
-    url += "?" + params
+    if params isnt ""
+        url += "?" + params
 
     for consoleSocket in shipSockets[ prefix ]
         consoleSocket.emit "setScreen", { screen : url }
@@ -612,7 +613,7 @@ tactical_screen = ( req, res ) ->
     zoom_level = req.query.zoom_level
     zoom_level ?= 1
     render =
-        title : "#{req.cookies.ship} Tactical Screen"
+        title : "#{ req.cookies.ship } Tactical Screen"
         ship :
             name : req.cookies.ship
         zoom : zoom
@@ -635,7 +636,7 @@ conn = ( req, res ) ->
     render =
         ship :
             name : req.cookies.ship
-        title : "#{req.cookies.ship} Conn"
+        title : "#{ req.cookies.ship } Conn"
     res.render "conn.html", render
 
 
@@ -645,7 +646,7 @@ conn_screen = ( req, res ) ->
     render =
         ship :
             name : req.cookies.ship
-        title : "#{req.cookies.ship} Helm View"
+        title : "#{ req.cookies.ship } Helm View"
         system_name : req.query.system
     res.render "conn_screen.html", render
 

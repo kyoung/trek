@@ -155,3 +155,15 @@ exports.UID = ->
 
     v = Math.round( Math.random() * 10e16 ).toString( 16 ) +
             Math.round( Math.random() * 10e16 ).toString( 16 )
+
+
+exports.shuffle = ( array ) ->
+
+    i = array.length
+
+    while --i > 0
+        j = ~~( Math.random() * ( i + 1 ) )
+        t = array[ j ]
+        array[ j ] = array[ i ]
+        array[ i ] = t
+    array
