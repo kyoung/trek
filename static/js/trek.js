@@ -92,11 +92,12 @@ var trek = (function($, _, Mustache, io) {
 
     // Battle damage
 
-    var screenName = "";
+    t.screenName = "";
 
     function registerDisplay ( screenName ) {
 
         // set the screenName var
+        t.screenName = screenName;
 
     }
 
@@ -113,7 +114,7 @@ var trek = (function($, _, Mustache, io) {
 
         // don't show damage if it's already there
         var $damageOverlay = $( ".damageOverlay" );
-        if ( $damageOverlay.length > 0 ) { return; }
+        if ( $damageOverlay.length > 0 ) { return false; }
 
         var $overlay = $( "<div class='damageOverlay overlay'></div>" );
         var $crack = $( "<img src='static/textures/broken-glass0.png' />" );
@@ -124,19 +125,22 @@ var trek = (function($, _, Mustache, io) {
 
         $( "body" ).append( $overlay );
 
+        return true;
+
     }
 
     t.socket.on( "Display", function( data ) {
+
+        console.log( data );
 
         args = data.split(":");
 
         switch ( args[0] ) {
 
             case "Blast Damage":
-                if ( args[1] == "All" || args[1] == screenName ) {
+                if ( args[1] == "All" || args[1] == t.screenName ) {
 
-                    displayBlastDamage();
-                    t.playConsoleBlast();
+                    if ( displayBlastDamage() ) { t.playConsoleBlast(); }
 
                 }
                 break;
@@ -176,6 +180,7 @@ var trek = (function($, _, Mustache, io) {
 
     }
 
+    t.playTheme = function () { playAudio( "static/sound/theme.mp3" ); };
     t.playBridgeSound = function () { playAudio( "static/sound/bridge.mp3", true ); };
     t.playKlaxon = function () { playAudio( "static/sound/redalert.mp3" ); };
     t.playAlarm = function () { playAudio( "static/sound/critical.mp3" ); };

@@ -183,7 +183,6 @@ function selectPowerComponent ( c ) {
 
 }
 
-trek.registerDisplay( "Engineering" );
 
 trek.socket.on( "power-blowout", function ( msg ) {
 
@@ -195,9 +194,12 @@ trek.socket.on( "power-blowout", function ( msg ) {
 
 } );
 
+
 $status.click();
 
+
 trek.playBridgeSound();
+trek.registerDisplay( "Engineering" );
 trek.checkBlastDamage();
 
 </script>

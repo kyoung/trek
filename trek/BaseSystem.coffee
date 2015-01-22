@@ -130,7 +130,7 @@ class System
     damage: ( amt ) ->
 
         if typeof amt isnt 'number'
-            throw new Error("We only accept numeric damage values: #{ amt }")
+            throw new Error "We only accept numeric damage values: #{ amt }"
 
         dmg_pct = amt / System.STRENGTH
 

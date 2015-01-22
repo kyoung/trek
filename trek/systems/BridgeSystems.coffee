@@ -20,22 +20,24 @@ class BridgeSystem extends System
         super @name, @deck, @section, BridgeSystem.POWER
 
         @station_damaged = {}
-        for station_key, _ of BridgeSystem.STATIONS
-            @station_damaged[ station_key ] = false
+        for _, station of BridgeSystem.STATIONS
+            @station_damaged[ station ] = false
 
 
     damage: ( amt ) ->
 
-        super amt
+        super( amt )
 
         # check the status, and ensure an appropriate number of screens
         # are damaged
 
-        screens_that_should_be_damaged = Math.ceil( ( 1 - @status ) * Object.keys( BridgeSystem.STATIONS ).length )
+        screens_that_should_be_damaged = Math.ceil( ( 1 - @state ) * Object.keys( BridgeSystem.STATIONS ).length )
         screens_that_are_damaged = ( s for s, damaged of @station_damaged when damaged ).length
 
+        console.log "...identified #{ screens_that_should_be_damaged } screens should be damaged: #{ @state }"
+
         if screens_that_should_be_damaged > screens_that_are_damaged
-            _damage_n_screens screens_that_should_be_damaged - screens_that_are_damaged
+            @_damage_n_screens screens_that_should_be_damaged - screens_that_are_damaged
 
 
     repair: ( amt ) ->
@@ -45,23 +47,24 @@ class BridgeSystem extends System
         # check the status, and ensure an appropriate number of screens
         # are repaired
 
-        screens_that_should_be_fixed = Math.floor( @status * Object.keys( BridgeSystem.STATIONS ).length )
+        screens_that_should_be_fixed = Math.floor( @state * Object.keys( BridgeSystem.STATIONS ).length )
         screens_that_are_operational = ( s for s, damaged of @station_damaged when not damaged ).length
 
         if screens_that_are_operational < screens_that_should_be_fixed
-            _repair_n_screens screens_that_should_be_fixed - screens_that_are_operational
+            @_repair_n_screens screens_that_should_be_fixed - screens_that_are_operational
 
 
     damage_station: ( station ) ->
 
-        @messaging_inteface 'Display', 'Blast Damage:#{ station }'
-        _set_station station, true
+        console.log "Damaging bridge station #{ station }"
+        @messaging_inteface 'Display', "Blast Damage:#{ station }"
+        @_set_station station, true
 
 
     damage_all_stations: ->
 
         @messaging_inteface 'Display', 'Blast Damage:All'
-        _set_all_stations true
+        @_set_all_stations true
 
 
     get_damage: -> @station_damaged
@@ -69,14 +72,14 @@ class BridgeSystem extends System
 
     repair_damage: ( station ) ->
 
-        @messaging_inteface 'Display', 'Repair:#{ station }'
-        _set_station station, false
+        @messaging_inteface 'Display', "Repair:#{ station }"
+        @_set_station station, false
 
 
     repair_all_damage: ->
 
         @messaging_inteface 'Display', 'Repair:All'
-        _set_all_stations false
+        @_set_all_stations false
 
 
     _set_station: ( station, value ) -> @station_damaged[ station ] = value

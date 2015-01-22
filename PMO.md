@@ -30,18 +30,18 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Consolidate the endpoints so that it's not just one method per url
 - [x] Reduce the use of Constants
   - Rely more on class variables for these things
-- [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md
+- [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 # Current Sprint
 - [ ] Crew interactions
   - [x] Healing from medics
   - [x] Heal crews in sickbay
-  - [ ] Repair teams should be able to fix bridge damage
-    - [ ] The bridge has to be a system
-    - [ ] Damage to consoles gets dolled out from here
+  - [x] Repair teams should be able to fix bridge damage
+    - [x] The bridge has to be a system
+    - [x] Damage to consoles gets dolled out from here
   - [x] Engineering teams should limit/prevent overdrive damage
-  - [ ] Science teams should ...
-    - [ ] Figure out what science teams should be able to actually do
+  - [-] Science teams should ...
+    - [-] Figure out what science teams should be able to actually do
       - Should be required for the mission profile: this is in keeping with cannon
   - [ ] Game over if crew is dead
 
@@ -66,6 +66,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
 ## Backlog For Breakout
+- Show warp fire, as we do phasers
 - Hotkeys
   - Conn station especially
 - Pretty Renders
@@ -125,12 +126,9 @@ Feedback taken from real user testing
 
 # Bug log
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
-- [ ] Red Alert not setting correctly as status in tactical menu
-- [ ] The position of ships relative to each other in the tactical display is not the same as in the nav display
 - [ ] Science Scanner circles don't show up on FF
 - [ ] Objects get tracked once we've done a detailed scan... so how do we untrack them? At some point, we should be able to loose them
 - [ ] It doesn't look like LR scanners can be configured?
-- [ ] Suddenly the conn display doesn't update when at warp, but you end up at your destination... likely that you're not actually going to warp, and all you're seeing is the final position adjustment at the end of travel.
 
 # Completed Sprints
 

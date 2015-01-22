@@ -97,10 +97,7 @@ class Constitution extends BaseShip
         do @initialize_sensors
         do @initialize_power_systems
 
-        message = @message
-        prefix = @prefix_code
-        bridge_message_interface = ( type, msg ) ->
-            message prefix, type, msg
+        bridge_message_interface = ( type, msg ) => @message @prefix_code, type, msg
 
         @bridge = new BridgeSystem(
             'Bridge',

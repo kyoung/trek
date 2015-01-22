@@ -3,6 +3,7 @@
 
 {Constitution} = require '../ships/Constitution'
 
+{System, ChargedSystem} = require '../BaseSystem'
 {Station} = require '../Station'
 {CelestialObject, Star, GasCloud} = require '../CelestialObject'
 {ShieldSystem, PhaserSystem, TorpedoSystem} = require '../systems/WeaponSystems'
@@ -95,8 +96,9 @@ class DGTauIncident extends Level
 
     get_events: ->
 
-        end_game = ( game ) ->
-            game.is_over = true
+
+        end_game = ( game ) -> game.is_over = true
+
 
         radiation_spike = ( game ) ->
 
@@ -123,6 +125,7 @@ class DGTauIncident extends Level
 
             setTimeout _end_spike, 2 * 60 * 1000 * do Math.random
 
+
         impossible = new LevelEvent {
             name : "Impossiblility",
             condition : @_is_mission_impossible,
@@ -142,7 +145,8 @@ class DGTauIncident extends Level
         events = [
             impossible,
             win,
-            radiation ]
+            radiation
+        ]
 
 
     get_final_score: ->
