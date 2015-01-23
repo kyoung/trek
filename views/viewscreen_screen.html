@@ -2,6 +2,26 @@
 
 <script type="text/javascript" src="static/js/three.min.js"></script>
 
+<script type="application/x-glsl" id="sky-vertex">
+    varying vec2 vUV;
+
+    void main () {
+      vUV = uv;
+      vec4 pos = vec4( position, 1.0 );
+      gl_Position = projectionMatrix * modelViewMatrix * pos;
+    }
+</script>
+
+<script type="application/x-glsl" id="sky-fragment">
+    uniform sampler2D texture;
+    varying vec2 vUV;
+
+    void main () {
+      vec4 sample = texture2D( texture, vUV );
+      gl_FragColor = vec4( sample.xyz, sample.w );
+    }
+</script>
+
 <script type="text/javascript">
 
 var targetName = "<%= target %>";
@@ -22,6 +42,9 @@ var loader = new THREE.JSONLoader( true );
 var particle_system;
 var warpSystem = [];
 var atWarp = false;
+
+var skyGeometry = new THREE.SphereGeometry( 3000, 400, 400 );
+var skyBox;
 
 var station;
 var ship;
@@ -45,7 +68,7 @@ if ( _.indexOf( starViews, targetName ) == -1 ) {
 
 	trek.api(
 		"navigation/stelar-telemetry",
-		{ target: targetName },
+		{ target : targetName },
 		parseTargetDrawData
 	);
 
@@ -62,77 +85,105 @@ function parseTargetDrawData( data ) {
 	shipRotation = data.bearing_to_viewer.bearing;
 	lightAngle = netBearingToLight;
 
-	if (lightAngle > 1) {
-		lightAngle -= 1;
-	}
+	if ( lightAngle > 1 ) { lightAngle -= 1; }
 
 	targetURL = data.target_model;
 	init();
 
 }
 
-window.requestAnimFrame = (function(){
+window.requestAnimFrame = ( function () {
   return  window.requestAnimationFrame       ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame    ||
           function( callback ){
-            window.setTimeout(callback, 1000 / 60);
+            window.setTimeout( callback, 1000 / 60 );
           };
-})();
+} )();
 
 
 
-function init(){
+function init () {
 
 	// Camera params :
 	// field of view, aspect ratio for render output, near and far clipping plane.
-	camera = new THREE.PerspectiveCamera(80, window.innerWidth/window.innerHeight, 0.5, visibleRadius);
+	camera = new THREE.PerspectiveCamera(
+		80,
+		window.innerWidth / window.innerHeight,
+		0.5,
+		visibleRadius );
 
-	if ( targetName == "aft" ) {
-
-		camera.rotation.y = Math.PI;
-
-	}
+	if ( targetName == "aft" ) { camera.rotation.y = Math.PI; }
 
 	scene = new THREE.Scene();
-	scene.add(camera);
-	renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+	scene.add( camera );
+	renderer = new THREE.WebGLRenderer( { antialias : true, alpha : true } );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
 	// the renderer's canvas domElement is added to the body
 	document.body.appendChild( renderer.domElement );
+
 	makeParticles();
-
 	showSun();
+	loadGalaxy();
 
-	if (targetURL != "") {
-		showTarget();
-	}
+	if ( targetURL != "" ) { showTarget(); }
 
-    globalLight = new THREE.AmbientLight(
-    	0x333333
-    );
+    globalLight = new THREE.AmbientLight( 0x333333 );
 
-    scene.add(globalLight);
+    scene.add( globalLight );
 
-    requestAnimationFrame(update);
+    requestAnimationFrame( update );
 
 };
 
 
-function update(stamp) {
+function loadGalaxy () {
 
-	_.each( torpedos, function( e ) {
+	var uniforms;
+	var material;
+
+    THREE.ImageUtils.loadTexture(
+        '/static/images/Milky_way.jpg',
+        THREE.SphericalReflectionMapping,
+        function ( texture ) {
+
+            uniforms = {
+              texture: { type : 't', value :  texture }
+            };
+
+            material = new THREE.ShaderMaterial( {
+              uniforms : uniforms,
+              vertexShader : document.getElementById( 'sky-vertex' ).textContent,
+              fragmentShader : document.getElementById( 'sky-fragment' ).textContent
+            } );
+
+            skyBox = new THREE.Mesh( skyGeometry, material );
+            skyBox.scale.set( -1, 1, 1 );
+            skyBox.rotation.order = 'XZY';
+            skyBox.renderDepth = 1000.0;
+            skyBox.position.set( 0, 0, 0 );
+            scene.add( skyBox );
+
+        } );
+
+}
+
+
+function update ( stamp ) {
+
+	_.each( torpedos, function ( e ) {
+
 		if ( e.position.z < -200 ) {
-			torpedos = _.filter( torpedos, function( t ){ return e != t });
+
+			torpedos = _.filter( torpedos, function ( t ){ return e != t } );
 			scene.remove( e );
+
 		}
 
 		e.position.z -= ( 7 - 1.5 );
 
-		_.each( e.lensFlares, function( f ) {
-			f.size /= 1.1;
-		});
+		_.each( e.lensFlares, function ( f ) { f.size /= 1.1; } );
 
 	});
 
@@ -143,6 +194,10 @@ function update(stamp) {
 		// rotations are in Radians
 		particle_system.rotation.y -= cameraTurnRate;
 
+		if ( skyBox != undefined ) {
+			skyBox.rotation.y -= cameraTurnRate;
+		}
+
 	}
 
 	updateWarpSystem();
@@ -150,7 +205,7 @@ function update(stamp) {
 	// and render the scene from the perspective of the camera
 	renderer.render( scene, camera );
 
-	requestAnimationFrame(update);
+	requestAnimationFrame( update );
 
 };
 
@@ -198,45 +253,56 @@ function showSun(){
 	// TODO fix this hack, and orient the backgroud sphere (which
 	// contains a drawing of the star) to the light source
 
-	systemStar = new THREE.PointLight(0xffddff, 1, 0);
+	systemStar = new THREE.PointLight( 0xffddff, 1, 0 );
 	// position hack until we come up with the real trig:
 	var best_eighth = Math.round( lightAngle * 8 ) / 8;
 
-	switch(best_eighth) {
+	switch( best_eighth ) {
+
 		case 0:
-			systemStar.position.set(0, 0, -3000);
+			systemStar.position.set( 0, 0, -3000 );
 			break;
+
 		case 0.125:
-			systemStar.position.set(-2121, 0, -2121);
+			systemStar.position.set( -2121, 0, -2121 );
 			break;
+
 		case 0.25:
-			systemStar.position.set(-3000, 0, 0);
+			systemStar.position.set( -3000, 0, 0 );
 			break;
+
 		case 0.375:
-			systemStar.position.set(-2121, 0, 2121);
+			systemStar.position.set( -2121, 0, 2121 );
 			break;
+
 		case 0.5:
-			systemStar.position.set(0, 0, 3000);
+			systemStar.position.set( 0, 0, 3000 );
 			break;
+
 		case 0.625:
-			systemStar.position.set(2121, 0, 2121);
+			systemStar.position.set( 2121, 0, 2121 );
 			break;
+
 		case 0.75:
-			systemStar.position.set(3000, 0, 0);
+			systemStar.position.set( 3000, 0, 0 );
 			break;
+
 		case 0.875:
-			systemStar.position.set(2121, 0, -2121);
+			systemStar.position.set( 2121, 0, -2121 );
 			break;
+
 		case 1:
-			systemStar.position.set(0, 0, -3000);
+			systemStar.position.set( 0, 0, -3000 );
 			break;
+
 	}
-	scene.add(systemStar);
+
+	scene.add( systemStar );
 
 };
 
 
-function makeParticles() {
+function makeParticles () {
 
 	drawWarpTunnel();
 	drawStars();
@@ -244,15 +310,17 @@ function makeParticles() {
 }
 
 
-function goToWarp() {
+function goToWarp () {
 
 	if ( atWarp ) {
 		return;
 	}
 
 	_.each( warpSystem, function( line ) {
+
 		line.position.z = visibleRadius * -3 * Math.random() - visibleRadius;
 		scene.add( line );
+
 	} );
 
 	atWarp = true;
@@ -260,24 +328,19 @@ function goToWarp() {
 }
 
 
-function dropOutOfWarp() {
-
-	atWarp = false;
-
-}
+function dropOutOfWarp () { atWarp = false; }
 
 
-function drawWarpTunnel() {
+function drawWarpTunnel () {
 
 	// Assumes the camera rotation is zero
 
 	var lineCount = 1000;
 
 	var material = new THREE.MeshBasicMaterial(
-		{ wireframe: true, color: "#FFFFFF" }
-	);
+		{ wireframe : true, color : "#FFFFFF" } );
 
-	for ( var i=0; i<lineCount; i++ ) {
+	for ( var i = 0; i < lineCount; i++ ) {
 
 		lineGeometry = new THREE.Geometry();
 		x = Math.random() * visibleRadius * 2 - visibleRadius;
@@ -300,7 +363,7 @@ function drawWarpTunnel() {
 }
 
 
-function drawStars() {
+function drawStars () {
 
 	// TODO: generate the stars in the server on game startup, and show them here via a JSON call
 
@@ -312,9 +375,7 @@ function drawStars() {
 	var particle_geo = new THREE.Geometry();
 	// we make a particle material and pass through the
 	// colour and custom particle render function we defined.
-	material = new THREE.ParticleSystemMaterial({
-		vertexColors: true,
-	});
+	material = new THREE.ParticleSystemMaterial( { vertexColors: true } );
 
 	for ( i=0; i<starcount; i++ ) {
 
@@ -322,9 +383,9 @@ function drawStars() {
 		// make the particle
 		particle = new THREE.Vector3();
 
-		var phi = Math.random() * 2*Math.PI;
+		var phi = Math.random() * 2 * Math.PI;
 		var z = Math.random() * visibleRadius * 2 - visibleRadius;
-		var theta = Math.asin(z/visibleRadius);
+		var theta = Math.asin( z / visibleRadius );
 		particle.x = visibleRadius * Math.cos( theta ) * Math.cos( phi );
 		particle.y = visibleRadius * Math.cos( theta ) * Math.sin( phi );
 		particle.z = z;
@@ -336,13 +397,14 @@ function drawStars() {
 		//scene.add( particle );
 
 		// and to the array of particles.
-		particle_geo.vertices.push(particle);
+		particle_geo.vertices.push( particle );
+
 	}
 
 	var colours = []
 	for ( var i=0; i<particle_geo.vertices.length; i++ ) {
-		colours[i] = new THREE.Color();
-		colours[i].setHSL(
+		colours[ i ] = new THREE.Color();
+		colours[ i ].setHSL(
 			Math.random(),
 			Math.random(),
 			Math.random()
@@ -350,7 +412,7 @@ function drawStars() {
 	}
 	particle_geo.colors = colours;
 
-	particle_system = new THREE.ParticleSystem(particle_geo, material);
+	particle_system = new THREE.ParticleSystem( particle_geo, material );
 	particle_system.scale.x = particle_system.scale.y = particle_system.scale.z = 0.1;
 
 	scene.add( particle_system );
@@ -360,19 +422,21 @@ function drawStars() {
 
 function showTarget(){
 
-	loader.load("/static/mesh/" + targetURL, function(geo, mat) {
-		target = new THREE.Mesh(geo,
-			new THREE.MeshFaceMaterial(mat));
+	loader.load( "/static/mesh/" + targetURL, function( geo, mat ) {
+
+		target = new THREE.Mesh( geo,
+			new THREE.MeshFaceMaterial( mat ) );
 		target.rotation.y = shipRotation * 2 * Math.PI;
-		target.position.set(0, 0, -7);
-		scene.add(target);
-	})
+		target.position.set( 0, 0, -7 );
+		scene.add( target );
+
+	} );
 
 };
 
 
 // In the event of a Torpedo being fired at what we're looking at
-function showTorpedoHit() {
+function showTorpedoHit () {
 
 	// Assume we fired the torpedo for now
 	// Starting position is the bottom of the screen
@@ -410,14 +474,16 @@ function showTorpedoHit() {
 
 
 // An explosion has occured; white flash!
-function whiteFlash() {
+function whiteFlash () {
+
 	var $white = $( "<div class='whiteout'></div>" );
 	$( "body" ).append( $white );
 	$white.fadeOut( 2000 );
+
 }
 
 
-function torpedoUpdateCallback( object ) {
+function torpedoUpdateCallback ( object ) {
 
 	var f, fl = object.lensFlares.length;
 	var flare;
@@ -442,7 +508,7 @@ function torpedoUpdateCallback( object ) {
 };
 
 
-function showDestruction() {
+function showDestruction () {
 
 	// The targetName is apparently destroyed.
 	// For now, just remove it.
@@ -453,7 +519,7 @@ function showDestruction() {
 };
 
 
-function processSpeedData( navData ) {
+function processSpeedData ( navData ) {
 
 	// If we're not just looking at stars, don't bother
 	if ( _.indexOf( starViews, targetName ) == -1 ) {
@@ -461,23 +527,42 @@ function processSpeedData( navData ) {
 	}
 
 	if ( navData.set_speed == "warp" ) {
+
 		goToWarp();
+
 	} else {
+
 		dropOutOfWarp();
+
 	}
 
 };
 
 
-function processTurnState( navData ) {
+function processTurnState ( navData ) {
 	// Process periodic updates to state (IE turn thrusters)
 
 	// Translate circle rotations into radians
+	var rotation = navData.rotation;
+	var turnSpeed = rotation.bearing;
+
+	if ( turnSpeed == 0 ) {
+
+		cameraTurning = false;
+		return;
+
+	}
+
+	cameraTurning = true;
+	cameraTurnRate = turnSpeed * Math.PI / 15 * 1000;
 
 };
 
 
-function processTurnDisplay( navData ) {
+function processTurnDisplay ( navData ) {
+
+	console.log( "Turning detected" );
+
 	// Process turn events (IE course plots)
 
 	turnDirection = navData.turn_direction;
@@ -485,9 +570,7 @@ function processTurnDisplay( navData ) {
 	turnDistance = navData.turn_distance;
 
 	// skip if the view isn't a rotating one
-	if ( _.indexOf( starViews, targetName ) == -1 ) {
-		return;
-	}
+	if ( _.indexOf( starViews, targetName ) == -1 ) { return; }
 
 	cameraTurning = true;
 	// how far does the camera turn each frame?
@@ -499,7 +582,7 @@ function processTurnDisplay( navData ) {
 	}
 
 	setTimeout(
-		function() {
+		function () {
 			cameraTurning = false;
 		},
 		turnDuration
@@ -518,11 +601,10 @@ trek.api(
 
         }
 
-    }
-)
+    } );
 
 
-trek.socket.on( "Display", function( data ) {
+trek.socket.on( "Display", function ( data ) {
 
 	var message = data.split( ":" );
 
@@ -544,31 +626,35 @@ trek.socket.on( "Display", function( data ) {
 
 	};
 
-});
+} );
 
 
-trek.socket.on( "Navigation", function( navData ) {
+trek.socket.on( "Navigation", function ( navData ) {
 
 
 	if ( _.has( navData, "turn_direction" ) ) {
+
 		processTurnDisplay( navData );
+
 	}
 
 	if ( _.has( navData, "set_speed" ) ) {
+
 		processSpeedData( navData );
+
 	}
 
-});
+} );
 
 
-trek.socket.on( "Turning", function( navData ) {
+trek.socket.on( "Turning", function ( navData ) {
 
 	// this is intermitent, but includes the current
 	// turn rate
 
 	processTurnState( navData );
 
-});
+} );
 
 
 trek.onAlert( function () { return } );

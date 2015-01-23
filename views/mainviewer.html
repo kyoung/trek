@@ -20,12 +20,7 @@ function pollForCaptainsLogs () {
 
     var parseCaptainsLog = function ( data ) {
 
-        if ( data == "" ) {
-
-            // no new logs
-            return;
-
-        }
+        if ( data == "" ) { return; }
 
         displayCaptainsLog( data );
 
@@ -81,6 +76,7 @@ setInterval( pollForCaptainsLogs, 3000 );
 
 // play the theme once, but only once
 var themePlayed = document.cookie.replace(/(?:(?:^|.*;\s*)themePlayed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
 if ( themePlayed != 'true' ) {
 
     trek.playTheme();

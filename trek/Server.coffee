@@ -459,16 +459,15 @@ plot_intercept = ( prefix, target, impulse, warp ) ->
 set_main_viewer = ( prefix, params ) ->
 
     url = params.screen
-    params = ""
+    query = ""
 
     for k, v of params
-        if k is "screen"
-            continue
-        params_str = '&' + k + '=' + v
-        params += params_str
+        if k is "screen" then continue
+        query += "&#{ k }=#{ v }"
 
-    if params isnt ""
-        url += "?" + params
+    if query isnt ""
+        url += "?" + query
+
 
     for consoleSocket in shipSockets[ prefix ]
         consoleSocket.emit "setScreen", { screen : url }
