@@ -64,7 +64,7 @@ var selectedSubmenu;
 var $viewScreen = $( "#viewScreen" );
 
 
-$SRScan.click( function(c) {
+$SRScan.click( function ( c ) {
 
     $viewScreen.attr( 'src', 'science_scans' );
     $scienceSubMenues.addClass( 'hidden' );
@@ -73,7 +73,7 @@ $SRScan.click( function(c) {
 } );
 
 
-$LRScan.click( function(c) {
+$LRScan.click( function ( c ) {
 
     $viewScreen.attr( 'src', 'science_scans_lr' );
     $scienceSubMenues.addClass( 'hidden' );
@@ -82,7 +82,7 @@ $LRScan.click( function(c) {
 } );
 
 
-$detailScan.click( function(c) {
+$detailScan.click( function ( c ) {
 
     $viewScreen.attr( 'src', 'science_details' );
     $scienceSubMenues.addClass( 'hidden' );
@@ -92,7 +92,7 @@ $detailScan.click( function(c) {
 } );
 
 
-$internalScan.click( function( c ) {
+$internalScan.click( function ( c ) {
 
     $viewScreen.attr( 'src', 'science_internal' );
     $scienceSubMenues.addClass( 'hidden' );
@@ -100,7 +100,7 @@ $internalScan.click( function( c ) {
 } );
 
 
-$environmentalScan.click( function( c ) {
+$environmentalScan.click( function ( c ) {
 
     $viewScreen.attr( 'src', 'science_environmental' );
     $scienceSubMenues.addClass( 'hidden' );
@@ -108,7 +108,7 @@ $environmentalScan.click( function( c ) {
 } );
 
 
-$viewMenu.click( function( c ) {
+$viewMenu.click( function ( c ) {
 
     $viewMenu.removeClass( 'lightblue' );
     $( this ).addClass( 'lightblue' );
@@ -116,7 +116,7 @@ $viewMenu.click( function( c ) {
 } );
 
 
-$SRScanMenuLi.click( function(c) {
+$SRScanMenuLi.click( function ( c ) {
 
     args = { type : this.id };
     $viewScreen.attr( 'src', 'science_scans?type=' + this.id )
@@ -125,7 +125,7 @@ $SRScanMenuLi.click( function(c) {
 } );
 
 
-$LRScanMenuLi.click( function(c) {
+$LRScanMenuLi.click( function ( c ) {
 
     args = { type : this.id };
     $viewScreen.attr( 'src', 'science_scans_lr?type=' + this.id );
@@ -134,25 +134,24 @@ $LRScanMenuLi.click( function(c) {
 } );
 
 
-function loadHighresReading( results ) {
+function loadHighresReading ( results ) {
 
     console.log( results );
     $detailedScanMenu.empty();
 
     var $ul = $( "<ul class='menu x1'></ul>" );
-    var liTempl = "<li class='green'>{{classification}}</li>";
+    var liTempl = "<li class='green'>{{ classification }}</li>";
 
-    _.each( results.classifications, function( e ) {
+    _.each( results.classifications, function ( e ) {
 
         var $li = $( Mustache.render( liTempl, e ) );
-        $li.click( function( c ) {
+        $li.click( function ( c ) {
 
             $viewScreen.attr(
                 'src',
-                'science_details?classification=' + e.classification + "&distance=" + e.distance + "&bearing=" + e.bearing.bearing + "&tag=" + e.tag
-            );
+                'science_details?classification=' + e.classification + "&distance=" + e.distance + "&bearing=" + e.bearing.bearing + "&tag=" + e.tag );
 
-        });
+        } );
 
         $ul.append( $li );
 
@@ -163,17 +162,17 @@ function loadHighresReading( results ) {
 };
 
 
-function refreshHighresMenu() {
+function refreshHighresMenu () {
 
     trek.api(
         "science/scanResults",
-        { type: "Passive High-Resolution Scan" },
+        { type : "Passive High-Resolution Scan" },
         loadHighresReading )
 
 };
 
 
-function screenToMainViewer() {
+function screenToMainViewer () {
 
     trek.api(
         "command/main-viewer",

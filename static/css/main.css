@@ -286,6 +286,19 @@ p#inputBox {
     margin-top: 100px;
 }
 
+
+/* Viewscreen
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.viewscreen-hidden-menu {
+    position: absolute;
+    width: 290px;
+    top: 0;
+    background-color: #000;
+    height: 100%;
+}
+
+
 /* Conn Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 

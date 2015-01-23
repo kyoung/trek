@@ -1,5 +1,5 @@
 <% include header.html %>
-<div id="leftSide" class="fleft">
+<div class="viewscreen-hidden-menu" id="viewscreenMenu">
 	<div id="viewMenu">
 		<ul class="menu x1" id="cameras">
 			<li class="lightblue" id="forward">Forward</li>
@@ -16,23 +16,42 @@
     </div>
 </div>
 
-<div id="rightSide" class="fleft">
+<div class="fullscreen">
 	<iframe id="viewScreen"></iframe>
 </div>
 
 <script type="text/javascript">
 
 var targetName = "";
+var $menu = $( "#viewscreenMenu" );
 var viewScreen = $( "#viewScreen" );
 viewScreen.attr( 'src', 'viewscreen_screen' );
 var visualRange = $( "#visualRange" );
 
 
-function getItemsInVisualRange () {
+function getItemsInVisualRange () { trek.api( "command/targets-in-visual-range", displayTargets ); }
 
-    trek.api( "command/targets-in-visual-range", displayTargets );
+
+function hideMenu () {
+
+    console.log( 'hiding menu' );
+    $menu.fadeOut();
 
 }
+
+
+function showMenu () {
+
+    console.log( 'showing menu' );
+    $menu.fadeIn();
+
+}
+
+window.onkeydown = function ( d ) {
+
+    showMenu();
+
+};
 
 
 function displayTargets ( data ) {
@@ -53,6 +72,7 @@ function displayTargets ( data ) {
 
         targetName = c.target.id;
         viewScreen.attr( 'src', 'viewscreen_screen?target=' + targetName );
+        hideMenu();
 
     } );
 
@@ -65,6 +85,7 @@ $( "#cameras li" ).click( function ( c ) {
     // set the camera;
     targetName = c.target.id;
     viewScreen.attr( 'src', 'viewscreen_screen?target=' + targetName );
+    hideMenu();
 
 } );
 
@@ -81,6 +102,7 @@ function setMainViewer () {
     )
 };
 
+// Depreciated with the hiding menu
 $( "#setMainViewer" ).click( setMainViewer );
 
 </script>

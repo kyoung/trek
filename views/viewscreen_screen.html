@@ -78,7 +78,7 @@ if ( _.indexOf( starViews, targetName ) == -1 ) {
 
 }
 
-function parseTargetDrawData( data ) {
+function parseTargetDrawData ( data ) {
 
 	var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
 
@@ -125,7 +125,7 @@ function init () {
 
 	makeParticles();
 	showSun();
-	loadGalaxy();
+	// loadGalaxy();
 
 	if ( targetURL != "" ) { showTarget(); }
 
@@ -204,20 +204,19 @@ function update ( stamp ) {
 
 	// and render the scene from the perspective of the camera
 	renderer.render( scene, camera );
-
 	requestAnimationFrame( update );
 
 };
 
 
-function updateWarpSystem() {
+function updateWarpSystem () {
 
 	_.each( warpSystem, calculateNewWarpLinePosition )
 
 }
 
 
-function calculateNewWarpLinePosition( line ) {
+function calculateNewWarpLinePosition ( line ) {
 
 	if ( atWarp ) {
 

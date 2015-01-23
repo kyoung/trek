@@ -29,13 +29,14 @@ class CelestialObject extends BaseObject
 
     scan_for: ( type ) ->
 
-        if @_scan_density[type]?
-            return @_scan_density[type]
+        if @_scan_density[ type ]?
+            return @_scan_density[ type ]
 
         return false
 
 
     block_for: ( type ) -> false
+
 
     get_detail_scan: ->
 
@@ -53,7 +54,7 @@ class Star extends CelestialObject
 
         super()
         @charted = true
-        @classification = "star:#{star_class}"
+        @classification = "#{star_class} Class Star"
         @name = name
         @_scan_density = {}
         @_scan_density[ LongRangeSensorSystem.SCANS.GRAVIMETRIC ] = up_to 3e8
@@ -65,6 +66,8 @@ class Star extends CelestialObject
         @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = up_to 1e8
         @_scan_density[ SensorSystem.SCANS.MAGNETON ] = up_to 20
         @_scan_density[ SensorSystem.SCANS.MULTIPHASIC ] = up_to 800
+        @model_url = "star_tau.json"
+        @model_display_scale = 0.5
 
 
     block_for: ( type ) ->
@@ -77,6 +80,26 @@ class Star extends CelestialObject
         if type in blocks
             return true
         return false
+
+
+    get_detail_scan: ->
+
+        random_energy = -> ( Math.random() for i in [ 0...10 ] )
+
+        r =
+            classification : @classification
+            name : @name
+            mesh : @model_url
+            mesh_scale : @model_display_scale
+            power_readings : [
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy
+            ]
 
 
 class GasCloud extends CelestialObject

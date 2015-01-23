@@ -367,7 +367,7 @@ class Game
         if target_name == ""
             return {}
         target = (o for o in @game_objects when o.name == target_name)[0]
-        stars = (o for o in @space_objects when o.classification.indexOf("star:") >= 0)
+        stars = (o for o in @space_objects when o.classification.indexOf("Star") >= 0)
         console.log stars
         telemetry =
             bearing_to_viewer: U.bearing(target, ship)
@@ -552,8 +552,8 @@ class Game
 
         if matches.length == 0
             throw new Error "Could not resolve active scan target,
-            for #{classification} at #{ Math.round(distance / 1e3) }km
-            bearing #{ Math.round(bearing * 1e3)}"
+            for #{ classification } at #{ Math.round( distance / 1e3 ) }km
+            bearing #{ Math.round(bearing * 1e3) }"
 
         target = matches[ 0 ]
 
@@ -586,7 +586,7 @@ class Game
 
         # Find all objects in range, that respond to type
         game_hits = (o for o in @game_objects when 0 < U.distance( position, o.position ) < range)
-        space_hits = (o for o in @space_objects when 0 < U.distance( position, o.position ) < range)
+        space_hits = (o for o in @space_objects when 0 < U.distance( position, o.position ) < range or o.charted )
         hits = game_hits.concat(space_hits)
         hits = (h for h in hits when h.scan_for type)
         count_show_up_on_scan = hits.length
