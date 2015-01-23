@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/kyoung/trek/badge.svg)](https://coveralls.io/r/kyoung/trek)
+
 # Trek
 Star Trek bridge simulator
 
