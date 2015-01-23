@@ -77,6 +77,8 @@
             </ul>
             <div class="clear"></div>
         </div>
+        <div id="navInfo">
+        </div>
         <div>
             <p id="inputBox">
             </p>
@@ -119,6 +121,7 @@
 var selected_option;
 var currentSystem = "<%= currentSystem %>";
 
+var $navInfo = $( "#navInfo" );
 var $inputbox = $( "#inputBox" );
 var $systemSelections = $( ".system-select" );
 var $viewScreen = $( "#viewScreen" );
@@ -215,6 +218,36 @@ function setWarpMenuFunction ( selection ) {
     $inputbox.html( "" );
 
 }
+
+
+function displayNavStatus ( data ) {
+
+    var navDatTmpl = "<p class='descriptive'>{{ speed }} {{ data }}</p>";
+    var html;
+
+    if ( data.warp > 0 ) {
+
+        html = Mustache.render( navDatTmpl, { data : data.warp, speed : 'Warp' } );
+
+    } else {
+
+        html = Mustache.render( navDatTmpl, { data : data.impulse, speed : 'Impulse' } );
+
+    }
+
+    $navInfo.html( html );
+
+}
+
+
+function getNavStats() {
+
+    trek.api( "navigation/status", displayNavStatus );
+
+}
+
+
+setInterval( getNavStats, 1000 );
 
 
 $( "#mainViewer" ).click( function () {

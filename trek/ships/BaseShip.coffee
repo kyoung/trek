@@ -618,6 +618,7 @@ class BaseShip extends BaseObject
             impulse: @impulse
             warp: @warp_speed
             log: @navigation_log.dump()
+            velocity: @velocity
 
 
     turn_port: ->

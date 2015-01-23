@@ -17,6 +17,7 @@ Responses that involve a timeout (eg a system scan), will return response object
 ## Power Systems
 Power in Trek is measured units called Dynes. All major systems operate in Megadynes, and so all power units are expressed in MDyn.
 
+
 # Tech debt and refactoring: TODO Before v.1.0 can be declared
 - [ ] Consolidated CSS
   - [ ] Also, refactor to use stylus
@@ -32,11 +33,13 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - Rely more on class variables for these things
 - [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
+
 # Current Sprint
-- [ ] Navigation
-  - [x] Thruster manuvering
-    - required for phaser combat
-  - [ ] Navigation status display
+- [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
+- [ ] Background nebula art
+  - [ ] Build out a star map background
+  - [ ] Create a basic star and nebula bit of art
+  - [ ] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
 
 ## Hotfix
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
@@ -45,36 +48,33 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Resolution bar in science scans is broken
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
 - [ ] Engineering power selectors suddenly have a fill to them
+- [ ] Transporter doesn't stop you from trying to transport without having selected a destination
+- [ ] Science Scanner circles don't show up on FF
 
 
 # Backlog
 ## Next Sprint
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
 
+
 ## Backlog For Breakout
+- Configuration of scanners
+  - Let the arc of the scanner be selected
+  - Let LR sensors be selected
+  - Do something more with sensors
+  - Objects get tracked once we've done a detailed scan... so how do we untrack them? At some point, we should be able to loose them (ie clocked, moved out of range, etc)
 - Lifesupport loss should mean the crew dies in N minutes
-- Show warp fire, as we do phasers
+- Show phaser fire, as we do torpedoes
 - Pretty Renders
   - http://devlog-martinsh.blogspot.ca/2011/12/glsl-depth-of-field-with-bokeh-v24.html
   - Just putting a minor blur on the material might be enough
   - Also, making the stations rotate a bit could help
   - Have speed and rotation displayed on the main viewer
   - Permanently bake the stars in so they don't change on refresh
-  - Background nebula art
-    - http://learningthreejs.com/blog/2011/08/15/lets-do-a-sky/
-    - [http://www.johannes-raida.de/tutorials/three.js/tutorial04/tutorial04.htm]
-      + This shows how to build a vertex color. Use this in combinaiton with a icosphere and a goland tool to map out a vertex from a bitmap
-      + http://12devsofxmas.co.uk/2012/01/webgl-and-three-js/
-  - It would be nice to be able to put the system star on screen
-  - It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
 - Internal Personnel
   - What happens when you over assign repair teams?
   - Intruders
-    - Figure out what happens when non-aligned parties beam aboard (IE if we beemed them aboard, take them to the brig, if they beamed aboard, they start attacking crew and disrupting systems)
     - Refactor the crew stuff, as we've simplified the Crew subclasses
-- Tactical
-  - Subsystem targetting!
-  - Weapons targeting should be it's own screen... with subsystems ability (if an active scan has been performed)
 - I should be affected by the environment
   - have particle density determine safe warp speed
 - Sector maps and other systems
@@ -92,10 +92,8 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - Explosions disrupt warp fields (seems needed for realism, but if not, makes for good ability to run away); perhaps?
   - Might not be needed; you'll want to drop out of warp to turn and fight
 - Additional Screens
-  + Shields status for engineering
-  + Shield "Scotty" nback iframe
+  + "Scotty" nback iframe
     + Minigame for engineering to allow miracle fixes
-  + Thruster navigation for helm
   + Library / Logs
   + Working sector nav
 - Some kind of computer interface for querying and library functions
@@ -104,16 +102,13 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 Feedback taken from real user testing
 
 - [ ] Need some kind of "cadet" mode to teach each pannel
-- [ ] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
+- [x] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
 - [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
-- [ ] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
+- [-] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
 
 
 # Bug log
-- [ ] Transporter doesn't stop you from trying to transport without having selected a destination
-- [ ] Science Scanner circles don't show up on FF
-- [ ] Objects get tracked once we've done a detailed scan... so how do we untrack them? At some point, we should be able to loose them
-- [ ] It doesn't look like LR scanners can be configured?
+
 
 # Completed Sprints
 
@@ -445,3 +440,9 @@ Feedback taken from real user testing
     - [-] Figure out what science teams should be able to actually do
       - Should be required for the mission profile: this is in keeping with cannon
   - [x] Game over if crew is dead
+
+## v 0.17 Navigation [COMPLETE]
+- [x] Navigation
+  - [x] Thruster manuvering
+    - required for phaser combat
+  - [x] Navigation status display
