@@ -1,4 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/kyoung/trek/badge.svg)](https://coveralls.io/r/kyoung/trek)
+[![Build Status](https://travis-ci.org/kyoung/trek.svg?branch=master)](https://travis-ci.org/kyoung/trek)
 
 # Trek
 Star Trek bridge simulator
