@@ -55,8 +55,8 @@ class System
 
         # materials required to repair
         @_repair_reqs = []
-        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = up_to 5
-        @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 2
+        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = 1 + up_to 5
+        @_repair_reqs[Cargo.EPS_CONDUIT] = 1 + up_to 2
         # Power to the system, in megadynes
         @power = 0
 
