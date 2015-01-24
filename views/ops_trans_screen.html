@@ -1,10 +1,10 @@
 <% include header.html %>
 
-<link rel="stylesheet" href="/static/css/ops_trans_screen.css">
+<!--link rel="stylesheet" href="/static/css/ops_trans_screen.css"-->
 
 <script src="static/js/jquery.color.js"></script>
 
-<div id="from_menu">
+<div id="from_menu" class="ops-trans-from_menu">
 	<h2>Transporter Control</h2>
 	<p>Origin</p>
 	<p id="origin_error" class="red"></p>
@@ -15,11 +15,11 @@
 	</ul>
 </div>
 
-<div id="energizer_controls">
-	<div class="beam_bar"></div>
-	<div class="beam_bar"></div>
-	<div class="beam_bar"></div>
-	<div id="beam_progress"></div>
+<div id="energizer_controls" class="ops-trans-energizer-controls">
+	<div class="ops-trans-beam_bar"></div>
+	<div class="ops-trans-beam_bar"></div>
+	<div class="ops-trans-beam_bar"></div>
+	<div id="beam_progress" class="ops-trans-beam_progress"></div>
 </div>
 
 <script>

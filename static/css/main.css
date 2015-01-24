@@ -486,6 +486,42 @@ svg.conn-arrow.up, svg.conn-arrow.down {
     top: 0;
 }
 
+ul.trans {
+    font-size: 0.8em;
+}
+
+.ops-trans-from_menu {
+    float: left;
+    width: 550px;
+    height: 800px;
+    overflow-y: scroll;
+}
+
+.ops-trans-energizer-controls {
+    right: 0;
+    width: 50%;
+    height: 100%;
+    position: absolute;
+}
+
+.ops-trans-beam_bar {
+    height: 100%;
+    width: 130px;
+    border-left: 3px #000 solid;
+    background-color: #0F8AA6;
+    float: left;
+}
+
+.ops-trans-beam_progress {
+    width: 100%;
+    height: 5px;
+    position: absolute;
+    background-color: #000;
+    bottom: 20px;
+    right: 0;
+    clear: both;
+}
+
 /* Tactical Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
