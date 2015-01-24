@@ -274,7 +274,7 @@ function addCharToInput ( new_char ) {
 
 $( ".numPad" ).click( function () {
 
-    var x_char = $( this ).html();
+    var x_char = $( 'span', this ).html();
     addCharToInput( x_char );
 
 } );
@@ -302,7 +302,7 @@ function engage () {
             trek.api(
                 "navigation/warp",
                 { speed : e[0] },
-                'PUT',
+                'POST',
                 function ( data ) { console.log( data ) } );
 
 
@@ -312,8 +312,8 @@ function engage () {
 
             trek.api(
                 "navigation/impulse",
-                { speed: e[ 0 ] },
-                'PUT',
+                { speed : e[ 0 ] },
+                'POST',
                 function ( c ) { consoel.log( c ) } );
 
         default:
