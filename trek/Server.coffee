@@ -32,6 +32,7 @@ landingPage = ( req, res ) ->
 ___________________________________________________###
 
 validate = ( req, res ) ->
+
     # take a request, response and validate for a prefix code
     postfix = req.cookies.postfix
     if not postfix in ship_postfixes
@@ -40,11 +41,11 @@ validate = ( req, res ) ->
     else
         return ships[ postfix ]
 
-postfix_validate = ( postfix ) ->
-    return ships[ postfix ]
 
-atoi = ( str ) ->
-    parseFloat str, 10
+postfix_validate = ( postfix ) -> return ships[ postfix ]
+
+
+atoi = ( str ) -> parseFloat str, 10
 
 
 ### Debug
@@ -182,17 +183,12 @@ navigation_api = ( prefix, method, command, params ) ->
             game.get_navigation_report prefix
 
         when 'warp'
-            if method == 'put'
+            if method == 'post'
                 game.set_warp_speed prefix, atoi( q.speed )
 
         when 'impulse'
-            if method == 'put'
+            if method == 'post'
                 game.set_impulse_speed prefix, atoi( q.speed )
-
-        when 'plot-intercept'
-            console.log "[!] Call to plot an intercept..."
-            # Disabled
-            # plot_intercept prefix, q.target, q.impulse, q.warp
 
         when 'system'
             # stellar telemetry
