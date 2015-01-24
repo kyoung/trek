@@ -125,7 +125,7 @@ function init () {
 
 	makeParticles();
 	showSun();
-	// loadGalaxy();
+	loadGalaxy();
 
 	if ( targetURL != "" ) { showTarget(); }
 
@@ -192,7 +192,7 @@ function update ( stamp ) {
 
 		// Rotate the stars, not the camera
 		// rotations are in Radians
-		particle_system.rotation.y -= cameraTurnRate;
+		// particle_system.rotation.y -= cameraTurnRate;
 
 		if ( skyBox != undefined ) {
 			skyBox.rotation.y -= cameraTurnRate;
@@ -304,7 +304,7 @@ function showSun(){
 function makeParticles () {
 
 	drawWarpTunnel();
-	drawStars();
+	// drawStars();
 
 }
 
@@ -374,7 +374,7 @@ function drawStars () {
 	var particle_geo = new THREE.Geometry();
 	// we make a particle material and pass through the
 	// colour and custom particle render function we defined.
-	material = new THREE.ParticleSystemMaterial( { vertexColors: true } );
+	material = new THREE.ParticleSystemMaterial( { vertexColors : true } );
 
 	for ( i=0; i<starcount; i++ ) {
 

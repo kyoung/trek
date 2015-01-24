@@ -36,12 +36,16 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 
 # Current Sprint
 - [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
+  - [x] Remove the iframe
+  - [ ] Make mobile friendly
 - [ ] Background nebula art
   - [x] Build out a star map background
   - [ ] Create a basic star and nebula bit of art
   - [x] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
 
 ## Hotfix
+- [ ] Transporter bugs are gone
+- [ ] Engineering overload is still busted
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
 - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
 - [ ] Engineering primary relay charge readout fails to auto-updated
