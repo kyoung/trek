@@ -56,7 +56,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 
 # Backlog
 ## Next Sprint
-- [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
+
 
 
 ## Backlog For Breakout

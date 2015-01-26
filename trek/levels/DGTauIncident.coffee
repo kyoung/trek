@@ -167,7 +167,7 @@ class DGTauIncident extends Level
         console.log "[LEVEL] message: #{ message }"
 
         # Allow ships to request outposts to lower their shields for transport
-        outpost_number = message.match /Outpost (\d+)/i;
+        outpost_number = message.match /outpost (\d+)/i;
         lower = message.match /lower/i;
         raise = message.match /raise/i;
 
@@ -338,7 +338,7 @@ class DGTauIncident extends Level
         system = @map.get_star_system 'DG Tau'
 
         @stations = []
-        for i in [1..10]
+        for i in [1..3]
             true for pre, e of @ships
             p = if i == 1 then e.position else do @_random_start_position
             p = { x : p.x + 3000, y : p.y, z : 0 }
