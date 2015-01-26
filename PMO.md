@@ -46,7 +46,6 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 ## Hotfix
 - [ ] Engineering overload is still busted
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
-- [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
 - [ ] Engineering primary relay charge readout fails to auto-updated
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
 - [ ] Engineering power selectors suddenly have a fill to them

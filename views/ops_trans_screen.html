@@ -165,7 +165,7 @@ function buildInternalCrewMenu ( r ) {
 	_.each( r, function ( e, i, l ) {
 		var c = $("<li class='blue trans_selection'>"+e.description+"</li>");
 
-		c.click( function() {
+		c.click( function () {
 
 			$( ".trans_selection" ).removeClass( 'lightblue' );
 			$( this ).addClass( 'lightblue' );
@@ -229,7 +229,7 @@ function buildCrewMenu ( transScan ) {
 };
 
 
-function buildCargoFromMenu (transScan, cargo) {
+function buildCargoFromMenu ( transScan, cargo ) {
 
 	originList.empty();
 	_.each(transScan.cargo, function ( v, k, l ) {
@@ -238,7 +238,7 @@ function buildCargoFromMenu (transScan, cargo) {
 
 			if ( k2 != cargo || v2 == 0 ) { return };
 			var s = k2 + ", Bay " + k + ": " + v2;
-			var c = $("<li class='blue' trans_selection'>"+s+"</li>");
+			var c = $( "<li class='blue' trans_selection'>"+s+"</li>" );
 
 			c.click( function () {
 
@@ -259,22 +259,25 @@ function buildCargoFromMenu (transScan, cargo) {
 };
 
 
-function buildCargoMenu (transScan) {
+function buildCargoMenu ( transScan ) {
 
 	originList.empty();
 	var available_cargo = {};
 
 	_.each(transScan.cargo, function ( v, k, l ) {
 
-		_.each(v, function ( v2, k2, l2 ) {
+		_.each( v, function ( v2, k2, l2 ) {
 
-			if (v2 == 0) {
-				return;
-			}
-			if (available_cargo.hasOwnProperty(k2)){
-				available_cargo[k2] += v2;
+			if ( v2 == 0 ) { return; }
+
+			if ( available_cargo.hasOwnProperty( k2 ) ){
+
+				available_cargo[ k2 ] += v2;
+
 			} else {
-				available_cargo[k2] = v2;
+
+				available_cargo[ k2 ] = v2;
+
 			}
 
 		});
@@ -310,8 +313,11 @@ function beamCargo () {
 		'transporters/transportCargo',
 		transportArgs,
 		'POST',
-		function ( r ) { console.log( r ); }
-	);
+		function ( r ) {
+
+			$transportLi.remove();
+
+		} );
 
 };
 
@@ -334,8 +340,7 @@ function beamCrew () {
 
 			$transportLi.remove();
 
-		}
-	);
+		} );
 
 };
 
