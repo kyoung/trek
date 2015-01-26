@@ -1,10 +1,10 @@
 <% include header.html %>
 <p><%= type %></p>
 
-<div id="scan_body">
-    <div id="resolution_selector" class="fleft scan-slider">
+<div id="scan_body" class="scan-body">
+    <div id="resolution_selector" class="fleft scan-slider scan-resolution-meter">
         <p class="descriptiveText">Resolution</p>
-        <div id="resolution_meter">
+        <div id="resolution_meter" class="scan-resolution-meter">
             <div id="64" class="scan-slider-selector-left">
             </div>
             <div id="32" class="scan-slider-selector-left">
@@ -41,9 +41,12 @@
 </div>
 
 <script>
+
 var type = "<%= type %>";
+
 var range = 0.5;
 var resolution = 8;
+
 var buckets = []
 for (var i=0; i<64; i++) {
     if (i <= 8 || i >= 55) {
@@ -54,23 +57,21 @@ for (var i=0; i<64; i++) {
 }
 
 // High resolution scans require max resolution
-if (type.indexOf('High-Resolution') > 0) {
-    resolution = 64;
-}
+if ( type.indexOf( 'High-Resolution' ) > 0 ) { resolution = 64; }
 
 // To be replaced with API status call. 17 LY is max short range scan.
 var maxRange = 17;
 var reading = [];
 
-var validResolutions = [4, 8, 16, 32, 64];
+var validResolutions = [ 4, 8, 16, 32, 64 ];
 
-var $resolutionSelectors = $("#resolution_meter .scan-slider-selector-left");
-var $rangeBar = $("#range_bar");
-var $rangeSelector = $("#range_selector");
-var $scanResults = $("#scanResults");
+var $resolutionSelectors = $( "#resolution_meter .scan-slider-selector-left" );
+var $rangeBar = $( "#range_bar" );
+var $rangeSelector = $( "#range_selector" );
+var $scanResults = $( "#scanResults" );
 
-var $scanTiming = $("#scan_timing");
-var $scanDetails = $("#scan_details");
+var $scanTiming = $( "#scan_timing" );
+var $scanDetails = $( "#scan_details" );
 
 var resultsCenterX = 500;
 var resultsCenterY = 350;
@@ -79,11 +80,11 @@ var resultsRadius = 350;
 var bearing_start;
 var bearing_end;
 
-$rangeSelector.click(selectRange);
-$resolutionSelectors.click(selectResolution);
+$rangeSelector.click( selectRange );
+$resolutionSelectors.click( selectResolution );
 
 
-function loadConfiguration (config_json) {
+function loadConfiguration ( config_json ) {
 
     range = config_json.range;
     resolution = config_json.resolution;

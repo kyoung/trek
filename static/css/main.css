@@ -696,6 +696,10 @@ ul.science-environmental-data li {
 
 }
 
+.scan-body {
+    height: 100%;
+}
+
 .scan-detail-alert {
     position: absolute;
     top: 300px;
@@ -787,6 +791,10 @@ ul.science-environmental-data li {
 
 .scan-detail-render {
     width: 100%;
+    height: 100%;
+}
+
+.scan-resolution-meter {
     height: 100%;
 }
 
