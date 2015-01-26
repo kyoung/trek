@@ -51,12 +51,8 @@ function loadPage () {
 
 			inTransporterRange = data;
 
-			transScan = _.find(
-				data, function ( i ) { return i.name == fromTarget }
-			);
-			destScan = _.find(
-				data, function ( i ) { return i.name == toTarget }
-			);
+			transScan = _.find( data, function ( i ) { return i.name == fromTarget } );
+			destScan = _.find( data, function ( i ) { return i.name == toTarget } );
 
 			if ( transType == 'cargo' ) {
 
@@ -70,8 +66,7 @@ function loadPage () {
 
 			}
 
-		}
-	);
+		} );
 }
 
 
@@ -79,6 +74,7 @@ function buildBayMenu (destScan) {
 
 	destList.empty();
 	_.each( destScan.cargo, function (v, k, l) {
+
 		var c = $("<li class='blue trans_dest'>Cargo Bay " + k + "</li>");
 		c.click( function() {
 
@@ -88,6 +84,7 @@ function buildBayMenu (destScan) {
 
 		} );
 		destList.append( c );
+
 	});
 
 };
@@ -378,11 +375,11 @@ function beamBarClicked () {
 			beam();
 		}
 	);
-	$(".beam_bar").animate(
-		{backgroundColor: "#03BD11"},
+	$( ".ops-trans-beam_bar" ).animate(
+		{ backgroundColor : "#03BD11" },
 		5000,
 		function() {
-			$(".beam_bar").animate(
+			$( ".ops-trans-beam_bar" ).animate(
 				{backgroundColor: "#0F8AA6"}, 5000
 			)
 		}
@@ -390,7 +387,7 @@ function beamBarClicked () {
 };
 
 
-$(".beam_bar").click( function (e) {
+$( ".ops-trans-beam_bar" ).click( function (e) {
 
 	var y = e.clientY;
 	if ( y < 200 ) {

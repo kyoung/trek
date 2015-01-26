@@ -976,7 +976,7 @@ class BaseShip extends BaseObject
         teams = ( t for t in @internal_personnel when t.id is crew_id )
         if teams.length == 0
             console.log @internal_personnel
-            throw new Error "No such team at that location: #{ @name } #{deck} #{section}"
+            throw new Error "No such team at that location: #{ @name } #{deck} #{section}. Refresh your targeting scan."
 
         @_remove_crew crew_id
         do @_rebuild_crew_checks

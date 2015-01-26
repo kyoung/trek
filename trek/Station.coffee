@@ -226,7 +226,7 @@ class Station extends BaseObject
         teams = (t for t in @crew when t.id == crew_id)
 
         if teams.length == 0
-            throw new Error("No team at that location: #{ level } #{section}")
+            throw new Error("No team at that location: #{ level } #{section}. Refresh your targeting scan.")
 
         team = teams[0]
 
