@@ -368,7 +368,7 @@ class Game
             return {}
         target = (o for o in @game_objects when o.name == target_name)[0]
         stars = (o for o in @space_objects when o.classification.indexOf("Star") >= 0)
-        console.log stars
+
         telemetry =
             bearing_to_viewer: U.bearing(target, ship)
             bearing_to_target: U.bearing(ship, target)

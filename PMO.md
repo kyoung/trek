@@ -44,7 +44,6 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [x] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
 
 ## Hotfix
-- [ ] Transporter bugs are gone
 - [ ] Engineering overload is still busted
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
 - [ ] Transporter screen doesn't get rid of transported cargo as it does transported personnel
@@ -75,6 +74,7 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - Also, making the stations rotate a bit could help
   - Have speed and rotation displayed on the main viewer
   - Permanently bake the stars in so they don't change on refresh
+  - Draw some star art and the planetary disks for these levels
 - Internal Personnel
   - What happens when you over assign repair teams?
   - Intruders

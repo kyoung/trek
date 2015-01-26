@@ -64,7 +64,7 @@ var starViews = [
 	"aft"
 ];
 
-if ( _.indexOf( starViews, targetName ) == -1 ) {
+if ( amLookingAtTarget() ) {
 
 	trek.api(
 		"navigation/stelar-telemetry",
@@ -304,7 +304,7 @@ function showSun(){
 function makeParticles () {
 
 	drawWarpTunnel();
-	// drawStars();
+	// drawStars(); // disabled while we test the new skybox background
 
 }
 
@@ -378,7 +378,6 @@ function drawStars () {
 
 	for ( i=0; i<starcount; i++ ) {
 
-
 		// make the particle
 		particle = new THREE.Vector3();
 
@@ -402,12 +401,13 @@ function drawStars () {
 
 	var colours = []
 	for ( var i=0; i<particle_geo.vertices.length; i++ ) {
+
 		colours[ i ] = new THREE.Color();
 		colours[ i ].setHSL(
 			Math.random(),
 			Math.random(),
-			Math.random()
-		);
+			Math.random() );
+
 	}
 	particle_geo.colors = colours;
 
@@ -419,7 +419,7 @@ function drawStars () {
 };
 
 
-function showTarget(){
+function showTarget () {
 
 	loader.load( "/static/mesh/" + targetURL, function( geo, mat ) {
 
@@ -521,9 +521,7 @@ function showDestruction () {
 function processSpeedData ( navData ) {
 
 	// If we're not just looking at stars, don't bother
-	if ( _.indexOf( starViews, targetName ) == -1 ) {
-		return;
-	}
+	if ( amLookingAtTarget() ) { return; }
 
 	if ( navData.set_speed == "warp" ) {
 
@@ -539,6 +537,9 @@ function processSpeedData ( navData ) {
 
 
 function processTurnState ( navData ) {
+
+	if ( amLookingAtTarget() ) { return; }
+
 	// Process periodic updates to state (IE turn thrusters)
 
 	// Translate circle rotations into radians
@@ -569,7 +570,7 @@ function processTurnDisplay ( navData ) {
 	turnDistance = navData.turn_distance;
 
 	// skip if the view isn't a rotating one
-	if ( _.indexOf( starViews, targetName ) == -1 ) { return; }
+	if ( amLookingAtTarget() ) { return; }
 
 	cameraTurning = true;
 	// how far does the camera turn each frame?
@@ -588,6 +589,14 @@ function processTurnDisplay ( navData ) {
 	);
 
 };
+
+
+function amLookingAtTarget () {
+
+	return _.indexOf( starViews, targetName ) == -1;
+
+}
+
 
 trek.api(
     "navigation/status",
