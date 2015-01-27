@@ -48,10 +48,11 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 
 ## Hotfix
 - [ ] Engineering overload is still busted
+- [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
+- [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
 - [ ] Engineering primary relay charge readout fails to auto-updated
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
-- [ ] Engineering power selectors suddenly have a fill to them
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
 - [ ] Science Scanner circles don't show up on FF
 
@@ -220,7 +221,7 @@ Feedback taken from real user testing
       - [x] Transport cargo away
     * [x] Repairs
       - [x] View damaged system details
-      - [x] Send repair crews to different systems 
+      - [x] Send repair crews to different systems
     * [x] Crew
       - [x] View crew on different decks
       - [x] Send crew to different decks
@@ -311,7 +312,7 @@ Feedback taken from real user testing
   - [x] Fix "Plot Intercept" to kill negative number results, and display an error if the plotted intercept was impossible.
 - Error Handling
   - [x] When express.js throws a 500 error, I want the client to be passed the message, so they can take action if desired.
-  
+
 ## v 0.8 [COMPLETE]
 - [x] Tactical
   - [x] Torpedo loading needs to be limited
@@ -385,7 +386,7 @@ Feedback taken from real user testing
   - [x] Where are the rest of the crews?
 - [x] Fix the Impulse direction indicator
   - [x] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
-- [x] Fix combat 
+- [x] Fix combat
   - [x] torpedo strikes don't seem to be working well
   - close range manuvering is required for phasers
 - [x] Captains log
