@@ -901,7 +901,8 @@ class BaseShip extends BaseObject
             throw new Error "Team not found #{ crew_id }. To #{ to_deck }, #{ to_section }."
 
         if team.deck is to_deck and team.section is to_section
-            return
+            # Return something... it doesn't much matter
+            return "Acknowledged"
 
         team.goto to_deck, to_section
         r = "Team enroute"
