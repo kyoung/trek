@@ -22,6 +22,9 @@ exports.CrewTest =
 
 	'test can move crews': ( test ) ->
 
+		original_move_time = Constants.CREW_TIME_PER_DECK
+		Constants.CREW_TIME_PER_DECK /= 10
+
 		r = new RepairTeam 'A', 'starboard'
 		r.goto 'B', 'aft'
 		test.expect 2
@@ -29,6 +32,7 @@ exports.CrewTest =
 		check_movement = ->
 			test.ok r.deck == 'B', 'Failed to move to deck'
 			test.ok r.is_onboard(), 'Failed to arrive at deck'
+			Constants.CREW_TIME_PER_DECK = original_move_time
 			do test.done
 
 		setTimeout check_movement, Constants.CREW_TIME_PER_DECK + 10
@@ -36,14 +40,14 @@ exports.CrewTest =
 
 	'test can assign repair crew for partial repair': ( test ) ->
 
+		original_repair_time = System.REPAIR_TIME
+		System.REPAIR_TIME /= 100
+
 		s = new System 'Test System', 'A', 'Forward'
 		r = new RepairTeam 'A', 'Forward'
 		s.repair 1
 		s.damage( 1 - System.OPERABILITY_CUTOFF - 0.001 )
 		r.repair s
-
-		original_repair_time = System.REPAIR_TIME
-		System.REPAIR_TIME /= 100
 
 		test.expect 2
 
@@ -129,7 +133,6 @@ exports.CrewTest =
 		net_health = 0
 		net_health += i for i in suvivor.members
 		test.ok net_health < suvivor.size, "Survivor failed to be injured"
-
 
 		do test.done
 

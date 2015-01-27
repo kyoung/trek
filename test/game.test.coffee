@@ -80,7 +80,6 @@ exports.GameTest =
             second torpedo: #{t3 - t2}")
 
         do game.over
-
         do test.done
 
 

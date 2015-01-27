@@ -31,6 +31,9 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
   - [ ] Consolidate the endpoints so that it's not just one method per url
 - [x] Reduce the use of Constants
   - Rely more on class variables for these things
+- [ ] Speed up the test; rely less on timeouts by forcing the elapse of time through the delta_t ability
+  - [ ] crew test
+  - [ ] ship test
 - [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 

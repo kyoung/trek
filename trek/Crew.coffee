@@ -64,7 +64,7 @@ class BaseTeam
     is_enroute: -> @status == STATUS.ENROUTE
 
 
-    goto: ( new_deck, new_section, on_arrival=NaN ) ->
+    goto: ( new_deck, new_section, on_arrival ) ->
 
         @status = STATUS.ENROUTE
         decks_to_go = Math.abs(
@@ -74,7 +74,7 @@ class BaseTeam
         @section = new_section
         time_to_travel = C.CREW_TIME_PER_DECK * decks_to_go
 
-        if not on_arrival
+        if not on_arrival?
             on_arrival = => @status = STATUS.ONBOARD
 
         setTimeout on_arrival, time_to_travel
@@ -184,8 +184,10 @@ class RepairTeam extends BaseTeam
     repair: ( system, complete=false ) ->
 
         team = @
+
         on_arrival = ->
             team.status = STATUS.ONBOARD
+
             repair_system_cycle = ->
                 system.repair ( 1 / System.REPAIR_TIME ) * 1000
                 operable = system.state > C.SYSTEM_OPERABILITY_CUTOFF and not complete
@@ -194,7 +196,9 @@ class RepairTeam extends BaseTeam
                     team.currently_repairing = undefined
                     return
                 setTimeout repair_system_cycle, 1000
+
             setTimeout repair_system_cycle, 1000
+
         @goto system.deck, system.section, on_arrival
         @currently_repairing = system.name
 

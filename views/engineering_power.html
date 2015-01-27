@@ -175,22 +175,35 @@ function loadPowerReport( powerJSON ) {
 
             var system = _.find(
                 power_report.subsystems,
-                function ( e ) {
-                    return e.name == clicked_id;
-                }
-            );
+                function ( e ) { return e.name == clicked_id; } );
 
             var max = power_report.max_level;
-            var level = x / (width / max);
+            var level = x / ( width / max );
 
-            trek.api(
-                "engineering/reactor",
-                { reactor: clicked_id, level: level },
-                'POST',
-                loadScreen
-            );
+            // If you're increasing the energy level of a reactor, you're likely going to blow
+            // things up... force an override
 
-        });
+            moveOutput = function () {
+
+                trek.api(
+                    "engineering/reactor",
+                    { reactor: clicked_id, level: level },
+                    'POST',
+                    loadScreen );
+
+            }
+
+            if ( level > component_json.output_level ) {
+
+                trek.confirm( "Increasing the power to a reactor will cause a cascade of damage to all attached systems. CONFIRM BEFORE PROCEEDING.", moveOutput );
+
+            } else {
+
+                moveOutput();
+
+            }
+
+        } );
     }
 
     else {

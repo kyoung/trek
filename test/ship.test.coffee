@@ -463,10 +463,8 @@ exports.ShipTest =
 
         initial_health = do c.health
 
-        dummy_worldscan_callback = () ->
-
         # tick one
-        s.calculate_state dummy_worldscan_callback, 250
+        s.calculate_state undefined, 250
         sustained_health = do c.health
         test.ok initial_health is sustained_health, "Team's health changed on their own!"
 
@@ -475,7 +473,7 @@ exports.ShipTest =
         c.section = s.sick_bay.section
 
         # tick two
-        s.calculate_state dummy_worldscan_callback, 250
+        s.calculate_state undefined, 250
         improved_health = do c.health
         test.ok improved_health > sustained_health, "Being in sickbay did not improve health: #{ initial_health } > #{ improved_health }"
 
@@ -498,10 +496,8 @@ exports.ShipTest =
         # send boarding team
         s.beam_onboard_crew intruder, c.deck, c.section
 
-        dummy_worldscan_callback = () ->
-
         # tick
-        s.calculate_state dummy_worldscan_callback, 250
+        s.calculate_state undefined, 250
 
         final_klingon_health = do intruder.health
 
@@ -516,7 +512,6 @@ exports.ShipTest =
 
         s = new Constitution
         tic = 250
-        dummy_worldscan_callback = ->
 
         is_close = ( n1, n2 ) ->
             n1 * 0.99 < n2 < n1 * 1.01
@@ -533,7 +528,7 @@ exports.ShipTest =
         tubes_are_autoloading = ( ship ) -> ship.torpedo_banks[ 0 ]._autoload
 
         s.set_alert "red"
-        s.calculate_state dummy_worldscan_callback, tic
+        s.calculate_state undefined, tic
 
         #console.log "Shields: #{ shields_are_up s  }"
         #console.log "Phasers: #{ phasers_are_charging s }"
@@ -543,15 +538,15 @@ exports.ShipTest =
         test.ok shields_are_up( s ) and phasers_are_charging( s ) and sifs_are_powered( s ) and tubes_are_autoloading( s ), "Failed to set condition one"
 
         s.set_alert "yellow"
-        s.calculate_state dummy_worldscan_callback, tic
+        s.calculate_state undefined, tic
         test.ok shields_are_up( s ) and not phasers_are_charging( s ) and sifs_are_powered( s ) and not tubes_are_autoloading( s ), "Failed to set condition two"
 
         s.set_alert "blue"
-        s.calculate_state dummy_worldscan_callback, tic
+        s.calculate_state undefined, tic
         test.ok not shields_are_up( s ) and not phasers_are_charging( s ) and not tubes_are_autoloading( s ) and sifs_are_powered( s ), "Failed to set condition three"
 
         s.set_alert "clear"
-        s.calculate_state dummy_worldscan_callback, tic
+        s.calculate_state undefined, tic
         test.ok not shields_are_up( s ) and not phasers_are_charging( s ) and not tubes_are_autoloading( s ) and not sifs_are_powered( s ), "Failed to stand down"
 
         do test.done
