@@ -34,7 +34,7 @@ class BridgeSystem extends System
         screens_that_should_be_damaged = Math.ceil( ( 1 - @state ) * Object.keys( BridgeSystem.STATIONS ).length )
         screens_that_are_damaged = ( s for s, damaged of @station_damaged when damaged ).length
 
-        console.log "...identified #{ screens_that_should_be_damaged } screens should be damaged: #{ @state }"
+        console.log "...identified [D] #{ screens_that_should_be_damaged } screens should be damaged: #{ @state }"
 
         if screens_that_should_be_damaged > screens_that_are_damaged
             @_damage_n_screens screens_that_should_be_damaged - screens_that_are_damaged
@@ -49,6 +49,8 @@ class BridgeSystem extends System
 
         screens_that_should_be_fixed = Math.floor( @state * Object.keys( BridgeSystem.STATIONS ).length )
         screens_that_are_operational = ( s for s, damaged of @station_damaged when not damaged ).length
+
+        console.log "...identified [F] #{ screens_that_should_be_fixed } screens should be fixed: #{ @state }"
 
         if screens_that_are_operational < screens_that_should_be_fixed
             @_repair_n_screens screens_that_should_be_fixed - screens_that_are_operational

@@ -5,6 +5,7 @@
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
 {SIFSystem} = require '../systems/SIFSystems'
+{BridgeSystem} = require '../systems/BridgeSystems'
 {Torpedo} = require '../Torpedo'
 {BaseObject} = require '../BaseObject'
 {CargoBay} = require '../CargoBay'

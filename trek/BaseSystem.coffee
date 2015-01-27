@@ -42,10 +42,8 @@ class System
                 #{@name}: #{@deck} #{@section}")
         if not @power_thresholds?
             @power_thresholds = {'min': 1, 'max': 2, 'dyn': 1}
-        if Math.random() > 0.8
-            @state = 0.8 + up_to(20) / 100
-        else
-            @state = 1
+
+        @state = 1
 
         # consuming passive power
         @online = true
