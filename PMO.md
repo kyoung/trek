@@ -5,19 +5,6 @@ Trek Project Management, because sometimes a checklist is all you need.
 ## Headings
 Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing system is [LONGITUDE] mark [LATITUDE]. Latitudal movement is not yet implemented.
 
-## Scope
-Space is big; this game is meant to take place over the space of a solar system, and posibly a sector, since it takes no time at all to move accross a system at warp 6.
-
-A sector is a 20-lightyear cube, and at Warp 6 a ship travels at [blank]. Meaning the entire board can be crossed in [blank]. Warp speed is generally not possible inside a solar system (probably for navigational safety reasons).
-
-## Timeouts
-Responses that involve a timeout (eg a system scan), will return response object that includes a timeout parameter, which it is the responsibility of the interface layer to implement (ie the web server and console layer).
-- Shields take 13 seconds to raise
-
-## Power Systems
-Power in Trek is measured units called Dynes. All major systems operate in Megadynes, and so all power units are expressed in MDyn.
-
-
 # Tech debt and refactoring: TODO Before v.1.0 can be declared
 - [ ] Consolidated CSS
   - [ ] Also, refactor to use stylus
@@ -34,16 +21,19 @@ Power in Trek is measured units called Dynes. All major systems operate in Megad
 - [ ] Speed up the test; rely less on timeouts by forcing the elapse of time through the delta_t ability
   - [ ] crew test
   - [ ] ship test
-- [ ] Get the authours of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
+- [ ] Get the authors of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 
 # Current Sprint
-- [ ] Viewscreen selection needs something other than the seperate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
+- [ ] Viewscreen selection needs something other than the separate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
   - [x] Remove the iframe
   - [ ] Make mobile friendly
 - [ ] Background nebula art
   - [x] Build out a star map background
   - [ ] Create a basic star and nebula bit of art
+      - http://www.webdesign.org/photoshop/special-effects/space-nebula.13396.html
+      - http://design.tutsplus.com/tutorials/ringed-planet-supernova-photoshop--psd-12301
+      - http://glennclovis.deviantart.com/art/Helio-Nebula-Tutorial-115604344?q=1&qo=1
   - [x] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
 
 ## Hotfix
