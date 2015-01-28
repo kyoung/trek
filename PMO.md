@@ -28,9 +28,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] Viewscreen selection needs something other than the separate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
   - [x] Remove the iframe
   - [ ] Make mobile friendly
-- [ ] Background nebula art
+- [x] Background nebula art
   - [x] Build out a star map background
-  - [ ] Create a basic star and nebula bit of art
+  - [x] Create a basic star and nebula bit of art
       - http://www.webdesign.org/photoshop/special-effects/space-nebula.13396.html
       - http://design.tutsplus.com/tutorials/ringed-planet-supernova-photoshop--psd-12301
       - http://glennclovis.deviantart.com/art/Helio-Nebula-Tutorial-115604344?q=1&qo=1
