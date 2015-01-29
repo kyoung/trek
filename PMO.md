@@ -25,16 +25,23 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 # Current Sprint
-- [ ] Viewscreen selection needs something other than the separate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
-  - [x] Remove the iframe
-  - [ ] Make mobile friendly
-- [x] Background nebula art
-  - [x] Build out a star map background
-  - [x] Create a basic star and nebula bit of art
-      - http://www.webdesign.org/photoshop/special-effects/space-nebula.13396.html
-      - http://design.tutsplus.com/tutorials/ringed-planet-supernova-photoshop--psd-12301
-      - http://glennclovis.deviantart.com/art/Helio-Nebula-Tutorial-115604344?q=1&qo=1
-  - [x] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
+- [ ] z-axis implementation
+    - [ ] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
+    - [ ] display -/+ z values on system map displays
+- [ ] have radiation levels increase the closer you get to the star
+    - [ ] safety zone > 40AU should allow a safe muster point
+    - [ ] science scans of the star should indicate this information
+- [ ] begin using the accretion disk
+    - [ ] have radiation be dampened by the accretion disks / dust cloud objects
+    - [ ] have the dust inform the particle density environmental value
+    - [ ] have the particle density figures corelate to max-possible warp speed
+    - [ ] display the distribution of gas clouds on the sector screen
+- [ ] have warp drive be a charge-depleting action on the nacelles
+- [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
+    - [ ] build new mesh
+    - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
+    - [ ] get rid of the station object. Merge into Ship
+
 
 ## Hotfix
 - [ ] Engineering overload is still busted
@@ -64,15 +71,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   - http://devlog-martinsh.blogspot.ca/2011/12/glsl-depth-of-field-with-bokeh-v24.html
   - Just putting a minor blur on the material might be enough
   - Also, making the stations rotate a bit could help
-  - Have speed and rotation displayed on the main viewer
-  - Permanently bake the stars in so they don't change on refresh
-  - Draw some star art and the planetary disks for these levels
-- Internal Personnel
-  - What happens when you over assign repair teams?
-  - Intruders
-    - Refactor the crew stuff, as we've simplified the Crew subclasses
-- I should be affected by the environment
-  - have particle density determine safe warp speed
 - Sector maps and other systems
   - Setup LY-based coordinates for objects not in systems
   - Compound coordinates? LY coordinates, offset by metrics is you're in a system
@@ -442,3 +440,15 @@ Feedback taken from real user testing
   - [x] Thruster manuvering
     - required for phaser combat
   - [x] Navigation status display
+
+ ## v 0.18 Prettier display [COMPLETE]
+ - [x] Viewscreen selection needs something other than the separate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
+     - [x] Remove the iframe
+     - [x] Make mobile friendly
+ - [x] Background nebula art
+     - [x] Build out a star map background
+     - [x] Create a basic star and nebula bit of art
+         - http://www.webdesign.org/photoshop/special-effects/space-nebula.13396.html
+         - http://design.tutsplus.com/tutorials/ringed-planet-supernova-photoshop--psd-12301
+         - http://glennclovis.deviantart.com/art/Helio-Nebula-Tutorial-115604344?q=1&qo=1
+     - [x] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
