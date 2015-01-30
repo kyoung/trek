@@ -439,8 +439,8 @@ command_api = ( prefix, method, command, params, res ) ->
 
 set_course = ( prefix, bearing, mark ) ->
 
-    b = atoi "0." + bearing
-    m = atoi mark
+    b = atoi( bearing ) / 1000
+    m = atoi( mark ) / 1000
     game.set_course prefix, b, m
 
 

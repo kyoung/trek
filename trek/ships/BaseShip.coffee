@@ -654,29 +654,46 @@ class BaseShip extends BaseObject
 
     fire_thrusters: ( direction ) ->
 
-
         check_safe_for_thrusters = =>
+
             if @impulse == 0 and @warp_speed == 0
                 return
-            @impulse == 0
-            @warp_speed == 0
+            @impulse = 0
+            @warp_speed = 0
             @velocity.x = 0
             @velocity.y = 0
             @velocity.z = 0
 
-        rotation = @bearing.bearing * Math.PI * 2
+        flat_rotation = @bearing.bearing * Math.PI * 2
+        flat_mark = @bearing.mark * Math.PI * 2
+
+        # CORRECT FOR 3D PLANE
+        z_vector = Math.sin flat_mark
+        xy_vector = Math.cos flat_mark
+        x_vector = xy_vector * Math.cos flat_rotation
+        y_vector = xy_vector * Math.sin flat_rotation
+
+        console.log "Vector set:"
+        console.log "#{ x_vector }, #{ y_vector }, #{ z_vector }"
+        console.log "from:"
+        console.log "#{ @bearing.bearing } m #{ @bearing.mark }"
+
+        delta_v = BaseShip.THRUSTER_DELTA_V_MPS / 1000
 
         switch direction
 
             when "forward"
                 do check_safe_for_thrusters
-                @velocity.x += Math.cos( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
-                @velocity.y += Math.sin( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
+
+                @velocity.x += x_vector * delta_v
+                @velocity.y += y_vector * delta_v
+                @velocity.z += z_vector * delta_v
 
             when "reverse"
                 do check_safe_for_thrusters
-                @velocity.x -= Math.cos( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
-                @velocity.y -= Math.sin( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
+                @velocity.x -= x_vector * delta_v
+                @velocity.y -= y_vector * delta_v
+                @velocity.z -= z_vector * delta_v
 
 
     set_course: ( bearing, mark, callback ) =>
@@ -690,6 +707,8 @@ class BaseShip extends BaseObject
 
     _set_course: ( bearing, mark, callback ) =>
 
+        console.log "#{ @name } turning #{ bearing } m #{ mark }"
+
         # These are understood to be relative bearings
         if not @inertial_dampener.is_online()
             throw new Error "internal Dampener offline. Safety protocols
@@ -700,7 +719,10 @@ class BaseShip extends BaseObject
                 Safety protocols prevent acceleration."
 
         if not 0 <= bearing <= 1
-            throw new Error "Illegal bearing #{bearing}"
+            throw new Error "Illegal bearing #{ bearing }"
+
+        if not ( mark < 0.25 or mark > 0.75 )
+            throw new Error "Illegal mark #{ mark }: limit mark coordinates to 0 - 250, or 750 - 1000"
 
         do @_clear_rotation
         @_navigation_lock = true
@@ -712,17 +734,36 @@ class BaseShip extends BaseObject
 
         # Calculate new bearing
         new_bearing = ( bearing + @bearing.bearing ) % 1
-        new_mark = ( mark + @bearing.mark ) % 1
-        if new_mark < 0
-            new_mark += 1
 
-        # Calculate the duration of the turn
+        # Marks are absolute
+        new_mark = mark
+        relative_mark = ( m ) ->
+            switch
+                when m > 0.5 then m - 1
+                when m < 0.5 then m
+
+        # Calculate the duration of the turn (bearing)
         turn_direction = C.COUNTERCLOCKWISE
         turn_distance = bearing
         if bearing > 0.5
             turn_direction = C.CLOCKWISE
             turn_distance = 1 - bearing
-        duration = C.TIME_FOR_FULL_ROTATION * turn_distance
+        duration_bearing = C.TIME_FOR_FULL_ROTATION * turn_distance
+
+        # Calculate the duration of the turn (mark)
+        delta_mark = Math.abs( relative_mark( mark ) - relative_mark( @bearing.mark ) )
+        duration_mark = C.TIME_FOR_FULL_ROTATION * delta_mark
+
+        duration = Math.max duration_bearing, duration_mark
+
+        # Set the bearing_v so that turns update in the nav display
+        turn_vector = if turn_direction is C.COUNTERCLOCKWISE then 1 else -1
+        mark_vector = if relative_mark( mark ) > relative_mark( @bearing.mark ) then 1 else -1
+
+        if bearing isnt @bearing.bearing then @bearing_v.bearing = turn_vector / C.TIME_FOR_FULL_ROTATION
+        if mark isnt @bearing.mark then @bearing_v.mark = mark_vector / C.TIME_FOR_FULL_ROTATION
+
+        @message @prefix_code, "Turning", do @navigation_report
 
         # Do this in a timeout
         set_course_and_speed = =>
@@ -730,6 +771,12 @@ class BaseShip extends BaseObject
             @bearing =
                 bearing: new_bearing
                 mark: new_mark
+
+            @bearing_v =
+                bearing : 0
+                mark : 0
+
+            @message @prefix_code, "Turning", do @navigation_report
 
             if initial_impulse > 0
                 @_set_impulse initial_impulse
@@ -744,9 +791,9 @@ class BaseShip extends BaseObject
 
         # message out to the ship
         r =
-            turn_direction: turn_direction
-            turn_duration: duration
-            turn_distance: turn_distance
+            turn_direction : turn_direction
+            turn_duration : duration
+            turn_distance : turn_distance
 
 
     _set_abs_course: ( heading, callback ) =>
@@ -789,9 +836,21 @@ class BaseShip extends BaseObject
         i = @impulse_drive
         delta = Math.abs( impulse_speed - @impulse )
         @impulse = impulse_speed
+
+        mark = @bearing.mark * Math.PI * 2
         rotation = @bearing.bearing * Math.PI * 2
-        @velocity.x = Math.cos( rotation ) * @impulse * C.IMPULSE_SPEED
-        @velocity.y = Math.sin( rotation ) * @impulse * C.IMPULSE_SPEED
+
+        z_vector = Math.sin mark
+        xy_vector = Math.cos mark
+        x_vector = xy_vector * Math.cos rotation
+        y_vector = xy_vector * Math.sin rotation
+
+        delta_v = @impulse * C.IMPULSE_SPEED
+
+        @velocity.x = x_vector * delta_v
+        @velocity.y = y_vector * delta_v
+        @velocity.z = z_vector * delta_v
+
         @power_debt += delta * i.burst_power
 
         if callback?
@@ -849,10 +908,18 @@ class BaseShip extends BaseObject
         @impulse = 0
         @warp_speed = warp_speed
         console.log "[#{ @name }] Setting warp to #{ warp_speed }"
+
         rotation = @bearing.bearing * Math.PI * 2
+        mark = @bearing.mark * Math.PI * 2
+
+        z_vector = Math.sin mark
+        xy_vector = Math.cos mark
+        x_vector = xy_vector * Math.cos rotation
+        y_vector = xy_vector * Math.sin rotation
 
         # The famous trek warp speed calculation
         warp_v = Math.pow( @warp_speed, 10/3 ) * C.SPEED_OF_LIGHT
+
         @velocity.x = Math.cos( rotation ) * warp_v
         @velocity.y = Math.sin( rotation ) * warp_v
 
@@ -1620,6 +1687,7 @@ class BaseShip extends BaseObject
 
         @position.x += @velocity.x * delta_t
         @position.y += @velocity.y * delta_t
+        @position.z += @velocity.z * delta_t
 
         @bearing.bearing += @bearing_v.bearing * delta_t
         @bearing.mark += @bearing_v.mark * delta_t
@@ -1631,7 +1699,7 @@ class BaseShip extends BaseObject
             @bearing.bearing += 1
 
         # If we're currently turning, notify any clients
-        if @bearing_v.bearing != 0
+        if @bearing_v.bearing isnt 0 or @bearing_v.mark isnt 0
             @message @prefix_code, "Turning", do @navigation_report
 
 

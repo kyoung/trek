@@ -331,29 +331,32 @@ $( "#engage" ).click( engage );
 
 
 function turnShipRight () {
+
     if ( turningRight ) {
+
         // toggle off turn
         turningRight = false;
         trek.api(
             'navigation/turn',
             { direction: 'stop' },
             'PUT',
-            function () {}
-        );
+            function () {} );
         $turnRight.removeClass( "toggle" );
 
     } else {
+
         if ( turningLeft ) {
+
             turningLeft = false;
             $turnLeft.removeClass( "toggle" );
+
         }
         turningRight = true;
         trek.api(
             'navigation/turn',
             { direction: 'starboard' },
             'PUT',
-            function () {}
-        );
+            function () {} );
         $turnRight.addClass( "toggle" );
     }
 }

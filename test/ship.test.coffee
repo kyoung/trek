@@ -550,3 +550,27 @@ exports.ShipTest =
         test.ok not shields_are_up( s ) and not phasers_are_charging( s ) and not tubes_are_autoloading( s ) and not sifs_are_powered( s ), "Failed to stand down"
 
         do test.done
+
+
+    'test can move in the z-axis': ( test ) ->
+
+        test.expect 1
+
+        s = new Constitution
+        tic = 250
+        bearing = 0
+        mark = 0.010
+
+        r = s.set_course bearing, mark
+
+        fire_thrusters = ->
+
+            # wait the tick so that we can move
+            s.fire_thrusters "forward"
+            s.calculate_state undefined, tic
+
+            test.ok s.position.z isnt 0, "Failed to move up or down"
+
+            do test.done
+
+        setTimeout fire_thrusters, r.turn_duration
