@@ -552,25 +552,35 @@ exports.ShipTest =
         do test.done
 
 
-    'test can move in the z-axis': ( test ) ->
+    'test can turn in the z-axis': ( test ) ->
 
         test.expect 1
 
         s = new Constitution
-        tic = 250
         bearing = 0
         mark = 0.010
 
         r = s.set_course bearing, mark
 
-        fire_thrusters = ->
+        check_turn = ->
 
-            # wait the tick so that we can move
-            s.fire_thrusters "forward"
-            s.calculate_state undefined, tic
-
-            test.ok s.position.z isnt 0, "Failed to move up or down"
+            s.calculate_state undefined, r.turn_duration
+            test.ok s.bearing.mark isnt 0
 
             do test.done
 
-        setTimeout fire_thrusters, r.turn_duration
+        setTimeout check_turn, r.turn_duration
+
+
+    'test can move in the z-axis': ( test ) ->
+
+        s = new Constitution
+        tic = 250
+        s.bearing = { bearing : 0, mark : 0.2 }
+
+        s.set_impulse 0.5
+        s.calculate_state undefined, tic
+
+        test.ok s.position.z isnt 0
+
+        do test.done

@@ -667,16 +667,7 @@ class BaseShip extends BaseObject
         flat_rotation = @bearing.bearing * Math.PI * 2
         flat_mark = @bearing.mark * Math.PI * 2
 
-        # CORRECT FOR 3D PLANE
-        z_vector = Math.sin flat_mark
-        xy_vector = Math.cos flat_mark
-        x_vector = xy_vector * Math.cos flat_rotation
-        y_vector = xy_vector * Math.sin flat_rotation
-
-        console.log "Vector set:"
-        console.log "#{ x_vector }, #{ y_vector }, #{ z_vector }"
-        console.log "from:"
-        console.log "#{ @bearing.bearing } m #{ @bearing.mark }"
+        vectors = U.scalar_from_bearing flat_rotation, flat_mark
 
         delta_v = BaseShip.THRUSTER_DELTA_V_MPS / 1000
 
@@ -685,15 +676,15 @@ class BaseShip extends BaseObject
             when "forward"
                 do check_safe_for_thrusters
 
-                @velocity.x += x_vector * delta_v
-                @velocity.y += y_vector * delta_v
-                @velocity.z += z_vector * delta_v
+                @velocity.x += vectors.x * delta_v
+                @velocity.y += vectors.y * delta_v
+                @velocity.z += vectors.z * delta_v
 
             when "reverse"
                 do check_safe_for_thrusters
-                @velocity.x -= x_vector * delta_v
-                @velocity.y -= y_vector * delta_v
-                @velocity.z -= z_vector * delta_v
+                @velocity.x -= vectors.x * delta_v
+                @velocity.y -= vectors.y * delta_v
+                @velocity.z -= vectors.z * delta_v
 
 
     set_course: ( bearing, mark, callback ) =>
@@ -837,19 +828,13 @@ class BaseShip extends BaseObject
         delta = Math.abs( impulse_speed - @impulse )
         @impulse = impulse_speed
 
-        mark = @bearing.mark * Math.PI * 2
-        rotation = @bearing.bearing * Math.PI * 2
-
-        z_vector = Math.sin mark
-        xy_vector = Math.cos mark
-        x_vector = xy_vector * Math.cos rotation
-        y_vector = xy_vector * Math.sin rotation
+        vectors = U.scalar_from_bearing @bearing.bearing, @bearing.mark
 
         delta_v = @impulse * C.IMPULSE_SPEED
 
-        @velocity.x = x_vector * delta_v
-        @velocity.y = y_vector * delta_v
-        @velocity.z = z_vector * delta_v
+        @velocity.x = vectors.x * delta_v
+        @velocity.y = vectors.y * delta_v
+        @velocity.z = vectors.z * delta_v
 
         @power_debt += delta * i.burst_power
 
@@ -909,19 +894,12 @@ class BaseShip extends BaseObject
         @warp_speed = warp_speed
         console.log "[#{ @name }] Setting warp to #{ warp_speed }"
 
-        rotation = @bearing.bearing * Math.PI * 2
-        mark = @bearing.mark * Math.PI * 2
+        vectors = U.scalar_from_bearing @bearing.bearing, @bearing.mark
+        warp_v = U.warp_speed @warp_speed
 
-        z_vector = Math.sin mark
-        xy_vector = Math.cos mark
-        x_vector = xy_vector * Math.cos rotation
-        y_vector = xy_vector * Math.sin rotation
-
-        # The famous trek warp speed calculation
-        warp_v = Math.pow( @warp_speed, 10/3 ) * C.SPEED_OF_LIGHT
-
-        @velocity.x = Math.cos( rotation ) * warp_v
-        @velocity.y = Math.sin( rotation ) * warp_v
+        @velocity.x = vectors.x * warp_v
+        @velocity.y = vectors.y * warp_v
+        @velocity.z = vectors.z * warp_v
 
         if callback?
             do callback
