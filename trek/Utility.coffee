@@ -43,11 +43,14 @@ exports.bearing = ( you, them, accuracy=3 ) ->
 exports.abs2rel_bearing = ( you, abs_bearing, accuracy ) ->
 
     rel_bearing = abs_bearing.bearing - you.bearing.bearing
+
     if rel_bearing < 0
         rel_bearing += 1
     if rel_bearing >= 1
         rel_bearing -= 1
-    mark = 0
+
+    mark = abs_bearing.mark
+
     r =
         bearing : Math.round( rel_bearing * Math.pow( 10, accuracy ) ) / Math.pow( 10, accuracy )
         mark : mark
@@ -70,7 +73,10 @@ exports.point_bearing = ( p1, p2 ) ->
         abs_bearing += 1
 
     mark = Math.atan2( dz, dxy ) / ( 2 * Math.PI )
-    
+
+    if mark < 0
+        mark += 1
+
     r =
         bearing: abs_bearing
         mark: mark

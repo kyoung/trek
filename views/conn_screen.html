@@ -25,6 +25,9 @@
         <p class="name">{{ name }}</p>
         <p class="speed">{{ speed }}</p>
         <p class="distBearing">{{ distAndBearing }}</p>
+        {{ #is_z_axis }}
+        <p class="z">z {{ z_axis }}</p>
+        {{ /is_z_axis }}
     </div>
 </script>
 
@@ -106,7 +109,7 @@ function paintScan ( data ) {
         var y = coordinates.y;
         var dist = trek.prettyDistanceAU( e.distance );
         var name = e.name;
-        var bearing = trek.prettyBearing( e.bearing.bearing ) + " mark " + e.bearing.mark;
+        var bearing = trek.prettyBearing( e.bearing.bearing ) + " mark " + trek.prettyMark( e.bearing.mark );
         var distAndBearing = dist + ", " + bearing;
 
         // Don't inlucde distance and bearing for yourself
@@ -135,14 +138,15 @@ function paintScan ( data ) {
 
             name : name.replace( /_/g, " " ),
             distAndBearing : distAndBearing,
-            speed : speed
-
+            speed : speed,
+            is_z_axis : e.position.z,
+            z_axis : trek.prettyDistanceAU( e.position.z )
         };
 
         if ( _.has( sensorObjects, e.name ) ) {
 
             sensorObjects[ name ].css( "top", y ).css( "left", x );
-            sensorObjects[ name ].html( Mustache.render( tmpl,reading ) );
+            sensorObjects[ name ].html( Mustache.render( tmpl, reading ) );
 
         } else {
 

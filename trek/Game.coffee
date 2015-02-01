@@ -710,14 +710,14 @@ class Game
         if object.transponder? and not object.transponder.is_online() and object isnt you
             return false
         p =
-            name: object.name
-            heading: object.bearing
-            velocity: object.velocity
-            impulse: object.impulse
-            warp: object.warp
-            bearing: U.bearing(you, object)
-            distance: U.distance(object.position, you.position)
-            position: object.position
+            name : object.name
+            heading : object.bearing
+            velocity : object.velocity
+            impulse : object.impulse
+            warp : object.warp
+            bearing : U.bearing you, object
+            distance : U.distance object.position, you.position
+            position : object.position
 
 
     get_public_space: ( object, you ) ->

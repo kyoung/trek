@@ -370,6 +370,14 @@ var trek = (function($, _, Mustache, io) {
     };
 
 
+    t.prettyMark = function ( mark ) {
+
+        var x = Math.round( mark * 1000 );
+        return x.toString();
+
+    };
+
+
     t.secondsToMinuteString = function ( seconds ) {
 
         var minutes = Math.floor( seconds/60 );

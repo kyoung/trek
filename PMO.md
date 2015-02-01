@@ -26,7 +26,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 # Current Sprint
 - [ ] z-axis implementation
-    - [ ] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
+    - [x] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
     - [ ] display -/+ z values on system map displays
 - [ ] have radiation levels increase the closer you get to the star
     - [ ] safety zone > 40AU should allow a safe muster point
