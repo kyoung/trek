@@ -91,10 +91,11 @@ class Torpedo extends BaseObject
 
     fire: ( { impulse, warp } ) ->
 
-        impulse = if isNaN(impulse) then 0 else impulse
-        warp = if isNaN(warp) then 0 else warp
-        @last_distance = Utility.distance(@.position, @target.position)
-        {bearing, time, final_position} = Utility.intercept(@, @target, {impulse: impulse, warp: warp})
+        impulse = if isNaN( impulse ) then 0 else impulse
+        warp = if isNaN( warp ) then 0 else warp
+
+        @last_distance = Utility.distance_between @, @target
+        { bearing, time, final_position } = Utility.intercept( @, @target, { impulse : impulse, warp : warp } )
         @set_bearing bearing.bearing, bearing.mark
         @set_velocity()
         @_detonation_position = final_position
@@ -112,6 +113,8 @@ class Torpedo extends BaseObject
         if @bearing.bearing < 0
             @bearing.bearing += 1
 
+        @bearing.mark = mark
+
 
     set_velocity: =>
 
@@ -120,11 +123,17 @@ class Torpedo extends BaseObject
             v = Utility.warp_speed( @warp ) + Constants.IMPULSE_SPEED / 4
         else
             v = Constants.IMPULSE_SPEED * @impulse
+
         if v == 0
-            throw new Error "Velocity error: warp #{@warp} impulse #{@impulse}"
+            throw new Error "Velocity error: warp #{ @warp } impulse #{ @impulse }"
+
         rotation = @bearing.bearing * Math.PI * 2
-        @velocity.x = Math.cos(rotation) * v
-        @velocity.y = Math.sin(rotation) * v
+
+        vectors = Utilty.scalar_from_bearing @bearing.bearing, @bearing.mark
+
+        @velocity.x = vectors.x * v
+        @velocity.y = vectors.y * v
+        @velocity.z = vectors.z * v
 
 
     calculate_state: ( _, delta ) =>
@@ -141,6 +150,7 @@ class Torpedo extends BaseObject
 
         @position.x += @velocity.x * delta_t
         @position.y += @velocity.y * delta_t
+        @position.z += @velocity.z * delta_t
 
 
     process_blast_damage: ( position, power, message_callback ) ->

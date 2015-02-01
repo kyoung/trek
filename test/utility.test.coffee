@@ -28,9 +28,25 @@ exports.UtilityTest =
             x: 1
             y: 1
             z: 0
+
         abs_bearing = Utility.point_bearing p1, p2
-        test.ok abs_bearing.bearing == 0.125, "Failed to calculate
-        correct absolute bearing: #{abs_bearing}"
+        test.ok abs_bearing.bearing == 0.125, "Failed to calculate correct absolute bearing: #{ abs_bearing.bearing }"
+
+        p3 =
+            x : 1
+            y : 0
+            z : -1
+
+        p4 =
+            x : 1
+            y : 0
+            z : 1
+
+        abs_bearing_2 = Utility.point_bearing p1, p3
+        abs_bearing_3 = Utility.point_bearing p1, p4
+        test.ok abs_bearing_2.mark == -0.125, "Failed to calculate a correct absolute mark: #{ abs_bearing_2.mark }"
+        test.ok abs_bearing_3.mark == 0.125, "Failed to calculate a correct absolute upward mark: #{ abs_bearing_3.mark }"
+
         do test.done
 
 

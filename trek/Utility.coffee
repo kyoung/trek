@@ -57,6 +57,10 @@ exports.point_bearing = ( p1, p2 ) ->
 
     dx = p2.x - p1.x
     dy = p2.y - p1.y
+    dz = p2.z - p1.z
+
+    dxy = Math.sqrt( dx * dx + dy * dy )
+
     abs_bearing = Math.atan2( dy, dx ) / ( 2 * Math.PI )
 
     if abs_bearing >= 1
@@ -65,7 +69,8 @@ exports.point_bearing = ( p1, p2 ) ->
     if abs_bearing < 0
         abs_bearing += 1
 
-    mark = 0
+    mark = Math.atan2( dz, dxy ) / ( 2 * Math.PI )
+    
     r =
         bearing: abs_bearing
         mark: mark
