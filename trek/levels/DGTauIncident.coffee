@@ -201,7 +201,7 @@ class DGTauIncident extends Level
         board_size = C.SYSTEM_WIDTH / 3
         x = Math.round( ( Math.random() - 0.5 ) * board_size )
         y = Math.round( ( Math.random() - 0.5 ) * board_size )
-        z = 0
+        z = Math.round( ( Math.random() - 0.5 ) * ( C.AU / 8 ) )
         r = { x : x, y : y, z : z }
 
 
@@ -369,7 +369,7 @@ class DGTauIncident extends Level
         for i in [0...1e4]
             g = new GasCloud( C.AU * Math.random(), C.AU / 8 )
             g.star_system = system
-            {x, y, z} = do @_random_start_position
+            { x, y, z } = do @_random_start_position
             g.set_position x, y, z
             @space_objects.push g
 

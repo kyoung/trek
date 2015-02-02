@@ -27,7 +27,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 # Current Sprint
 - [ ] z-axis implementation
     - [x] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
-    - [ ] display -/+ z values on system map displays
+    - [x] display -/+ z values on system map displays
+    - [x] have the stations start at positions other than z : 0
+    - [ ] figure out if/how to patch the rotation of the ship
 - [ ] have radiation levels increase the closer you get to the star
     - [ ] safety zone > 40AU should allow a safe muster point
     - [ ] science scans of the star should indicate this information
@@ -52,6 +54,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
 - [ ] Science Scanner circles don't show up on FF
+- [ ] We need to calibrate the rotation of the sky box to the position of the star of the local system
 
 
 # Backlog
