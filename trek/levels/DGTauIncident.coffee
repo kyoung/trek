@@ -196,12 +196,12 @@ class DGTauIncident extends Level
         return true
 
 
-    _random_start_position: ->
+    _random_start_position: ( z_axis=false ) ->
 
         board_size = C.SYSTEM_WIDTH / 3
         x = Math.round( ( Math.random() - 0.5 ) * board_size )
         y = Math.round( ( Math.random() - 0.5 ) * board_size )
-        z = Math.round( ( Math.random() - 0.5 ) * ( C.AU / 8 ) )
+        z = if z_axis then Math.round( ( Math.random() - 0.5 ) * ( C.AU / 8 ) ) else 0
         r = { x : x, y : y, z : z }
 
 
@@ -293,15 +293,15 @@ class DGTauIncident extends Level
 
         system = @map.get_star_system 'DG Tau'
 
-        system_entry_point = do @_random_start_position
+        system_entry_point = @_random_start_position true
         ent_entry_point =
-            x: system_entry_point.x + 3000
-            y: system_entry_point.y
-            z: 0
+            x : system_entry_point.x + 3000
+            y : system_entry_point.y
+            z : system_entry_point.z
         lex_entry_point =
-            x: system_entry_point.x
-            y: system_entry_point.y
-            z: 0
+            x : system_entry_point.x
+            y : system_entry_point.y
+            z : system_entry_point.z
 
         initial_bearing = do @_random_bearing
 
@@ -311,8 +311,10 @@ class DGTauIncident extends Level
         e.set_bearing initial_bearing
         e.set_alignment C.ALIGNMENT.FEDERATION
         e.set_alert 'yellow'
+
         for s in e.shields
             s.charge = 1
+
         # e.set_impulse 0.5
         e.enter_captains_log @enterprise_logs[ 0 ]
         @ships[ e.prefix_code ] = e
@@ -326,8 +328,10 @@ class DGTauIncident extends Level
         x.set_bearing initial_bearing
         x.set_alignment C.ALIGNMENT.FEDERATION
         x.set_alert 'yellow'
+
         for s in x.shields
             s.charge = 1
+
         x.set_impulse 0.5
         x.enter_captains_log @lexington_logs[ 0 ]
         @ships[ x.prefix_code ] = x
@@ -338,11 +342,10 @@ class DGTauIncident extends Level
         system = @map.get_star_system 'DG Tau'
 
         @stations = []
-        for i in [1..3]
+        for i in [ 1..3 ]
             true for pre, e of @ships
-            p = if i == 1 then e.position else do @_random_start_position
-            p = { x : p.x + 3000, y : p.y, z : 0 }
-            s = new Station "Outpost_#{i}", p
+            p = @_random_start_position true
+            s = new Station "Outpost_#{ i }", p
             s.star_system = system
             s.set_alignment C.ALIGNMENT.FEDERATION
             do s.shields.power_on
