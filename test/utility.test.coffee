@@ -44,7 +44,7 @@ exports.UtilityTest =
 
         abs_bearing_2 = Utility.point_bearing p1, p3
         abs_bearing_3 = Utility.point_bearing p1, p4
-        test.ok abs_bearing_2.mark == -0.125, "Failed to calculate a correct absolute mark: #{ abs_bearing_2.mark }"
+        test.ok abs_bearing_2.mark == 0.875, "Failed to calculate a correct absolute downward mark: #{ abs_bearing_2.mark }"
         test.ok abs_bearing_3.mark == 0.125, "Failed to calculate a correct absolute upward mark: #{ abs_bearing_3.mark }"
 
         do test.done

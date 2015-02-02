@@ -97,7 +97,7 @@ class Torpedo extends BaseObject
         @last_distance = Utility.distance_between @, @target
         { bearing, time, final_position } = Utility.intercept( @, @target, { impulse : impulse, warp : warp } )
         @set_bearing bearing.bearing, bearing.mark
-        @set_velocity()
+        do @set_velocity
         @_detonation_position = final_position
         if @target.navigation_log?
             [..., @_last_target_navigation] = @target.navigation_log
@@ -129,7 +129,7 @@ class Torpedo extends BaseObject
 
         rotation = @bearing.bearing * Math.PI * 2
 
-        vectors = Utilty.scalar_from_bearing @bearing.bearing, @bearing.mark
+        vectors = Utility.scalar_from_bearing @bearing.bearing, @bearing.mark
 
         @velocity.x = vectors.x * v
         @velocity.y = vectors.y * v
