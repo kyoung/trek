@@ -231,12 +231,20 @@ class DGTauIncident extends Level
         return true
 
 
-    _random_start_position: ( z_axis=false ) ->
+    _random_start_position: ( z_axis=false, harmonic=false ) ->
 
-        board_size = C.SYSTEM_WIDTH / 3
-        x = Math.round( ( Math.random() - 0.5 ) * board_size )
-        y = Math.round( ( Math.random() - 0.5 ) * board_size )
+        board_size = C.SYSTEM_WIDTH / 2
+
+        rotation = 2 * Math.PI * do Math.random
+
+        radius = 3 * C.AU + ( board_size / 2 * do Math.random )
+        #if harmonic
+        #    # radius = ( Math.ceil( Math.random() * board_size / 2 ) ) * C.AU
+
+        x = radius * Math.cos rotation
+        y = radius * Math.sin rotation
         z = if z_axis then Math.round( ( Math.random() - 0.5 ) * ( C.AU / 8 ) ) else 0
+
         r = { x : x, y : y, z : z }
 
 
@@ -404,9 +412,9 @@ class DGTauIncident extends Level
 
         # Gas clouds
         for i in [0...1e3]
-            g = new GasCloud( C.AU * Math.random(), C.AU / 8 )
+            g = new GasCloud( C.AU * ( 0.3 + Math.random() ), C.AU / 8 )
             g.charted = true
-            { x, y, z } = do @_random_start_position
+            { x, y, z } = @_random_start_position false, true
             g.set_position x, y, z
             @space_objects.push g
             system.add_clouds g
