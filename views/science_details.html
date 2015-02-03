@@ -69,6 +69,10 @@ function loadActiveScan( data ) {
         graphPowerReadings( data.power_readings );
     }
 
+    if ( _.has( data, "radiation_output" ) ) {
+        listRadiationReadings( data.radiation_output, data.radiation_safe_distance );
+    }
+
 };
 
 
@@ -396,8 +400,8 @@ function listCargo( cargoList ) {
 
     // Return to a list
     var cargoFlatList = [];
-    _.each( cargo, function( val, key) {
-        cargoFlatList.push( {sku: key, qty: val } );
+    _.each( cargo, function ( val, key) {
+        cargoFlatList.push( { sku : key, qty : val } );
     });
     var cargoRender = { cargo: cargoFlatList };
 
@@ -410,7 +414,22 @@ function listCargo( cargoList ) {
 }
 
 
-function renderMesh( meshName, meshScale ) {
+function listRadiationReadings ( output, safeDistance ) {
+
+    var radiationTemplate = "<div><h2>Radiation Readings</h2><p class='lightblue'>Output: {{ output }}</p><p class='lightblue'>Safe Distance: {{ distance }}</div>";
+    var radiation = {
+        output : output,
+        distance : trek.prettyDistanceAU( safeDistance )
+    }
+
+    var $rads = $( Mustache.render( radiationTemplate, radiation ) );
+
+    $detailTextLeft.append( $rads );
+
+}
+
+
+function renderMesh ( meshName, meshScale ) {
 
     var w, h;
     w = $renderPane.width();

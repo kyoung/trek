@@ -326,6 +326,13 @@ svg.conn-arrow.up, svg.conn-arrow.down {
     font-size: 2em;
 }
 
+.conn-gas-circle {
+    display: inline-block;
+    border-radius: 50%;
+    position: fixed;
+    background-color: rgba(15, 138, 166, 0.33);
+}
+
 /* Ops Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 

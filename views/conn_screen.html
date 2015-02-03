@@ -73,6 +73,13 @@ function relativeCoordinates ( x, y, z ) {
 }
 
 
+function relativeRadius ( r ) {
+
+    return r * $displayGrid.width() / ( maxX - minX );
+
+}
+
+
 function absoluteCoordinates ( x, y, z ) {
 
     var w = $displayGrid.width();
@@ -91,6 +98,30 @@ function absoluteCoordinates ( x, y, z ) {
     console.log( yAbs );
 
     return { x : xAbs, y : yAbs, z : zAbs };
+
+}
+
+
+function paintMap ( data ) {
+
+    console.log( data );
+
+    // Paint the clouds, but the star will still have to be handled by the scan
+    _.each( data.clouds, function ( cloud ) {
+
+        cloudTemplate = "<div class='conn-gas-circle' style='width:{{ relative_radius }}px; height:{{ relative_radius }}px;'></div>"
+
+        var coordinates = relativeCoordinates( cloud.position.x, cloud.position.y, cloud.position.z );
+        var radius = relativeRadius( cloud.radius );
+        var cloud = { relative_radius : Math.round( radius * 10) / 10 };
+        var x = coordinates.x - radius;
+        var y = coordinates.y - radius;
+
+        var $obj = $( Mustache.render( cloudTemplate, cloud ) );
+        $obj.css( "top", y ).css( "left", x );
+        $displayGrid.append( $obj );
+
+    } );
 
 }
 
@@ -141,6 +172,7 @@ function paintScan ( data ) {
             speed : speed,
             is_z_axis : e.position.z,
             z_axis : trek.prettyDistanceAU( e.position.z )
+
         };
 
         if ( _.has( sensorObjects, e.name ) ) {
@@ -157,17 +189,18 @@ function paintScan ( data ) {
 
         }
 
-    });
+    } );
 
 }
 
 
 function scan () {
+
     trek.api(
         "navigation/charts",
         { system: systemName },
-        paintScan
-    );
+        paintScan );
+
 }
 
 
@@ -204,7 +237,9 @@ function zoom ( click ) {
 
 }
 
+
 $displayGrid.click( zoom );
+
 
 trek.onAlert( function( data ){ return; } );
 
@@ -213,12 +248,15 @@ trek.api(
     'navigation/system',
     { system: systemName },
     function( data ) {
+
         system = data;
         setMinMaxVals();
         scan();
         scanInterval = setInterval( scan, 500 );
-    }
-);
+
+        paintMap( data );
+
+    } );
 
 
 </script>

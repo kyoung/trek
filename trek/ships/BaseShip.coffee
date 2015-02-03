@@ -50,6 +50,8 @@ class BaseShip extends BaseObject
             mark: 0
         @_navigation_lock = false
 
+        @star_system = undefined
+
         do @initialize_systems
         do @initialize_hull
         do @initialize_cargo

@@ -9,7 +9,7 @@ class BaseObject
         @warp_speed = 0
         @impulse = 0
         @alive = true
-        @star_system = undefined
+
         @model_url = ""
         @classification = ""
         @_scan_density = {}

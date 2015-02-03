@@ -49,6 +49,8 @@ class Station extends BaseObject
         for i in [ 1..10 ]
             @cargobays.push( new CargoBay( i ) )
 
+        @star_system = undefined
+
         do @initialize_crew
         do @initialize_hull
         do @initialize_systems

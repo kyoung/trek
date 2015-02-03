@@ -25,19 +25,21 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 # Current Sprint
-- [ ] z-axis implementation
+- [x] z-axis implementation
     - [x] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
     - [x] display -/+ z values on system map displays
     - [x] have the stations start at positions other than z : 0
-    - [ ] figure out if/how to patch the rotation of the ship
-- [ ] have radiation levels increase the closer you get to the star
-    - [ ] safety zone > 40AU should allow a safe muster point
-    - [ ] science scans of the star should indicate this information
+    - [x] figure out if/how to patch the rotation of the ship
+        - turning left/right while pitched up does different things depending on the angle of attack... we could get all fancy with quaternions, but at the end of the day, this is meant to be a ship, not a fighter. It would make sense for safety reasons to limit the accumulation of angular momentum, and if we decide we're okay with this, we don't have to do anything.
+- [x] have radiation levels increase the closer you get to the star
+    - [x] safety zone > 20AU should allow a safe muster point
+    - [x] science scans of the star should indicate this information
 - [ ] begin using the accretion disk
-    - [ ] have radiation be dampened by the accretion disks / dust cloud objects
-    - [ ] have the dust inform the particle density environmental value
+    - [x] have radiation be dampened by the accretion disks / dust cloud objects
+    - [x] have the dust inform the particle density environmental value
     - [ ] have the particle density figures corelate to max-possible warp speed
-    - [ ] display the distribution of gas clouds on the sector screen
+    - [x] display the distribution of gas clouds on the sector screen
+    - [ ] have clouds appear more radially, and at harmonics
 - [ ] have warp drive be a charge-depleting action on the nacelles
 - [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
     - [ ] build new mesh
@@ -46,6 +48,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Hotfix
+- [ ] The star of the system is no longer displayed
 - [ ] Engineering overload is still busted
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
 - [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
