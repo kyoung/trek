@@ -9,6 +9,7 @@ var trek = (function($, _, Mustache, io) {
 
     // depreciated... use onAlert
     t.on_alert = function(callback) {
+
         console.log( "depreciated trek.on_alert call" );
         alertCallbacks.push( callback );
 
@@ -37,7 +38,7 @@ var trek = (function($, _, Mustache, io) {
 
                 $bg.remove();
 
-            });
+            } );
 
             $( "body" ).append( $bg );
             $bg.css( 'visibility', 'visible' );
@@ -62,7 +63,9 @@ var trek = (function($, _, Mustache, io) {
         if ( alertCallbacks.length > 0 ) {
 
             _.each( alertCallbacks, function ( e ) {
+
                 e( data );
+
             } );
 
             return;
@@ -106,7 +109,11 @@ var trek = (function($, _, Mustache, io) {
     function clearBlastDamage () {
 
         var $damageOverlays = $( ".damageOverlay" );
-        _.each( $damageOverlays, function ( e ) { e.remove(); } );
+        _.each( $damageOverlays, function ( e ) {
+
+            e.remove();
+
+        } );
 
     }
 
@@ -114,7 +121,11 @@ var trek = (function($, _, Mustache, io) {
 
         // don't show damage if it's already there
         var $damageOverlay = $( ".damageOverlay" );
-        if ( $damageOverlay.length > 0 ) { return false; }
+        if ( $damageOverlay.length > 0 ) {
+
+            return false;
+
+        }
 
         var $overlay = $( "<div class='damageOverlay overlay'></div>" );
         var $crack = $( "<img src='static/textures/broken-glass0.png' />" );
@@ -133,26 +144,31 @@ var trek = (function($, _, Mustache, io) {
 
         console.log( data );
 
-        args = data.split(":");
+        args = data.split( ":" );
 
-        switch ( args[0] ) {
+        switch ( args[ 0 ] ) {
 
             case "Blast Damage":
-                if ( args[1] == "All" || args[1] == t.screenName ) {
+                if ( args[ 1 ] == "All" || args[ 1 ] == t.screenName ) {
 
-                    if ( displayBlastDamage() ) { t.playConsoleBlast(); }
+                    if ( displayBlastDamage() ) {
+
+                        t.playConsoleBlast();
+
+                    }
 
                 }
                 break;
 
             case "Repair":
-                if ( args[1] == "All" || args[1] == screenName ) {
+                if ( args[ 1 ] == "All" || args[ 1 ] == screenName ) {
 
                     clearBlastDamage();
                     document.cookie = "cracked=false";
 
                 }
                 break;
+
         }
 
     } );
@@ -160,8 +176,12 @@ var trek = (function($, _, Mustache, io) {
     t.checkBlastDamage = function () {
 
         // catch people trying to reset their window
-        var crackedCookie = document.cookie.replace(/(?:(?:^|.*;\s*)cracked\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        if ( crackedCookie == 'true' ) { displayBlastDamage(); }
+        var crackedCookie = document.cookie.replace( /(?:(?:^|.*;\s*)cracked\s*\=\s*([^;]*).*$)|^.*$/, "$1" );
+        if ( crackedCookie == 'true' ) {
+
+            displayBlastDamage();
+
+        }
 
     };
 
@@ -180,15 +200,35 @@ var trek = (function($, _, Mustache, io) {
 
     }
 
-    t.playTheme = function () { playAudio( "static/sound/theme.mp3" ); };
-    t.playBridgeSound = function () { playAudio( "static/sound/bridge.mp3", true ); };
-    t.playKlaxon = function () { playAudio( "static/sound/redalert.mp3" ); };
-    t.playAlarm = function () { playAudio( "static/sound/critical.mp3" ); };
-    t.playTorpedo = function () { playAudio( "static/sound/fire_torpedo.mp3" ); };
-    t.playPhaser = function () { playAudio( "static/sound/phaser1.mp3" ); };
-    t.playTransporter = function () { playAudio( "static/sound/transporter.mp3" ); };
-    t.playShipHit = function () { playAudio( "static/sound/damage1.mp3" ); };
-    t.playHail = function () { playAudio( "static/sound/hailing.mp3" ); };
+    // Big Sound Registration Loop
+    // trek callname, sound file, loop?
+    var soundLookups = [
+        [ 'playTheme', 'static/sound/theme.mp3', false ],
+        [ 'playBridgeSound', 'static/sound/bridge.mp3', true ],
+        [ 'playKlaxon', 'static/sound/redalert.mp3', false ],
+        [ 'playAlarm', 'static/sound/critical.mp3', false ],
+        [ 'playTorpedo', 'static/sound/fire_torpedo.mp3', false ],
+        [ 'playPhaser', 'static/sound/phaser1.mp3', false ],
+        [ 'playTransporter', 'static/sound/transporter.mp3', false ],
+        [ 'playShipHit', 'static/sound/damage1.mp3', false ],
+        [ 'playHail', 'static/sound/hailing.mp3', false ]
+    ]
+
+
+    _.each( soundLookups, function ( e ) {
+
+        var soundFile = e[ 1 ];
+        var loop = e[ 2 ];
+
+        t[ e[ 0 ] ] = function () {
+
+            playAudio( soundFile, loop );
+
+        }
+
+    } )
+
+
     t.playConsoleBlast = function () {
 
         var coin = Math.random() > 0.5;
@@ -238,10 +278,17 @@ var trek = (function($, _, Mustache, io) {
         var $cancel = $( "<button class='confirmation'>Cancel</button>" );
 
         $confirm.click( function () {
-            callback();
-            $bg.remove() } );
 
-        $cancel.click( function () { $bg.remove(); } );
+            callback();
+            $bg.remove()
+
+        } );
+
+        $cancel.click( function () {
+
+            $bg.remove();
+
+        } );
 
         $errorWrap.append( $div.append($confirm ).append( $cancel ) );
         $bg.append( $errorWrap );
@@ -250,6 +297,7 @@ var trek = (function($, _, Mustache, io) {
         $bg.css( "visibility", "visible" );
 
     }
+
     t.confirm = confirm;
 
 
@@ -258,7 +306,7 @@ var trek = (function($, _, Mustache, io) {
 
         $.get( '/static/svg/gameover.svg', function( svg ) {
 
-            var $go_svg = $( svg.children[0] );
+            var $go_svg = $( svg.children[ 0 ] );
             var $bg = $( "<div class='blackout'></div>" );
             var $alert_wrap = $( "<div class='alert-wrap'></div>" );
 
@@ -267,20 +315,22 @@ var trek = (function($, _, Mustache, io) {
             $( "body" ).append( $bg );
             $bg.css( 'visibility', 'visible' );
 
-        });
+        } );
 
     }
 
     t.socket.on("gameover", function( data ) {
 
         if ( alertCallbacks.length > 0 ) {
+
             return;
+
         }
 
         // check score, and see if you won
         displayGameOver();
 
-    });
+    } );
 
 
     // API Wrapper
@@ -298,40 +348,50 @@ var trek = (function($, _, Mustache, io) {
 
         // function( api, [[data, [method,]] callback] )
         switch ( arguments.length ) {
+
             case 1:
-                callback = function() { return; };
+                callback = function() {
+
+                    return;
+
+                };
                 data = {};
                 method = 'GET';
                 break;
+
             case 2:
                 callback = data;
                 data = {};
                 method = 'GET';
                 break;
+
             case 3:
                 callback = method;
                 method = 'GET';
                 break;
+
             case 4:
                 break;
+
         }
 
         processData = true;
         if ( method != 'GET' ) {
+
             data = JSON.stringify( data );
             processData = false;
+
         }
 
-        $.ajax({
-            type: method,
-            url: '/api/' + api_name,
-            data: data,
-            success: callback,
-            processData: processData,
-            contentType: 'application/json',
-            error: apiError
-        });
-
+        $.ajax( {
+            type : method,
+            url : '/api/' + api_name,
+            data : data,
+            success : callback,
+            processData : processData,
+            contentType : 'application/json',
+            error : apiError
+        } );
 
     };
 
@@ -343,8 +403,11 @@ var trek = (function($, _, Mustache, io) {
         var rgx = /(\d+)(\d{3})/;
         x = x.toString();
         while ( rgx.test( x ) ) {
+
             x = x.replace( rgx, '$1' + ',' + '$2' );
+
         }
+
         return x + "km";
 
     };
@@ -354,9 +417,13 @@ var trek = (function($, _, Mustache, io) {
 
         var au = Math.round( meters / 149597870700 );
         if (au < 1) {
+
             return t.prettyDistanceKM( meters );
+
         } else {
+
             return au += "AU";
+
         }
 
     };
@@ -380,7 +447,7 @@ var trek = (function($, _, Mustache, io) {
 
     t.secondsToMinuteString = function ( seconds ) {
 
-        var minutes = Math.floor( seconds/60 );
+        var minutes = Math.floor( seconds / 60 );
         var secondRemaining = Math.round( seconds % 60 );
         minutes = minutes.toString();
         return minutes + ":" + secondRemaining;
@@ -390,22 +457,29 @@ var trek = (function($, _, Mustache, io) {
 
     t.parseQueryString = function () {
 
-        var qs = window.location.search.substr(1);
-        if ( qs === "" ){ return {}; }
+        var qs = window.location.search.substr( 1 ) ;
+        if ( qs === "" ) {
+
+            return {};
+
+        }
 
         var a = qs.split( '&' );
         var b = {};
-        for ( var i = 0; i < a.length; ++i ){
-            var p=a[ i ].split( '=' );
+        for ( var i = 0; i < a.length; ++ i ) {
+
+            var p = a[ i ].split( '=' );
 
             if ( p.length != 2 ) continue;
 
-            b[p[0]] = decodeURIComponent( p[1].replace( /\+/g, " " ) );
+            b[ p[ 0 ] ] = decodeURIComponent( p[ 1 ].replace( /\+/g, " " ) );
+
         }
+
         return b;
 
     };
 
     return t;
 
-}(jQuery, _, Mustache, io));
+}( jQuery, _, Mustache, io ) );

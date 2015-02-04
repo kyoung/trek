@@ -5,7 +5,7 @@
     "test": "./node_modules/.bin/nodeunit test",
     "runtest": "./node_modules/.bin/nodeunit",
     "start": "coffee ./trek/Server.coffee",
-    "lint": "find ./trek -name '*.coffee' -exec coffeelint {} -f coffeelint.conf \\;",
+    "lint": "find ./trek -name '*.coffee' -exec coffeelint {} -f coffeelint.conf \\; && node_modules/jscs/bin/jscs static/js/trek*.js",
     "todo": "grep -A 5 -r TODO trek/*; grep -A 5 -r TODO static/*; grep -A 5 -r TODO test/*; grep -A 5 -r TODO views/*",
     "coveralls": "jscoverage lib && YOURPACKAGE_COVERAGE=1 nodeunit --reporter=lcov test | coveralls"
 
@@ -19,11 +19,16 @@
     "coveralls": "^2.11.2",
     "ejs": "1.0.0",
     "express": "3.5.1",
+    "jscs": "1.10.0",
     "nodeunit": "0.9.0",
     "socket.io": "0.9.15",
     "stylus": "0.48.1"
   },
   "devDependencies": {
     "jscoverage": "^0.5.9"
+  },
+  "jscsConfig": {
+    "preset": "mdcs",
+    "validateIndentation": null
   }
 }
