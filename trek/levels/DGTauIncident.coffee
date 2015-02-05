@@ -101,28 +101,57 @@ class DGTauIncident extends Level
         end_game = ( game ) -> game.is_over = true
 
 
+        set_particle_density = ( game ) ->
+
+            _particle_density_at_point = ( p ) ->
+
+                # if you're outside of the accretion disk, particle density is a non-issue
+                if ( -C.AU / 16 ) > p.z or p.z > ( C.AU / 16 )
+                    return 0.043214
+
+                # box-y-x method of finding local dust clouds
+                dust = ( o for o in game.space_objects when o.quick_fits p )
+                net_density = 0
+                net_density += p.density for p in dust
+
+                return net_density
+
+            game.set_environment_function C.ENVIRONMENT.PARTICLE_DENSITY, _particle_density_at_point
+
+
         radiation_spike = ( game ) ->
 
             shield_charge_rate = ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME
             high_level = 1 + do Math.random
-            low_level = do Math.random * 0.5
+            low_level = do Math.random * 0.2
+
+
+            _base_radiation_level = ( p ) ->
+                r = shield_charge_rate * 1e12
+                d = U.distance p, { x : 0, y : 0, z : 0 }
+                # Raditation doesn't come from a point, but a line (the star jets)
+                r / d
+
 
             _high_radiation = ( p ) ->
                 wiggle = 0.98 + 0.04 * do Math.random
-                return shield_charge_rate * high_level * wiggle
+                r = _base_radiation_level p
+                dust = game.get_environmental_condition_at_position C.ENVIRONMENT.PARTICLE_DENSITY, p
+                return Math.max( r * high_level * wiggle * ( 1 - dust ), 0 )
+
 
             _low_radiation = ( p ) ->
                 wiggle = 0.98 + 0.04 * do Math.random
-                return shield_charge_rate * low_level * wiggle
+                r = _base_radiation_level p
+                dust = game.get_environmental_condition_at_position C.ENVIRONMENT.PARTICLE_DENSITY, p
+                return Math.max( r * low_level * wiggle * ( 1 - dust ), 0 )
+
 
             _end_spike = ->
-                game.set_environment_function(
-                    C.ENVIRONMENT.RADIATION,
-                    _low_radiation )
+                game.set_environment_function C.ENVIRONMENT.RADIATION, _low_radiation
 
-            game.set_environment_function(
-                C.ENVIRONMENT.RADIATION,
-                _high_radiation )
+
+            game.set_environment_function C.ENVIRONMENT.RADIATION, _high_radiation
 
             setTimeout _end_spike, 2 * 60 * 1000 * do Math.random
 
@@ -143,10 +172,16 @@ class DGTauIncident extends Level
             plusMinus : 2 * 60 * 1000,
             do : radiation_spike }
 
+        particle_density = new LevelEvent {
+            name : "Particle Density Init",
+            delay : 500,
+            do : set_particle_density }
+
         events = [
             impossible,
             win,
-            radiation
+            radiation,
+            particle_density
         ]
 
 
@@ -167,9 +202,9 @@ class DGTauIncident extends Level
         console.log "[LEVEL] message: #{ message }"
 
         # Allow ships to request outposts to lower their shields for transport
-        outpost_number = message.match /outpost (\d+)/i;
-        lower = message.match /lower/i;
-        raise = message.match /raise/i;
+        outpost_number = message.match /outpost (\d+)/i
+        lower = message.match /lower/i
+        raise = message.match /raise/i
 
         if not outpost_number? or outpost_number.length is 0 or ( lower?.length is 0 and raise?.length is 0 )
             return
@@ -196,12 +231,20 @@ class DGTauIncident extends Level
         return true
 
 
-    _random_start_position: ->
+    _random_start_position: ( z_axis=false, harmonic=false ) ->
 
-        board_size = C.SYSTEM_WIDTH / 3
-        x = Math.round( ( Math.random() - 0.5 ) * board_size )
-        y = Math.round( ( Math.random() - 0.5 ) * board_size )
-        z = 0
+        board_size = C.SYSTEM_WIDTH / 2
+
+        rotation = 2 * Math.PI * do Math.random
+
+        radius = 3 * C.AU + ( board_size / 2 * do Math.random )
+        #if harmonic
+        #    # radius = ( Math.ceil( Math.random() * board_size / 2 ) ) * C.AU
+
+        x = radius * Math.cos rotation
+        y = radius * Math.sin rotation
+        z = if z_axis then Math.round( ( Math.random() - 0.5 ) * ( C.AU / 8 ) ) else 0
+
         r = { x : x, y : y, z : z }
 
 
@@ -293,15 +336,15 @@ class DGTauIncident extends Level
 
         system = @map.get_star_system 'DG Tau'
 
-        system_entry_point = do @_random_start_position
+        system_entry_point = @_random_start_position true
         ent_entry_point =
-            x: system_entry_point.x + 3000
-            y: system_entry_point.y
-            z: 0
+            x : system_entry_point.x + 3000
+            y : system_entry_point.y
+            z : system_entry_point.z
         lex_entry_point =
-            x: system_entry_point.x
-            y: system_entry_point.y
-            z: 0
+            x : system_entry_point.x
+            y : system_entry_point.y
+            z : system_entry_point.z
 
         initial_bearing = do @_random_bearing
 
@@ -311,8 +354,10 @@ class DGTauIncident extends Level
         e.set_bearing initial_bearing
         e.set_alignment C.ALIGNMENT.FEDERATION
         e.set_alert 'yellow'
+
         for s in e.shields
             s.charge = 1
+
         # e.set_impulse 0.5
         e.enter_captains_log @enterprise_logs[ 0 ]
         @ships[ e.prefix_code ] = e
@@ -326,8 +371,10 @@ class DGTauIncident extends Level
         x.set_bearing initial_bearing
         x.set_alignment C.ALIGNMENT.FEDERATION
         x.set_alert 'yellow'
+
         for s in x.shields
             s.charge = 1
+
         x.set_impulse 0.5
         x.enter_captains_log @lexington_logs[ 0 ]
         @ships[ x.prefix_code ] = x
@@ -338,11 +385,10 @@ class DGTauIncident extends Level
         system = @map.get_star_system 'DG Tau'
 
         @stations = []
-        for i in [1..3]
+        for i in [ 1..3 ]
             true for pre, e of @ships
-            p = if i == 1 then e.position else do @_random_start_position
-            p = { x : p.x + 3000, y : p.y, z : 0 }
-            s = new Station "Outpost_#{i}", p
+            p = @_random_start_position true
+            s = new Station "Outpost_#{ i }", p
             s.star_system = system
             s.set_alignment C.ALIGNMENT.FEDERATION
             do s.shields.power_on
@@ -358,20 +404,20 @@ class DGTauIncident extends Level
 
         system = @map.get_star_system 'DG Tau'
         # Central star
-        s = new Star "DG Tau", "D"
-        s.star_system = system
-
+        s = new Star "DG Tau", "D", ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME * 1e12
+        s.charted = true
+        system.add_star s
         @dgtau = s
-
         @space_objects.push s
 
         # Gas clouds
-        for i in [0...1e4]
-            g = new GasCloud( C.AU * Math.random(), C.AU / 8 )
-            g.star_system = system
-            {x, y, z} = do @_random_start_position
+        for i in [0...1e3]
+            g = new GasCloud( C.AU * ( 0.3 + Math.random() ), C.AU / 8 )
+            g.charted = true
+            { x, y, z } = @_random_start_position false, true
             g.set_position x, y, z
             @space_objects.push g
+            system.add_clouds g
 
 
     _init_environment: ->
@@ -383,11 +429,12 @@ class DGTauIncident extends Level
             @game_environment[ v ] = _null
 
         bg_radiation = @background_radiation
+        initial_radiation = ( p ) -> bg_radiation
 
-        initial_radiation = ( p ) ->
-            bg_radiation
+        initial_particle_density = ( p ) -> 1
 
         @game_environment[ C.ENVIRONMENT.RADIATION ] = initial_radiation
+        @game_environment[ C.ENVIRONMENT.PARTICLE_DENSITY] = initial_particle_density
 
 
 exports.Level = DGTauIncident

@@ -157,16 +157,17 @@ class Game
     get_charted_objects: ( prefix, system_name ) ->
 
         star_system = @map.get_star_system system_name
+        if not star_system?
+            throw new Error "Cannot find star system #{ system_name }"
+
         you = @ships[ prefix ]
 
-        # Get charted objects
-        r = ( @get_public_space o, you for o in @space_objects \
-            when o.charted == true \
-            and o.star_system == star_system )
+        # Get charted objects,
+        ## Don't pass gas clouds, as these get handled by the system scan
+        r = ( @get_public_space o, you for o in star_system.stars when o.charted )
 
         # Overlay any subspace becons
-        s = ( @get_public o, you for o in @game_objects \
-            when @get_public o, you )
+        s = ( @get_public o, you for o in @game_objects when @get_public o, you )
 
         # Overlay points that you have scanned and are tracking
         # tracking = ( @get_tracking_data o, you for o in you.get_scanned_objects() )
@@ -519,6 +520,7 @@ class Game
 
 
     get_environment_conditions: ( game_object ) ->
+
         @_get_environmental_conditions_at_position game_object.position
 
 
@@ -529,6 +531,17 @@ class Game
         @_get_environmental_conditions_at_position position
 
 
+    get_environmental_condition_at_position: ( parameter, position ) ->
+
+        if not @environment_functions[ parameter ]?
+            keys = []
+            for k, v of @environment_functions
+                keys.push k
+            throw new Error "Unrecognized parameter #{ parameter }, out of #{ keys }"
+
+        @environment_functions[ parameter ] position
+
+
     _get_environmental_conditions_at_position: ( position ) ->
 
         r = (
@@ -536,8 +549,7 @@ class Game
                 {
                     parameter : k,
                     readout : v position
-                }
-        )
+                } )
 
 
     get_active_scan: ( prefix, classification, distance, bearing, tag ) ->
@@ -710,14 +722,14 @@ class Game
         if object.transponder? and not object.transponder.is_online() and object isnt you
             return false
         p =
-            name: object.name
-            heading: object.bearing
-            velocity: object.velocity
-            impulse: object.impulse
-            warp: object.warp
-            bearing: U.bearing(you, object)
-            distance: U.distance(object.position, you.position)
-            position: object.position
+            name : object.name
+            heading : object.bearing
+            velocity : object.velocity
+            impulse : object.impulse
+            warp : object.warp
+            bearing : U.bearing you, object
+            distance : U.distance object.position, you.position
+            position : object.position
 
 
     get_public_space: ( object, you ) ->
@@ -734,11 +746,12 @@ class Game
             throw new Error "Undefined object; dark mater?"
 
         p =
-            name: object.name
-            bearing: U.bearing you, object
-            distance: U.distance you.position, object.position
-            position: object.position
-            classification: object.classification
+            name : object.name
+            bearing : U.bearing you, object
+            distance : U.distance you.position, object.position
+            position : object.position
+            classification : object.classification
+            radius : object.radius
 
 
     get_tracking_data: ( object, you ) ->

@@ -50,6 +50,8 @@ class BaseShip extends BaseObject
             mark: 0
         @_navigation_lock = false
 
+        @star_system = undefined
+
         do @initialize_systems
         do @initialize_hull
         do @initialize_cargo
@@ -197,14 +199,6 @@ class BaseShip extends BaseObject
 
     ### Tactical
     _________________________________________________###
-
-
-    hail: ( target ) ->
-
-        if not @communication_array.is_online()
-            throw new Error("Cannot hail. Communication array is offline.")
-        console.log "{@name} <<incomming hail>>"
-
 
     set_alert: ( status ) ->
 
@@ -654,29 +648,37 @@ class BaseShip extends BaseObject
 
     fire_thrusters: ( direction ) ->
 
-
         check_safe_for_thrusters = =>
+
             if @impulse == 0 and @warp_speed == 0
                 return
-            @impulse == 0
-            @warp_speed == 0
+            @impulse = 0
+            @warp_speed = 0
             @velocity.x = 0
             @velocity.y = 0
             @velocity.z = 0
 
-        rotation = @bearing.bearing * Math.PI * 2
+        flat_rotation = @bearing.bearing * Math.PI * 2
+        flat_mark = @bearing.mark * Math.PI * 2
+
+        vectors = U.scalar_from_bearing flat_rotation, flat_mark
+
+        delta_v = BaseShip.THRUSTER_DELTA_V_MPS / 1000
 
         switch direction
 
             when "forward"
                 do check_safe_for_thrusters
-                @velocity.x += Math.cos( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
-                @velocity.y += Math.sin( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
+
+                @velocity.x += vectors.x * delta_v
+                @velocity.y += vectors.y * delta_v
+                @velocity.z += vectors.z * delta_v
 
             when "reverse"
                 do check_safe_for_thrusters
-                @velocity.x -= Math.cos( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
-                @velocity.y -= Math.sin( rotation ) * BaseShip.THRUSTER_DELTA_V_MPS / 1000
+                @velocity.x -= vectors.x * delta_v
+                @velocity.y -= vectors.y * delta_v
+                @velocity.z -= vectors.z * delta_v
 
 
     set_course: ( bearing, mark, callback ) =>
@@ -690,6 +692,8 @@ class BaseShip extends BaseObject
 
     _set_course: ( bearing, mark, callback ) =>
 
+        console.log "#{ @name } turning #{ bearing } m #{ mark }"
+
         # These are understood to be relative bearings
         if not @inertial_dampener.is_online()
             throw new Error "internal Dampener offline. Safety protocols
@@ -700,7 +704,10 @@ class BaseShip extends BaseObject
                 Safety protocols prevent acceleration."
 
         if not 0 <= bearing <= 1
-            throw new Error "Illegal bearing #{bearing}"
+            throw new Error "Illegal bearing #{ bearing }"
+
+        if not ( mark < 0.25 or mark > 0.75 )
+            throw new Error "Illegal mark #{ mark }: limit mark coordinates to 0 - 250, or 750 - 1000"
 
         do @_clear_rotation
         @_navigation_lock = true
@@ -712,17 +719,36 @@ class BaseShip extends BaseObject
 
         # Calculate new bearing
         new_bearing = ( bearing + @bearing.bearing ) % 1
-        new_mark = ( mark + @bearing.mark ) % 1
-        if new_mark < 0
-            new_mark += 1
 
-        # Calculate the duration of the turn
+        # Marks are absolute
+        new_mark = mark
+        relative_mark = ( m ) ->
+            switch
+                when m > 0.5 then m - 1
+                when m < 0.5 then m
+
+        # Calculate the duration of the turn (bearing)
         turn_direction = C.COUNTERCLOCKWISE
         turn_distance = bearing
         if bearing > 0.5
             turn_direction = C.CLOCKWISE
             turn_distance = 1 - bearing
-        duration = C.TIME_FOR_FULL_ROTATION * turn_distance
+        duration_bearing = C.TIME_FOR_FULL_ROTATION * turn_distance
+
+        # Calculate the duration of the turn (mark)
+        delta_mark = Math.abs( relative_mark( mark ) - relative_mark( @bearing.mark ) )
+        duration_mark = C.TIME_FOR_FULL_ROTATION * delta_mark
+
+        duration = Math.max duration_bearing, duration_mark
+
+        # Set the bearing_v so that turns update in the nav display
+        turn_vector = if turn_direction is C.COUNTERCLOCKWISE then 1 else -1
+        mark_vector = if relative_mark( mark ) > relative_mark( @bearing.mark ) then 1 else -1
+
+        if bearing isnt @bearing.bearing then @bearing_v.bearing = turn_vector / C.TIME_FOR_FULL_ROTATION
+        if mark isnt @bearing.mark then @bearing_v.mark = mark_vector / C.TIME_FOR_FULL_ROTATION
+
+        @message @prefix_code, "Turning", do @navigation_report
 
         # Do this in a timeout
         set_course_and_speed = =>
@@ -730,6 +756,12 @@ class BaseShip extends BaseObject
             @bearing =
                 bearing: new_bearing
                 mark: new_mark
+
+            @bearing_v =
+                bearing : 0
+                mark : 0
+
+            @message @prefix_code, "Turning", do @navigation_report
 
             if initial_impulse > 0
                 @_set_impulse initial_impulse
@@ -744,9 +776,9 @@ class BaseShip extends BaseObject
 
         # message out to the ship
         r =
-            turn_direction: turn_direction
-            turn_duration: duration
-            turn_distance: turn_distance
+            turn_direction : turn_direction
+            turn_duration : duration
+            turn_distance : turn_distance
 
 
     _set_abs_course: ( heading, callback ) =>
@@ -789,9 +821,15 @@ class BaseShip extends BaseObject
         i = @impulse_drive
         delta = Math.abs( impulse_speed - @impulse )
         @impulse = impulse_speed
-        rotation = @bearing.bearing * Math.PI * 2
-        @velocity.x = Math.cos( rotation ) * @impulse * C.IMPULSE_SPEED
-        @velocity.y = Math.sin( rotation ) * @impulse * C.IMPULSE_SPEED
+
+        vectors = U.scalar_from_bearing @bearing.bearing, @bearing.mark
+
+        delta_v = @impulse * C.IMPULSE_SPEED
+
+        @velocity.x = vectors.x * delta_v
+        @velocity.y = vectors.y * delta_v
+        @velocity.z = vectors.z * delta_v
+
         @power_debt += delta * i.burst_power
 
         if callback?
@@ -849,12 +887,13 @@ class BaseShip extends BaseObject
         @impulse = 0
         @warp_speed = warp_speed
         console.log "[#{ @name }] Setting warp to #{ warp_speed }"
-        rotation = @bearing.bearing * Math.PI * 2
 
-        # The famous trek warp speed calculation
-        warp_v = Math.pow( @warp_speed, 10/3 ) * C.SPEED_OF_LIGHT
-        @velocity.x = Math.cos( rotation ) * warp_v
-        @velocity.y = Math.sin( rotation ) * warp_v
+        vectors = U.scalar_from_bearing @bearing.bearing, @bearing.mark
+        warp_v = U.warp_speed @warp_speed
+
+        @velocity.x = vectors.x * warp_v
+        @velocity.y = vectors.y * warp_v
+        @velocity.z = vectors.z * warp_v
 
         if callback?
             do callback
@@ -1128,7 +1167,6 @@ class BaseShip extends BaseObject
             mesh_scale: @model_display_scale
             registry: @serial
             hull: @hull
-            name: @name
             shields: do @shield_report
 
         # TODO: Do we have shielding? Radiation leaks? Radioactive cargo?
@@ -1213,9 +1251,9 @@ class BaseShip extends BaseObject
 
         # forward sensors (0.875 > 0.125)
         forward_segments = @_calculate_scan_segment(
-           [ 0...8 ].concat( [ 56...64 ] ),
-           first_segment,
-           second_segment )
+            [ 0...8 ].concat( [ 56...64 ] ),
+                first_segment,
+                second_segment )
 
         # port sensors (0.125, 0.375)
         port_segments = @_calculate_scan_segment(
@@ -1470,8 +1508,13 @@ class BaseShip extends BaseObject
 
     hail: ( message, hail_function ) ->
 
-        if @communication_array?
-            @communication_array.hail message, hail_function
+        if not @communication_array?
+            return
+
+        if not do @communication_array.is_online
+            throw new Error "Cannot hail. Communications array is offline."
+
+        @communication_array.hail message, hail_function
 
 
     hear_hail: ( prefix, message ) ->
@@ -1516,8 +1559,8 @@ class BaseShip extends BaseObject
         if from_point == @position
             from_point.x += 1
         b = U.bearing(
-                { position : @position, bearing : @bearing },
-                { position : from_point } )
+            { position : @position, bearing : @bearing },
+            { position : from_point } )
 
         if not b?
             throw new Error "Invalid origin point #{from_point}"
@@ -1620,6 +1663,7 @@ class BaseShip extends BaseObject
 
         @position.x += @velocity.x * delta_t
         @position.y += @velocity.y * delta_t
+        @position.z += @velocity.z * delta_t
 
         @bearing.bearing += @bearing_v.bearing * delta_t
         @bearing.mark += @bearing_v.mark * delta_t
@@ -1631,7 +1675,7 @@ class BaseShip extends BaseObject
             @bearing.bearing += 1
 
         # If we're currently turning, notify any clients
-        if @bearing_v.bearing != 0
+        if @bearing_v.bearing isnt 0 or @bearing_v.mark isnt 0
             @message @prefix_code, "Turning", do @navigation_report
 
 

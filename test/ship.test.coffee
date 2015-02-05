@@ -550,3 +550,37 @@ exports.ShipTest =
         test.ok not shields_are_up( s ) and not phasers_are_charging( s ) and not tubes_are_autoloading( s ) and not sifs_are_powered( s ), "Failed to stand down"
 
         do test.done
+
+
+    'test can turn in the z-axis': ( test ) ->
+
+        test.expect 1
+
+        s = new Constitution
+        bearing = 0
+        mark = 0.010
+
+        r = s.set_course bearing, mark
+
+        check_turn = ->
+
+            s.calculate_state undefined, r.turn_duration
+            test.ok s.bearing.mark isnt 0
+
+            do test.done
+
+        setTimeout check_turn, r.turn_duration
+
+
+    'test can move in the z-axis': ( test ) ->
+
+        s = new Constitution
+        tic = 250
+        s.bearing = { bearing : 0, mark : 0.2 }
+
+        s.set_impulse 0.5
+        s.calculate_state undefined, tic
+
+        test.ok s.position.z isnt 0
+
+        do test.done

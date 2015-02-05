@@ -326,6 +326,13 @@ svg.conn-arrow.up, svg.conn-arrow.down {
     font-size: 2em;
 }
 
+.conn-gas-circle {
+    display: inline-block;
+    border-radius: 50%;
+    position: fixed;
+    background-color: rgba(3, 189, 17, 0.3)
+}
+
 /* Ops Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
@@ -1542,7 +1549,7 @@ path.alert-red-pulse-9 {
 
 /* Mobile-Specific style overrides
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-@media (max-width: 1024px) {
+@media (max-width: 400px) {
 
     h1 {
         font-size: 5em;
