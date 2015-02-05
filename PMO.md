@@ -10,9 +10,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   - [ ] Also, refactor to use stylus
 - [ ] Class-selector CSS
   - [ ] find and kill all id-based css rules
-- [ ] Coding-style cleaned JS
-  - [ ] implement the Mr. Doob JS standard everywhere
-  - [ ] get JS out of the html so that we can lint it
+- [x] Coding-style cleaned JS
+  - [x] implement the Mr. Doob JS standard everywhere
+  - [x] get JS out of the html so that we can lint it
 - [ ] All HTML must use base templating
 - [ ] Fix the API
   - [x] Get the API turned into a RESTful API
@@ -49,7 +49,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Hotfix
-- [ ] The star of the system is no longer displayed
+- [ ] Comically enlarged buttons in eng
 - [ ] Engineering overload is still busted
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
 - [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
