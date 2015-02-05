@@ -200,14 +200,6 @@ class BaseShip extends BaseObject
     ### Tactical
     _________________________________________________###
 
-
-    hail: ( target ) ->
-
-        if not @communication_array.is_online()
-            throw new Error("Cannot hail. Communication array is offline.")
-        console.log "{@name} <<incomming hail>>"
-
-
     set_alert: ( status ) ->
 
         @alert = status
@@ -1175,7 +1167,6 @@ class BaseShip extends BaseObject
             mesh_scale: @model_display_scale
             registry: @serial
             hull: @hull
-            name: @name
             shields: do @shield_report
 
         # TODO: Do we have shielding? Radiation leaks? Radioactive cargo?
@@ -1260,9 +1251,9 @@ class BaseShip extends BaseObject
 
         # forward sensors (0.875 > 0.125)
         forward_segments = @_calculate_scan_segment(
-           [ 0...8 ].concat( [ 56...64 ] ),
-           first_segment,
-           second_segment )
+            [ 0...8 ].concat( [ 56...64 ] ),
+                first_segment,
+                second_segment )
 
         # port sensors (0.125, 0.375)
         port_segments = @_calculate_scan_segment(
@@ -1517,8 +1508,13 @@ class BaseShip extends BaseObject
 
     hail: ( message, hail_function ) ->
 
-        if @communication_array?
-            @communication_array.hail message, hail_function
+        if not @communication_array?
+            return
+
+        if not do @communication_array.is_online
+            throw new Error "Cannot hail. Communications array is offline."
+
+        @communication_array.hail message, hail_function
 
 
     hear_hail: ( prefix, message ) ->
@@ -1563,8 +1559,8 @@ class BaseShip extends BaseObject
         if from_point == @position
             from_point.x += 1
         b = U.bearing(
-                { position : @position, bearing : @bearing },
-                { position : from_point } )
+            { position : @position, bearing : @bearing },
+            { position : from_point } )
 
         if not b?
             throw new Error "Invalid origin point #{from_point}"

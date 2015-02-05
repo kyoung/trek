@@ -202,9 +202,9 @@ class DGTauIncident extends Level
         console.log "[LEVEL] message: #{ message }"
 
         # Allow ships to request outposts to lower their shields for transport
-        outpost_number = message.match /outpost (\d+)/i;
-        lower = message.match /lower/i;
-        raise = message.match /raise/i;
+        outpost_number = message.match /outpost (\d+)/i
+        lower = message.match /lower/i
+        raise = message.match /raise/i
 
         if not outpost_number? or outpost_number.length is 0 or ( lower?.length is 0 and raise?.length is 0 )
             return

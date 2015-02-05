@@ -373,7 +373,7 @@ engineering_api = ( prefix, method, command, params ) ->
 
     resp = switch command
         when 'getStatus', 'status'
-             game.get_damage_report prefix
+            game.get_damage_report prefix
 
         when 'getPowerReport'
             game.get_power_report prefix
