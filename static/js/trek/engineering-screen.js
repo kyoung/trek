@@ -65,12 +65,12 @@ function drawStatus( data ) {
 
             systemList += Mustache.render( systemTmpl, context );
 
+            } );
+
             var state = { section : sectionName, systemList : systemList };
             var $status = $( Mustache.render( sectionTmpl, state ) );
 
             $statusReport.append( $status );
-
-            } );
 
         } );
 

@@ -1549,7 +1549,7 @@ path.alert-red-pulse-9 {
 
 /* Mobile-Specific style overrides
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-@media (max-width: 1024px) {
+@media (max-width: 400px) {
 
     h1 {
         font-size: 5em;
