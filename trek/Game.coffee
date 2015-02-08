@@ -17,7 +17,7 @@ class Game
         @is_over = false
 
         level_files = fs.readdirSync "./trek/levels"
-        lfs = ( l[0...l.indexOf( "." )] for l in level_files when l.indexOf( ".coffee" ) > 0 )
+        lfs = ( l[ 0...l.indexOf( "." ) ] for l in level_files when l.indexOf( ".coffee" ) > 0 )
 
         # ...
         {Level} = require "./levels/#{ level_name }"
@@ -150,7 +150,7 @@ class Game
             max_y: width / 2
             min_z: 0 - width / 2
             max_z: width / 2
-            charted_objects: (o for o in @space_objects when o.charted == true)
+            charted_objects: ( o for o in @space_objects when o.charted == true )
         }
 
 
@@ -203,7 +203,7 @@ class Game
 
         if isNaN mark
             mark = 0
-        console.log "Setting course #{bearing} #{mark}"
+        console.log "Setting course #{ bearing } #{ mark }"
         message = @ships[ prefix ].set_course bearing, mark
         @message prefix, "Navigation", message
 
@@ -235,9 +235,9 @@ class Game
         impulse = if isNaN( impulse ) then 0 else impulse
         warp = if isNaN( warp ) then 0 else warp
 
-        target = (o for o in @game_objects when o.name == target_name)[0]
+        target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
         if not target
-            target = (o for o in @space_objects when o.name == target_name)[0]
+            target = ( o for o in @space_objects when o.name == target_name )[ 0 ]
         if not target
             throw new Error 'Invalid target'
 
@@ -250,9 +250,9 @@ class Game
 
     match_course_and_speed: ( prefix, target_name ) =>
 
-        target = (o for o in @game_objects when o.name == target_name)[0]
+        target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
         if not target
-            target = (o for o in @space_objects when o.name == target_name)[0]
+            target = ( o for o in @space_objects when o.name == target_name )[ 0 ]
 
         # TODO: Techincally, we should be matching the heading
         # first, but it mucks with test timing.
@@ -272,13 +272,13 @@ class Game
 
     set_warp_speed: ( prefix, warp ) ->
 
-        @message prefix, "Navigation", { set_speed: "warp" }
+        @message prefix, "Navigation", { set_speed : "warp" }
         @ships[ prefix ].set_warp warp
 
 
     set_impulse_speed: ( prefix, impulse ) ->
 
-        @message prefix, "Navigation", { set_speed: "impulse" }
+        @message prefix, "Navigation", { set_speed : "impulse" }
         @ships[ prefix ].set_impulse impulse
 
 
@@ -314,7 +314,7 @@ class Game
         things_that_died = ( o for o in @game_objects when not o.alive )
         for death in things_that_died
             for prefix, ship of @ships
-                @message prefix, "Display", "Destroyed:#{death.name}"
+                @message prefix, "Display", "Destroyed:#{ death.name }"
 
         @game_objects = ( o for o in @game_objects when o.alive )
 
@@ -322,7 +322,7 @@ class Game
     two_second_torpedo_event: ( target_name ) =>
 
         for prefix, ship of @ships
-            @message prefix, "Display", "Torpedo hitting:#{target_name}"
+            @message prefix, "Display", "Torpedo hitting:#{ target_name }"
 
 
     fire_torpedo: ( prefix, yield_level ) =>
@@ -335,7 +335,7 @@ class Game
             @game_objects.push torpedo
             return "torpedo fired"
         else
-            return "torpedo launch failed: #{torpedo}"
+            return "torpedo launch failed: #{ torpedo }"
 
 
     load_torpedo_tube: ( prefix, tube_number ) -> @ships[ prefix ].load_torpedo tube_number
@@ -359,7 +359,7 @@ class Game
     get_targets_in_visual_range: ( prefix ) ->
 
         ship = @ships[ prefix ]
-        objects = (o.name for o in @game_objects when U.distance(ship.position, o.position) < C.VISUAL_RANGE)
+        objects = ( o.name for o in @game_objects when U.distance( ship.position, o.position ) < C.VISUAL_RANGE )
 
 
     get_stelar_telemetry: ( prefix, target_name ) ->
@@ -367,14 +367,14 @@ class Game
         ship = @ships[ prefix ]
         if target_name == ""
             return {}
-        target = (o for o in @game_objects when o.name == target_name)[0]
-        stars = (o for o in @space_objects when o.classification.indexOf("Star") >= 0)
+        target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
+        stars = ( o for o in @space_objects when o.classification.indexOf( "Star" ) >= 0 )
 
         telemetry =
-            bearing_to_viewer: U.bearing(target, ship)
-            bearing_to_target: U.bearing(ship, target)
-            bearing_to_star: U.bearing(ship, stars[0])
-            distance_from_star: U.distance(target.position, stars[0].position)
+            bearing_to_viewer: U.bearing( target, ship )
+            bearing_to_target: U.bearing( ship, target )
+            bearing_to_star: U.bearing( ship, stars[ 0 ] )
+            distance_from_star: U.distance( target.position, stars[ 0 ].position )
             target_model: target.model_url
 
 
@@ -422,18 +422,17 @@ class Game
         return r
 
 
-    crew_ready_to_transport: ( prefix ) ->
-        @ships[ prefix ].crew_ready_to_transport()
+    crew_ready_to_transport: ( prefix ) -> do @ships[ prefix ].crew_ready_to_transport
 
 
     transport_crew: ( prefix, transport_args ) ->
 
-        {crew_id, source_name, source_deck, source_section,
-            target_name, target_deck, target_section} = transport_args
+        { crew_id, source_name, source_deck, source_section,
+            target_name, target_deck, target_section } = transport_args
 
         ship = @ships[ prefix ]
-        source = (s for s in @game_objects when s.name == source_name)[0]
-        target = (s for s in @game_objects when s.name == target_name)[0]
+        source = ( s for s in @game_objects when s.name == source_name )[ 0 ]
+        target = ( s for s in @game_objects when s.name == target_name )[ 0 ]
 
         ship.transport_crew crew_id, source, source_deck, source_section, target, target_deck, target_section
 
@@ -565,7 +564,7 @@ class Game
         if matches.length == 0
             throw new Error "Could not resolve active scan target,
             for #{ classification } at #{ Math.round( distance / 1e3 ) }km
-            bearing #{ Math.round(bearing * 1e3) }"
+            bearing #{ Math.round( bearing * 1e3 ) }"
 
         target = matches[ 0 ]
 
@@ -597,25 +596,25 @@ class Game
         ###
 
         # Find all objects in range, that respond to type
-        game_hits = (o for o in @game_objects when 0 < U.distance( position, o.position ) < range)
-        space_hits = (o for o in @space_objects when 0 < U.distance( position, o.position ) < range or o.charted )
-        hits = game_hits.concat(space_hits)
-        hits = (h for h in hits when h.scan_for type)
+        game_hits = ( o for o in @game_objects when 0 < U.distance( position, o.position ) < range )
+        space_hits = ( o for o in @space_objects when 0 < U.distance( position, o.position ) < range or o.charted )
+        hits = game_hits.concat space_hits
+        hits = ( h for h in hits when h.scan_for type )
         count_show_up_on_scan = hits.length
 
         # Find subset in arc of bearing
         crossing_lapping_scan = bearing_to < bearing_from
-        min_bearing = Math.min(bearing_to, bearing_from)
-        max_bearing = Math.max(bearing_to, bearing_from)
+        min_bearing = Math.min bearing_to, bearing_from
+        max_bearing = Math.max bearing_to, bearing_from
 
         if crossing_lapping_scan
-            hits = (h for h in hits when min_bearing > U.point_bearing(position, h.position).bearing or max_bearing < U.point_bearing(position, h.position).bearing)
+            hits = ( h for h in hits when min_bearing > U.point_bearing( position, h.position ).bearing or max_bearing < U.point_bearing( position, h.position ).bearing )
         else
-            hits = (h for h in hits when min_bearing < U.point_bearing(position, h.position).bearing < max_bearing)
+            hits = ( h for h in hits when min_bearing < U.point_bearing( position, h.position ).bearing < max_bearing )
         # For each object, see if blocked by space objects
         count_pre_block = hits.length
 
-        final_hits = (h for h in hits when not @_is_object_blocked(h, type, position))
+        final_hits = ( h for h in hits when not @_is_object_blocked( h, type, position ) )
 
         if type == SensorSystem.SCANS.P_HIGHRES
             classifications = (
@@ -623,12 +622,12 @@ class Game
                     classification: h.classification,
                     coordinate: h.position,
                     tag: h.sensor_tag
-                } for h in final_hits)
+                } for h in final_hits )
         else
             classifications = []
 
         r =
-            readings: ({bearing: U.point_bearing(position, h.position), reading: h.scan_for type} for h in final_hits)
+            readings: ( { bearing : U.point_bearing( position, h.position ), reading : h.scan_for type } for h in final_hits )
             classifications: classifications
             spectra: []
 
@@ -710,7 +709,7 @@ class Game
 
             # If the pI is closer to o than it's radius, and
             # pI is on the segment pA > pB then it is blocked
-            if U.distance({x: pI_x, y: pI_y, z:0}, o.position) < o.radius
+            if U.distance( { x : pI_x, y : pI_y, z : 0 }, o.position ) < o.radius
                 if pA.x < pI_x < pB.x
                     return true
             return false
@@ -758,11 +757,11 @@ class Game
 
         # Return sensor data on objects you've identified and are tracking
         p =
-            name: object.name
-            bearing: U.bearing you, object
-            distance: U.distance you.position, object.position
-            position: object.position
-            classification: object.classification
+            name : object.name
+            bearing : U.bearing you, object
+            distance : U.distance you.position, object.position
+            position : object.position
+            classification : object.classification
 
 
     ship_event: ( prefix, event ) =>

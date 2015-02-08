@@ -51,6 +51,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 ## Hotfix
 - [ ] Comically enlarged buttons in eng
 - [ ] Engineering overload is still busted
+- [ ] Charge refresh doesn't happen off of the main plasma relay in eng
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
 - [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.

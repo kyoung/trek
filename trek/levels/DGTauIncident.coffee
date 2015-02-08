@@ -238,8 +238,9 @@ class DGTauIncident extends Level
         rotation = 2 * Math.PI * do Math.random
 
         radius = 3 * C.AU + ( board_size / 2 * do Math.random )
-        #if harmonic
-        #    # radius = ( Math.ceil( Math.random() * board_size / 2 ) ) * C.AU
+        if harmonic
+            ring_harmonics = [ 5, 10, 7, 17, 9 ]
+            radius = ring_harmonics[ Math.floor( Math.random() * ring_harmonics.length ) ] * C.AU
 
         x = radius * Math.cos rotation
         y = radius * Math.sin rotation

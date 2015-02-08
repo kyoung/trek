@@ -25,7 +25,7 @@ SECTIONS =
 DECKS = {}
 for deck_number in [ 65..85 ]
     deck_letter = String.fromCharCode deck_number
-    DECKS[deck_letter] = deck_letter
+    DECKS[ deck_letter ] = deck_letter
 
 
 class BaseShip extends BaseObject
@@ -654,6 +654,8 @@ class BaseShip extends BaseObject
                 return
             @impulse = 0
             @warp_speed = 0
+            @port_warp_coil.set_warp 0
+            @starboard_warp_coil.set_warp 0
             @velocity.x = 0
             @velocity.y = 0
             @velocity.z = 0
@@ -818,6 +820,9 @@ class BaseShip extends BaseObject
             throw new Error 'Impulse drive offline'
 
         @warp_speed = 0
+        @port_warp_coil.set_warp 0
+        @starboard_warp_coil.set_warp 0
+
         i = @impulse_drive
         delta = Math.abs( impulse_speed - @impulse )
         @impulse = impulse_speed
@@ -858,16 +863,16 @@ class BaseShip extends BaseObject
         if not @warp_core.is_online()
             throw new Error 'Warp drive offline'
 
-        if not @starboard_warp_coil.is_online()
+        if not @starboard_warp_coil.is_online() or not @starboard_warp_coil.charge > 0
             throw new Error 'Starboard warp coil is offline'
 
-        if not @port_warp_coil.is_online()
+        if not @port_warp_coil.is_online() or not @port_warp_coil.charge > 0
             throw new Error 'Port warp coil is offline'
 
         if not @inertial_dampener.is_online() and @warp_speed isnt warp_speed
             throw new Error 'Inertial dampener is offline; cannot change velocity'
 
-        if not (@primary_SIF.is_online() or @secondary_SIF.is_online()) and \
+        if not ( @primary_SIF.is_online() or @secondary_SIF.is_online() ) and \
         @warp_speed isnt warp_speed
             throw new Error 'Structural Integrity Field offline; cannot change velocity'
 
@@ -876,16 +881,17 @@ class BaseShip extends BaseObject
                 It is unsafe to go to warp."
 
         if warp_speed > WarpSystem.MAX_WARP
-            throw new Error "Cannot exceed warp #{ WarpSystem.MAX_WARP }"
+            throw new Error "Cannot exceed warp #{ max_warp } at current power levels."
 
         if warp_speed < 1
             throw new Error "Minimum warp velocity is warp 1.0"
 
-        # TODO: Check if the available power to the nacels is sufficient
-        # to achieve this warp. If not, route the required power.
-
         @impulse = 0
         @warp_speed = warp_speed
+
+        @port_warp_coil.set_warp warp_speed
+        @starboard_warp_coil.set_warp warp_speed
+
         console.log "[#{ @name }] Setting warp to #{ warp_speed }"
 
         vectors = U.scalar_from_bearing @bearing.bearing, @bearing.mark
@@ -1652,6 +1658,10 @@ class BaseShip extends BaseObject
 
         engineering_locations = ( { deck : c.deck, section : c.section } for c in @internal_personnel when c.description is "Engineering Team" and not do c.is_enroute )
         @_update_system_state delta, engineering_locations
+
+        if @warp_speed > 0 and ( @port_warp_coil.charge is 0 or @starboard_warp_coil.charge is 0 )
+            @warp_speed = 0
+            @velocity = { x : 0, y : 0, z : 0 }
 
         @_update_crew delta
 
