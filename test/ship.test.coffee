@@ -44,6 +44,8 @@ exports.ShipTest =
 
         C.TIME_FOR_FULL_ROTATION /= 10
         s = new Constitution
+        s.port_warp_coil.charge = 1
+        s.starboard_warp_coil.charge = 1
 
         s.set_warp 1
 
@@ -351,6 +353,8 @@ exports.ShipTest =
     'test can go to warp': ( test ) ->
 
         e = new Constitution
+        e.port_warp_coil.charge = 1
+        e.starboard_warp_coil.charge = 1
         e.set_warp 1
 
         do test.done
