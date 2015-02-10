@@ -200,7 +200,7 @@ class Constitution extends BaseShip
             ShieldSystem.NAVIGATION_POWER )
 
         # Decks S, T, and U now available
-        @navigation_computer = new NavigationComputerSystem(
+        @navigational_computer = new NavigationComputerSystem(
             'Navigational Computer',
             @DECKS.S,
             @SECTIONS.FORWARD )

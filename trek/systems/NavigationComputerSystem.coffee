@@ -1,4 +1,8 @@
 {System, ChargedSystem} = require '../BaseSystem'
+Cargo = require '../Cargo'
+
+C = require '../Constants'
+U = require '../Utility'
 
 class NavigationComputerSystem extends System
 
@@ -7,15 +11,18 @@ class NavigationComputerSystem extends System
     constructor: ( @name, @deck, @section, @power_thresholds ) ->
 
         super @name, @deck, @section, NavigationComputerSystem.POWER
-        @_repair_reqs[ Cargo.COMPUTER_COMPONENTS ] = up_to 40
+        @_repair_reqs[ Cargo.COMPUTER_COMPONENTS ] = U.up_to 40
 
 
-    calculate_safe_warp_velocity: ( navigational_deflector, local_particle_density ) ->
+    calculate_safe_warp_velocity: ( navigational_deflector, environmental_readings ) ->
 
-        # What is the maximum safe warp velocity given particle density and
-        # navigational deflector status and charge
-
+        pd_key = C.ENVIRONMENT.PARTICLE_DENSITY
         nominal_max_safe_warp = 8
+
+        if not environmental_readings[ pd_key ]?
+            return nominal_max_safe_warp
+
+        local_particle_density = environmental_readings[  pd_key ]
 
         # local particle density of > 1 doesn't permit safe deflector operation
         if local_particle_density > 1

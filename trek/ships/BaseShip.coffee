@@ -885,8 +885,8 @@ class BaseShip extends BaseObject
 
         allowed_warp = @navigational_computer.calculate_safe_warp_velocity(
             @navigational_deflectors,
-            @environmental_conditions[ C.ENVIRONMENT.PARTICLE_DENSITY ] )
-        if not warp_speed < allowed_warp
+            @environmental_conditions )
+        if warp_speed > allowed_warp
             throw new Error "Unsafe warp velocity. Local conditions limit safe velocity to warp #{ allowed_warp }"
 
         if warp_speed > WarpSystem.MAX_WARP
@@ -1673,7 +1673,7 @@ class BaseShip extends BaseObject
             coils_charged = @port_warp_coil.charge > 0 and @starboard_warp_coil.charge > 0
             safe_speed = @navigational_computer.calculate_safe_warp_velocity(
                 @navigational_deflectors,
-                @environmental_conditions[ C.ENVIRONMENT.PARTICLE_DENSITY ] )
+                @environmental_conditions )
             if not coils_charged or @warp_speed > safe_speed
                 @warp_speed = 0
                 @velocity = { x : 0, y : 0, z : 0 }

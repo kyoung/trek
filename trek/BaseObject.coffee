@@ -15,6 +15,7 @@ class BaseObject
         @_scan_density = {}
         @sensor_tag = Math.round( Math.random() * 10e16 ).toString( 16 ) +
             Math.round( Math.random() * 10e16 ).toString( 16 )
+        @environmental_conditions = []
 
 
     process_torpedo_damage: ( from_point, damage ) -> console.log "HIT! Total damage: #{damage}"
