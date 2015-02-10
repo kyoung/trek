@@ -40,7 +40,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] have the dust inform the particle density environmental value
     - [x] have the particle density figures corelate to max-possible warp speed
     - [x] display the distribution of gas clouds on the sector screen
-    - [ ] have clouds appear more radially, and at harmonics
+    - [x] have clouds appear more radially, and at harmonics
 - [x] have warp drive be a charge-depleting action on the nacelles
 - [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
     - [ ] build new mesh

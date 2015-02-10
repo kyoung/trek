@@ -239,7 +239,7 @@ class DGTauIncident extends Level
 
         radius = 3 * C.AU + ( board_size / 2 * do Math.random )
         if harmonic
-            ring_harmonics = [ 5, 10, 7, 17, 9 ]
+            ring_harmonics = [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ]
             radius = ring_harmonics[ Math.floor( Math.random() * ring_harmonics.length ) ] * C.AU
 
         x = radius * Math.cos rotation
@@ -412,10 +412,12 @@ class DGTauIncident extends Level
         @space_objects.push s
 
         # Gas clouds
+        has_z_coordiante = false
         for i in [0...1e3]
             g = new GasCloud( C.AU * ( 0.3 + Math.random() ), C.AU / 8 )
             g.charted = true
-            { x, y, z } = @_random_start_position false, true
+            on_harmonic = if i % 10 > 0 then true else false
+            { x, y, z } = @_random_start_position has_z_coordiante, on_harmonic
             g.set_position x, y, z
             @space_objects.push g
             system.add_clouds g
