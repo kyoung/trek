@@ -30,6 +30,8 @@ class WarpSystem extends ChargedSystem
     # If the nacels are completely charged down, it should take a while
     # to recharge them. Charge isn't actively consumed in use, however
     @CHARGE_TIME = 2 * 60 * 1000
+    # Warp speed at which coils can be rechared at their Dyn rate
+    @STABLE_WARP = 6
     @MAX_WARP = 8
 
 
@@ -74,7 +76,7 @@ class WarpSystem extends ChargedSystem
     update_system: ( delta_t_ms, engineering_locations ) ->
 
         super delta_t_ms, engineering_locations
-        w = @warp_field_level / WarpSystem.MAX_WARP
+        w = @warp_field_level / WarpSystem.STABLE_WARP
         power_drain = w * @power_thresholds.dyn
         charge_drain_per_ms = 1 / @charge_time * power_drain
         accumulated_drain = charge_drain_per_ms * delta_t_ms

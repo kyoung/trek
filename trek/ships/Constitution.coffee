@@ -6,6 +6,7 @@
 {WarpSystem} = require '../systems/WarpSystems'
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
+{NavigationComputerSystem} = require '../systems/NavigationComputerSystem'
 {SIFSystem} = require '../systems/SIFSystems'
 {Torpedo} = require '../Torpedo'
 {CommunicationsSystems} = require '../systems/CommunicationSystems'
@@ -199,6 +200,10 @@ class Constitution extends BaseShip
             ShieldSystem.NAVIGATION_POWER )
 
         # Decks S, T, and U now available
+        @navigation_computer = new NavigationComputerSystem(
+            'Navigational Computer',
+            @DECKS.S,
+            @SECTIONS.FORWARD )
 
         do @initialize_power_connections
 
@@ -211,8 +216,8 @@ class Constitution extends BaseShip
 
         @systems = [].concat( @shields ).concat( @phasers )
         @systems = @systems.concat( @torpedo_banks ).concat( @sensors )
-        @systems = @systems.concat( @power_systems )
-        @systems = @systems.concat([
+        @systems = @systems.concat @power_systems
+        @systems = @systems.concat( [
             @bridge
             @transporters
             @lifesupport
@@ -229,7 +234,7 @@ class Constitution extends BaseShip
             @navigational_deflectors
             @weapons_targeting
             @brig
-        ])
+        ] )
 
 
     initialize_power_connections: ->

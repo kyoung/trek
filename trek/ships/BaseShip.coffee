@@ -880,6 +880,15 @@ class BaseShip extends BaseObject
             throw new Error "Navigational deflectors are offline.
                 It is unsafe to go to warp."
 
+        if not @navigational_computer.is_online()
+            throw new Error 'Navigational computers are offline; cannot calculate deflector paths'
+
+        allowed_warp = @navigational_computer.calculate_safe_warp_velocity(
+            @navigational_deflectors,
+            @environmental_conditions[ C.ENVIRONMENT.PARTICLE_DENSITY ] )
+        if not warp_speed < allowed_warp
+            throw new Error "Unsafe warp velocity. Local conditions limit safe velocity to warp #{ allowed_warp }"
+
         if warp_speed > WarpSystem.MAX_WARP
             throw new Error "Cannot exceed warp #{ max_warp } at current power levels."
 
@@ -1659,9 +1668,15 @@ class BaseShip extends BaseObject
         engineering_locations = ( { deck : c.deck, section : c.section } for c in @internal_personnel when c.description is "Engineering Team" and not do c.is_enroute )
         @_update_system_state delta, engineering_locations
 
-        if @warp_speed > 0 and ( @port_warp_coil.charge is 0 or @starboard_warp_coil.charge is 0 )
-            @warp_speed = 0
-            @velocity = { x : 0, y : 0, z : 0 }
+        # You've lost warp plasma charge and can no longer maintain your speed
+        if @warp_speed > 0
+            coils_charged = @port_warp_coil.charge > 0 and @starboard_warp_coil.charge > 0
+            safe_speed = @navigational_computer.calculate_safe_warp_velocity(
+                @navigational_deflectors,
+                @environmental_conditions[ C.ENVIRONMENT.PARTICLE_DENSITY ] )
+            if not coils_charged or @warp_speed > safe_speed
+                @warp_speed = 0
+                @velocity = { x : 0, y : 0, z : 0 }
 
         @_update_crew delta
 

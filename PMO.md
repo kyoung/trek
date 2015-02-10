@@ -38,10 +38,10 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] begin using the accretion disk
     - [x] have radiation be dampened by the accretion disks / dust cloud objects
     - [x] have the dust inform the particle density environmental value
-    - [ ] have the particle density figures corelate to max-possible warp speed
+    - [x] have the particle density figures corelate to max-possible warp speed
     - [x] display the distribution of gas clouds on the sector screen
     - [ ] have clouds appear more radially, and at harmonics
-- [ ] have warp drive be a charge-depleting action on the nacelles
+- [x] have warp drive be a charge-depleting action on the nacelles
 - [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
     - [ ] build new mesh
     - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
