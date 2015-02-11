@@ -28,6 +28,8 @@ class Game
 
         @i = setInterval @update_state, Game.TICK_MS
 
+        @uid = do U.UID
+
 
     message: ( prefix, type, content ) ->
 
@@ -672,7 +674,7 @@ class Game
         delta_t = now - @_clock
         @_clock = now
 
-        o.set_environmental_conditions @get_environment_conditions o for o in @game_objects
+        o.set_environmental_conditions( @get_environment_conditions o ) for o in @game_objects
         o.calculate_state @world_scan, delta_t for o in @game_objects
 
         if @is_over

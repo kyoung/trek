@@ -4,6 +4,7 @@
 {ReactorSystem, PowerSystem} = require '../trek/systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../trek/systems/SensorSystems'
 {SIFSystem} = require '../trek/systems/SIFSystems'
+{NavigationComputerSystem} = require '../trek/systems/NavigationComputerSystem'
 {Torpedo} = require '../trek/Torpedo'
 C = require '../trek/Constants'
 util = require 'util'
@@ -217,6 +218,26 @@ exports.SystemTest =
 		do test.done
 
 
+	'test navigational computer': ( test ) ->
+
+		n = new NavigationComputerSystem 'NavCOM', 'A', 4
+
+		env = [ { parameter : 'Particle Density', readout : 1 } ]
+		nav_deflector = { charge : 1 }
+
+		w = n.calculate_safe_warp_velocity nav_deflector, env
+
+		test.ok w is 0, "Failed to stop warp in a particle cloud: #{ w }"
+
+		env[ 0 ].readout = 0.5
+
+		w = n.calculate_safe_warp_velocity nav_deflector, env
+
+		test.ok 0 < w < 8, "Failed to set a moderate warp in mild particle clouds"
+
+		do test.done
+
+
 	'test charged systems': ( test ) ->
 
 		phaser_power = PhaserSystem.POWER
@@ -270,5 +291,3 @@ exports.SystemTest =
 		test.ok s_low_power.charge > 0, "#{s_low_power.name} failed to charge at all"
 
 		do test.done
-
-

@@ -39,6 +39,10 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] have radiation be dampened by the accretion disks / dust cloud objects
     - [x] have the dust inform the particle density environmental value
     - [x] have the particle density figures corelate to max-possible warp speed
+        - this gets super annoying... let's balance this a bit more
+        - [ ] when the nav drops out of warp, display a message to the conn screen (socket it)
+        - [ ] play with lowering the particle density some more
+        - [ ] the visible gas clouds don't seem to line up with the observed particle density
     - [x] display the distribution of gas clouds on the sector screen
     - [x] have clouds appear more radially, and at harmonics
 - [x] have warp drive be a charge-depleting action on the nacelles

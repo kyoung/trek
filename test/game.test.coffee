@@ -197,3 +197,10 @@ exports.GameTest =
         # Grant some time for the system to boot
         setTimeout allow_startup, 1000
 
+
+    'test environment interaction': ( test ) ->
+
+        g = new Game 'DGTauIncident', 2
+
+
+        do test.done

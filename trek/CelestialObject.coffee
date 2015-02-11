@@ -122,7 +122,7 @@ class GasCloud extends CelestialObject
         super()
         @classification = "Plasma Cloud"
 
-        @density = up_to 1
+        @density = up_to 0.3
 
         @_scan_density = {}
         @_scan_density[SensorSystem.SCANS.HIGHRES] = up_to 20

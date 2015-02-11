@@ -71,6 +71,17 @@ class BaseShip extends BaseObject
         @shuttles = []
         @_viewscreen_target = ""
 
+        # Assume navigation is working
+        if @port_warp_coil? and @starboard_warp_coil
+            do @port_warp_coil.bring_online
+            @port_warp_coil.charge = 1
+            do @starboard_warp_coil.bring_online
+            @starboard_warp_coil.charge = 1
+
+        if @navigational_deflectors?
+            do @navigational_deflectors.bring_online
+            @navigational_deflectors.charge = 1
+
         # Override these in your subclass to change your ship type
         @model_url = "constitution.js"
         @model_display_scale = 5
@@ -876,7 +887,7 @@ class BaseShip extends BaseObject
         @warp_speed isnt warp_speed
             throw new Error 'Structural Integrity Field offline; cannot change velocity'
 
-        if not @navigational_deflectors.is_online()
+        if not @navigational_deflectors.is_online() or @navigational_deflectors.charge is 0
             throw new Error "Navigational deflectors are offline.
                 It is unsafe to go to warp."
 
@@ -886,6 +897,7 @@ class BaseShip extends BaseObject
         allowed_warp = @navigational_computer.calculate_safe_warp_velocity(
             @navigational_deflectors,
             @environmental_conditions )
+        console.log "Navigational computer says safe warp is #{ allowed_warp }: setting #{ warp_speed }"
         if warp_speed > allowed_warp
             throw new Error "Unsafe warp velocity. Local conditions limit safe velocity to warp #{ allowed_warp }"
 

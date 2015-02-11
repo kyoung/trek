@@ -78,15 +78,7 @@ trek.onAlert( function( data ) {
 
 setInterval( pollForCaptainsLogs, 3000 );
 
-// play the theme once, but only once
-var themePlayed = document.cookie.replace( /(?:(?:^|.*;\s*)themePlayed\s*\=\s*([^;]*).*$)|^.*$/, "$1" );
 
-if ( themePlayed != 'true' ) {
-
-    trek.playTheme();
-    document.cookie = "themePlayed=true";
-
-}
-
+trek.playTheme();
 trek.registerDisplay( "Viewscreen" );
 trek.checkBlastDamage();
