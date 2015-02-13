@@ -56,7 +56,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Hotfix
-- [ ] Comically enlarged buttons in eng
 - [ ] Engineering overload is still busted
 - [ ] Charge refresh doesn't happen off of the main plasma relay in eng
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles

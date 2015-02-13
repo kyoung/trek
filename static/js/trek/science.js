@@ -100,6 +100,13 @@ function loadHighresReading ( results ) {
 
     _.each( results.classifications, function ( e ) {
 
+        // TODO: this is a hack... really, these should all be collapsed or grouped
+        if ( e.classification == "Plasma Cloud" ) {
+
+            return;
+
+        }
+
         var $li = $( Mustache.render( liTempl, e ) );
         $li.click( function ( c ) {
 

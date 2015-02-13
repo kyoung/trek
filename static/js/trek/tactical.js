@@ -51,9 +51,8 @@ $menues.click( function () {
 
     } );
 
+
 $torpedoMenu.click( showTorpedoMenu );
-
-
 function showTorpedoMenu () {
 
     setTacticalDisplay();
@@ -401,7 +400,7 @@ function buildTargetMenu ( scanData ) {
 
     _.each( scanData, function ( s ) {
 
-        if ( s.name == shipName ) {
+        if ( s.name == shipName || s.name == "" || s.name == undefined ) {
 
             return;
 
