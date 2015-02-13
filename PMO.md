@@ -22,6 +22,8 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] Speed up the test; rely less on timeouts by forcing the elapse of time through the delta_t ability
   - [ ] crew test
   - [ ] ship test
+      - [ ] ship.test.coffee -t 'test alert settings'
+  - [ ] game test
 - [ ] Get the authors of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 
@@ -40,7 +42,8 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] have the dust inform the particle density environmental value
     - [x] have the particle density figures corelate to max-possible warp speed
         - this gets super annoying... let's balance this a bit more
-        - [ ] when the nav drops out of warp, display a message to the conn screen (socket it)
+        - [x] when the nav drops out of warp, display a message to the conn screen (socket it)
+        - [x] when the computer detects a lower required speed, drop to that speed, not zero
         - [ ] play with lowering the particle density some more
         - [ ] the visible gas clouds don't seem to line up with the observed particle density
     - [x] display the distribution of gas clouds on the sector screen
@@ -306,7 +309,7 @@ Feedback taken from real user testing
   - [x] Clearing out underscores from names
   - [-] Plotting course to stationary objects is broken
   - [-] Velocity doesn't work at warp
-  - [x] Setting speed above warp 6 is broken in the interface  
+  - [x] Setting speed above warp 6 is broken in the interface
   - [x] Ability to zoom around
   - [x] Fix the "Plot intercept" menu as a fly out that display over the screen to select a target
   - [x] Fix "Plot Intercept" to kill negative number results, and display an error if the plotted intercept was impossible.

@@ -244,7 +244,7 @@ function turnShipRight () {
         $turnRight.addClass( "toggle" );
 
     }
-    
+
 }
 
 
@@ -480,6 +480,13 @@ trek.socket.on( "Navigation", function ( navData ) {
 trek.socket.on( "Turning", function ( navData ) {
 
     updateNavigationDisplay( navData );
+
+} );
+
+
+trek.socket.on( "Nav-Override", function ( message ) {
+
+    trek.displayRed( message );
 
 } );
 

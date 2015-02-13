@@ -599,3 +599,4 @@ exports.ShipTest =
         test.ok s.position.z isnt 0
 
         do test.done
+

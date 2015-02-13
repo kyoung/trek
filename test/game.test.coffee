@@ -202,5 +202,5 @@ exports.GameTest =
 
         g = new Game 'DGTauIncident', 2
 
-
+        do g.over
         do test.done

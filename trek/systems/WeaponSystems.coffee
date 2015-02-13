@@ -110,6 +110,7 @@ class TorpedoSystem extends System
             @torpedo_state = TorpedoSystem.STATUS.LOADED
 
         setTimeout loaded, TorpedoSystem.LOAD_TIME
+
         r = { status: TorpedoSystem.STATUS.LOADING }
 
 

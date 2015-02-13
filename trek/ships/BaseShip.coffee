@@ -864,6 +864,12 @@ class BaseShip extends BaseObject
         @_set_warp warp_speed, callback
 
 
+    computer_set_warp: ( warp_speed ) =>
+
+        @_log_navigation_action "Computer setting warp speed: #{ warp_speed}"
+        @_set_warp warp_speed
+
+
     _set_warp: ( warp_speed, callback ) =>
 
         do @_clear_rotation
@@ -1680,15 +1686,20 @@ class BaseShip extends BaseObject
         engineering_locations = ( { deck : c.deck, section : c.section } for c in @internal_personnel when c.description is "Engineering Team" and not do c.is_enroute )
         @_update_system_state delta, engineering_locations
 
-        # You've lost warp plasma charge and can no longer maintain your speed
         if @warp_speed > 0
+            # You've lost warp plasma charge and can no longer maintain your speed
             coils_charged = @port_warp_coil.charge > 0 and @starboard_warp_coil.charge > 0
+            if not coils_charged
+                @computer_set_warp 0
+                @message @prefix_code, 'Nav-Override', "Warp plasma charge is depleted."
+
+            # You've entered a denser region of space, and need to slow down
             safe_speed = @navigational_computer.calculate_safe_warp_velocity(
                 @navigational_deflectors,
                 @environmental_conditions )
-            if not coils_charged or @warp_speed > safe_speed
-                @warp_speed = 0
-                @velocity = { x : 0, y : 0, z : 0 }
+            if @warp_speed > safe_speed
+                @computer_set_warp safe_speed
+                @message @prefix_code, 'Nav-Override', "Warp speed reduced to #{ safe_speed }. Local conditions limit maximum safe warp."
 
         @_update_crew delta
 
