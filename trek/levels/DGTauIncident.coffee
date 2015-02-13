@@ -318,10 +318,10 @@ class DGTauIncident extends Level
             "Captains Log, stardate #{ @stardate }\n
             \n
             We've entered the DG Tau system
-            to carry out the evacuation of the mining teams in the
+            to carry out the evacuation of the mining team in the
             area. The young star has entered a dangerously volatile stage
             in it's development and has been emitting unpredictable bursts
-            of radiation beyond the capacity of the mining stations shielding.\n
+            of radiation beyond the capacity of the mining station's shielding.\n
             \n
             The Enterprise is even less equiped to handle such hostile
             conditions, and as such we will be required to route as much
