@@ -15,10 +15,12 @@ exports.TorpedoTest =
         do test.done
 
 
-    'test can fire at impulse': ( test ) ->
+    'test can fire at warp': ( test ) ->
 
         target = new Constitution "Reliant", 27012
         target.set_position 1e8, 1e8
+        target.port_warp_coil.charge = 1
+        target.starboard_warp_coil.charge = 1
         target.set_warp 1
         torpedo = new Torpedo target, '16'
         torpedo.armed = true
@@ -28,7 +30,7 @@ exports.TorpedoTest =
         do test.done
 
 
-    'test can fire at warp': ( test ) ->
+    'test can fire at impulse': ( test ) ->
 
         target = new Constitution "Reliant", 27012
         target.set_position 1e8, 1e8

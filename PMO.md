@@ -22,6 +22,8 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] Speed up the test; rely less on timeouts by forcing the elapse of time through the delta_t ability
   - [ ] crew test
   - [ ] ship test
+      - [ ] ship.test.coffee -t 'test alert settings'
+  - [ ] game test
 - [ ] Get the authors of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 
@@ -38,10 +40,15 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] begin using the accretion disk
     - [x] have radiation be dampened by the accretion disks / dust cloud objects
     - [x] have the dust inform the particle density environmental value
-    - [ ] have the particle density figures corelate to max-possible warp speed
+    - [x] have the particle density figures corelate to max-possible warp speed
+        - this gets super annoying... let's balance this a bit more
+        - [x] when the nav drops out of warp, display a message to the conn screen (socket it)
+        - [x] when the computer detects a lower required speed, drop to that speed, not zero
+        - [ ] play with lowering the particle density some more
+        - [ ] the visible gas clouds don't seem to line up with the observed particle density
     - [x] display the distribution of gas clouds on the sector screen
-    - [ ] have clouds appear more radially, and at harmonics
-- [ ] have warp drive be a charge-depleting action on the nacelles
+    - [x] have clouds appear more radially, and at harmonics
+- [x] have warp drive be a charge-depleting action on the nacelles
 - [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
     - [ ] build new mesh
     - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
@@ -51,6 +58,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 ## Hotfix
 - [ ] Comically enlarged buttons in eng
 - [ ] Engineering overload is still busted
+- [ ] Charge refresh doesn't happen off of the main plasma relay in eng
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
 - [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
@@ -301,7 +309,7 @@ Feedback taken from real user testing
   - [x] Clearing out underscores from names
   - [-] Plotting course to stationary objects is broken
   - [-] Velocity doesn't work at warp
-  - [x] Setting speed above warp 6 is broken in the interface  
+  - [x] Setting speed above warp 6 is broken in the interface
   - [x] Ability to zoom around
   - [x] Fix the "Plot intercept" menu as a fly out that display over the screen to select a target
   - [x] Fix "Plot Intercept" to kill negative number results, and display an error if the plotted intercept was impossible.

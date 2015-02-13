@@ -25,7 +25,7 @@ SECTIONS =
 DECKS = {}
 for deck_number in [ 65..85 ]
     deck_letter = String.fromCharCode deck_number
-    DECKS[deck_letter] = deck_letter
+    DECKS[ deck_letter ] = deck_letter
 
 
 class BaseShip extends BaseObject
@@ -70,6 +70,17 @@ class BaseShip extends BaseObject
         @torpedo_inventory = 96
         @shuttles = []
         @_viewscreen_target = ""
+
+        # Assume navigation is working
+        if @port_warp_coil? and @starboard_warp_coil
+            do @port_warp_coil.bring_online
+            @port_warp_coil.charge = 1
+            do @starboard_warp_coil.bring_online
+            @starboard_warp_coil.charge = 1
+
+        if @navigational_deflectors?
+            do @navigational_deflectors.bring_online
+            @navigational_deflectors.charge = 1
 
         # Override these in your subclass to change your ship type
         @model_url = "constitution.js"
@@ -654,6 +665,8 @@ class BaseShip extends BaseObject
                 return
             @impulse = 0
             @warp_speed = 0
+            @port_warp_coil.set_warp 0
+            @starboard_warp_coil.set_warp 0
             @velocity.x = 0
             @velocity.y = 0
             @velocity.z = 0
@@ -797,6 +810,12 @@ class BaseShip extends BaseObject
         @_set_impulse impulse_speed, callback
 
 
+    computer_set_impulse: ( impulse_speed ) =>
+
+        @_log_navigation_action "Computer setting impulse: #{ impulse_speed }"
+        @_set_impulse impulse_speed
+
+
     _set_impulse: ( impulse_speed, callback ) ->
 
         do @_clear_rotation
@@ -818,6 +837,9 @@ class BaseShip extends BaseObject
             throw new Error 'Impulse drive offline'
 
         @warp_speed = 0
+        @port_warp_coil.set_warp 0
+        @starboard_warp_coil.set_warp 0
+
         i = @impulse_drive
         delta = Math.abs( impulse_speed - @impulse )
         @impulse = impulse_speed
@@ -848,6 +870,12 @@ class BaseShip extends BaseObject
         @_set_warp warp_speed, callback
 
 
+    computer_set_warp: ( warp_speed ) =>
+
+        @_log_navigation_action "Computer setting warp speed: #{ warp_speed}"
+        @_set_warp warp_speed
+
+
     _set_warp: ( warp_speed, callback ) =>
 
         do @_clear_rotation
@@ -858,34 +886,45 @@ class BaseShip extends BaseObject
         if not @warp_core.is_online()
             throw new Error 'Warp drive offline'
 
-        if not @starboard_warp_coil.is_online()
+        if not @starboard_warp_coil.is_online() or not @starboard_warp_coil.charge > 0
             throw new Error 'Starboard warp coil is offline'
 
-        if not @port_warp_coil.is_online()
+        if not @port_warp_coil.is_online() or not @port_warp_coil.charge > 0
             throw new Error 'Port warp coil is offline'
 
         if not @inertial_dampener.is_online() and @warp_speed isnt warp_speed
             throw new Error 'Inertial dampener is offline; cannot change velocity'
 
-        if not (@primary_SIF.is_online() or @secondary_SIF.is_online()) and \
+        if not ( @primary_SIF.is_online() or @secondary_SIF.is_online() ) and \
         @warp_speed isnt warp_speed
             throw new Error 'Structural Integrity Field offline; cannot change velocity'
 
-        if not @navigational_deflectors.is_online()
+        if not @navigational_deflectors.is_online() or @navigational_deflectors.charge is 0
             throw new Error "Navigational deflectors are offline.
                 It is unsafe to go to warp."
 
+        if not @navigational_computer.is_online()
+            throw new Error 'Navigational computers are offline; cannot calculate deflector paths'
+
+        allowed_warp = @navigational_computer.calculate_safe_warp_velocity(
+            @navigational_deflectors,
+            @environmental_conditions )
+        console.log "Navigational computer says safe warp is #{ allowed_warp }: setting #{ warp_speed }"
+        if warp_speed > allowed_warp
+            throw new Error "Unsafe warp velocity. Local conditions limit safe velocity to warp #{ allowed_warp }"
+
         if warp_speed > WarpSystem.MAX_WARP
-            throw new Error "Cannot exceed warp #{ WarpSystem.MAX_WARP }"
+            throw new Error "Cannot exceed warp #{ max_warp } at current power levels."
 
         if warp_speed < 1
             throw new Error "Minimum warp velocity is warp 1.0"
 
-        # TODO: Check if the available power to the nacels is sufficient
-        # to achieve this warp. If not, route the required power.
-
         @impulse = 0
         @warp_speed = warp_speed
+
+        @port_warp_coil.set_warp warp_speed
+        @starboard_warp_coil.set_warp warp_speed
+
         console.log "[#{ @name }] Setting warp to #{ warp_speed }"
 
         vectors = U.scalar_from_bearing @bearing.bearing, @bearing.mark
@@ -1652,6 +1691,25 @@ class BaseShip extends BaseObject
 
         engineering_locations = ( { deck : c.deck, section : c.section } for c in @internal_personnel when c.description is "Engineering Team" and not do c.is_enroute )
         @_update_system_state delta, engineering_locations
+
+        if @warp_speed > 0
+            # You've lost warp plasma charge and can no longer maintain your speed
+            coils_charged = @port_warp_coil.charge > 0 and @starboard_warp_coil.charge > 0
+            if not coils_charged
+                @computer_set_warp 0
+                @message @prefix_code, 'Nav-Override', "Warp plasma charge is depleted."
+
+            # You've entered a denser region of space, and need to slow down
+            safe_speed = @navigational_computer.calculate_safe_warp_velocity(
+                @navigational_deflectors,
+                @environmental_conditions )
+            if @warp_speed > safe_speed and safe_speed >= 1
+                @computer_set_warp safe_speed
+                @message @prefix_code, 'Nav-Override', "Warp speed reduced to #{ safe_speed }. Local conditions limit maximum safe warp."
+
+            if @warp_speed > safe_speed and safe_speed < 1
+                @computer_set_impulse 1
+                @message @prefix_code, 'Nav-Override', "Warp is unsafe in this environment. Dropping to impulse."
 
         @_update_crew delta
 

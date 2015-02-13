@@ -436,6 +436,9 @@ command_api = ( prefix, method, command, params, res ) ->
         when 'captains-log'
             game.get_captains_log prefix
 
+        when 'game'
+            game.uid
+
 
 set_course = ( prefix, bearing, mark ) ->
 

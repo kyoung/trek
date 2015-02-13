@@ -96,6 +96,8 @@ class Star extends CelestialObject
 
         random_energy = -> ( Math.random() for i in [ 0...10 ] )
 
+        misc = if @misc? then @misc else []
+
         r =
             classification : @classification
             name : @name
@@ -103,6 +105,7 @@ class Star extends CelestialObject
             mesh_scale : @model_display_scale
             radiation_output : @radiation_output
             radiation_safe_distance : 20 * C.AU
+            misc : misc
             power_readings : [
                 do random_energy,
                 do random_energy,
@@ -122,7 +125,7 @@ class GasCloud extends CelestialObject
         super()
         @classification = "Plasma Cloud"
 
-        @density = up_to 1
+        @density = up_to 0.3
 
         @_scan_density = {}
         @_scan_density[SensorSystem.SCANS.HIGHRES] = up_to 20

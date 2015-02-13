@@ -202,3 +202,7 @@ exports.scalar_from_bearing = ( bearing, mark ) ->
         x : x_vector
         y : y_vector
         z : z_vector
+
+
+exports.up_to = ( n ) ->
+    Math.floor Math.random() * n

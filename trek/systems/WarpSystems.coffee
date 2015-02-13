@@ -30,7 +30,9 @@ class WarpSystem extends ChargedSystem
     # If the nacels are completely charged down, it should take a while
     # to recharge them. Charge isn't actively consumed in use, however
     @CHARGE_TIME = 2 * 60 * 1000
-    @MAX_WARP = 7
+    # Warp speed at which coils can be rechared at their Dyn rate
+    @STABLE_WARP = 6
+    @MAX_WARP = 8
 
 
     constructor: ( @name, @deck, @section, @power_thresholds ) ->
@@ -41,12 +43,13 @@ class WarpSystem extends ChargedSystem
         super @name, @deck, @section, @power_thresholds
 
         @_repair_reqs = []
-        @_repair_reqs[Cargo.COMPUTER_COMPONENTS] = up_to 20
-        @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 20
-        @_repair_reqs[Cargo.WARP_PLASMA] = up_to 30
-        @_repair_reqs[Cargo.DILITHIUM] = 5
+        @_repair_reqs[ Cargo.COMPUTER_COMPONENTS ] = up_to 20
+        @_repair_reqs[ Cargo.EPS_CONDUIT ] = up_to 20
+        @_repair_reqs[ Cargo.WARP_PLASMA ] = up_to 30
+        @_repair_reqs[ Cargo.DILITHIUM ] = 5
         @_initiate_coil_output()
         @charge_time = WarpSystem.CHARGE_TIME
+        @warp_field_level = 0
 
 
     _initiate_coil_output: ->
@@ -61,10 +64,24 @@ class WarpSystem extends ChargedSystem
 
 
     warp_field_output: ->
+
         if not @online
             return []
         r = ( c * @power * C.WARP_POWER_FIELD_MULTIPLIER for c in @coil_balance )
 
+
+    set_warp: ( @warp_field_level ) ->
+
+
+    update_system: ( delta_t_ms, engineering_locations ) ->
+
+        super delta_t_ms, engineering_locations
+        w = @warp_field_level / WarpSystem.STABLE_WARP
+        power_drain = w * @power_thresholds.dyn
+        charge_drain_per_ms = 1 / @charge_time * power_drain
+        accumulated_drain = charge_drain_per_ms * delta_t_ms
+
+        @charge_down accumulated_drain
 
 
 exports.WarpSystem = WarpSystem

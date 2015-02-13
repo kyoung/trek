@@ -231,15 +231,16 @@ class DGTauIncident extends Level
         return true
 
 
-    _random_start_position: ( z_axis=false, harmonic=false ) ->
+    _random_start_position: ( z_axis=false, harmonic=false, max_radius ) ->
 
         board_size = C.SYSTEM_WIDTH / 2
 
         rotation = 2 * Math.PI * do Math.random
 
-        radius = 3 * C.AU + ( board_size / 2 * do Math.random )
-        #if harmonic
-        #    # radius = ( Math.ceil( Math.random() * board_size / 2 ) ) * C.AU
+        radius = if max_radius? then ( 3 * C.AU + max_radius * do Math.random ) else ( 3 * C.AU + ( board_size / 2 * do Math.random ) )
+        if harmonic
+            ring_harmonics = [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ]
+            radius = ring_harmonics[ Math.floor( Math.random() * ring_harmonics.length ) ] * C.AU
 
         x = radius * Math.cos rotation
         y = radius * Math.sin rotation
@@ -317,10 +318,10 @@ class DGTauIncident extends Level
             "Captains Log, stardate #{ @stardate }\n
             \n
             We've entered the DG Tau system
-            to carry out the evacuation of the mining teams in the
+            to carry out the evacuation of the mining team in the
             area. The young star has entered a dangerously volatile stage
             in it's development and has been emitting unpredictable bursts
-            of radiation beyond the capacity of the mining stations shielding.\n
+            of radiation beyond the capacity of the mining station's shielding.\n
             \n
             The Enterprise is even less equiped to handle such hostile
             conditions, and as such we will be required to route as much
@@ -385,9 +386,11 @@ class DGTauIncident extends Level
         system = @map.get_star_system 'DG Tau'
 
         @stations = []
-        for i in [ 1..3 ]
-            true for pre, e of @ships
-            p = @_random_start_position true
+        has_z_coordinate = true
+        at_harmonic = false
+        max_radius = 12 * C.AU
+        for i in [ 1 ]
+            p = @_random_start_position has_z_coordinate, at_harmonic, max_radius
             s = new Station "Outpost_#{ i }", p
             s.star_system = system
             s.set_alignment C.ALIGNMENT.FEDERATION
@@ -406,15 +409,18 @@ class DGTauIncident extends Level
         # Central star
         s = new Star "DG Tau", "D", ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME * 1e12
         s.charted = true
+        s.misc = [ { name : 'Accretion Disk', value : "#{ Math.round( C.AU / 8 / 1000 ) } km" } ]
         system.add_star s
         @dgtau = s
         @space_objects.push s
 
         # Gas clouds
+        has_z_coordinate = false
         for i in [0...1e3]
             g = new GasCloud( C.AU * ( 0.3 + Math.random() ), C.AU / 8 )
             g.charted = true
-            { x, y, z } = @_random_start_position false, true
+            on_harmonic = if i % 4 > 0 then true else false
+            { x, y, z } = @_random_start_position has_z_coordinate, on_harmonic
             g.set_position x, y, z
             @space_objects.push g
             system.add_clouds g

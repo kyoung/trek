@@ -203,7 +203,6 @@ var trek = (function($, _, Mustache, io) {
     // Big Sound Registration Loop
     // trek callname, sound file, loop?
     var soundLookups = [
-        [ 'playTheme', 'static/sound/theme.mp3', false ],
         [ 'playBridgeSound', 'static/sound/bridge.mp3', true ],
         [ 'playKlaxon', 'static/sound/redalert.mp3', false ],
         [ 'playAlarm', 'static/sound/critical.mp3', false ],
@@ -234,6 +233,29 @@ var trek = (function($, _, Mustache, io) {
         var coin = Math.random() > 0.5;
         var sound = coin ? "static/sound/console_explo_01.mp3" : "static/sound/console_explo_02.mp3";
         playAudio( sound );
+
+    };
+
+
+    t.playTheme = function () {
+
+        // only play the theme once per game
+        var checkIfPlayed = function( gameUID ) {
+
+            var re = new RegExp( gameUID + '_theme_played=0' );
+            if ( re.test( document.cookie ) ) {
+
+                return;
+
+            }
+
+            document.cookie = gameUID + '_theme_played=0;';
+
+            playAudio( 'static/sound/theme.mp3', false );
+
+        }
+
+        t.api( 'command/game', checkIfPlayed );
 
     };
 

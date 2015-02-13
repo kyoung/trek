@@ -81,8 +81,10 @@ function paintMap ( data ) {
         var coordinates = relativeCoordinates( cloud.position.x, cloud.position.y, cloud.position.z );
         var radius = relativeRadius( cloud.radius );
         var cloud = { relative_radius : Math.round( radius * 10) / 10 };
-        var x = coordinates.x;
-        var y = coordinates.y;
+
+        // TODO: the radius shouldn't need to be over two here... why is that?
+        var x = coordinates.x - radius / 2;
+        var y = coordinates.y - radius / 2;
 
         var $obj = $( Mustache.render( cloudTemplate, cloud ) );
         $obj.css( "top", y ).css( "left", x );

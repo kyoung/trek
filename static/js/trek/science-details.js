@@ -77,6 +77,12 @@ function loadActiveScan( data ) {
 
     }
 
+    if ( _.has( data, "misc" ) ) {
+
+        listMisc( data.misc );
+
+    }
+
 }
 
 
@@ -467,6 +473,16 @@ function listRadiationReadings ( output, safeDistance ) {
     var $rads = $( Mustache.render( radiationTemplate, radiation ) );
 
     $detailTextLeft.append( $rads );
+
+}
+
+
+function listMisc ( miscData ) {
+
+    var miscTemplate = "<div>{{ #data }}<h2>{{ name }}</h2><p class='lightblue'>{{ value }}</p>{{ /data }}</div>"
+    var $misc = $( Mustache.render( miscTemplate, { data : miscData } ) );
+
+    $detailTextRight.append( $misc );
 
 }
 

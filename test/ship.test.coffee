@@ -44,6 +44,8 @@ exports.ShipTest =
 
         C.TIME_FOR_FULL_ROTATION /= 10
         s = new Constitution
+        s.port_warp_coil.charge = 1
+        s.starboard_warp_coil.charge = 1
 
         s.set_warp 1
 
@@ -233,6 +235,9 @@ exports.ShipTest =
         test.expect 3
         e = new Constitution
 
+        original_repair_time = System.REPAIR_TIME
+        System.REPAIR_TIME /= 500
+
         # Pick a system on the same deck to avoid transit time
         # The first available repair crews happen to be on F deck
         e.impulse_drive.repair 1
@@ -256,8 +261,12 @@ exports.ShipTest =
         test.ok final_computer < starting_computer, "Failed to consume computer components"
         test.ok final_eps < starting_eps, "Failed to consume EPS components"
 
+        close_to = ( n, v ) ->
+            0.99 * v < n < 1.01 * v
+
         check_repair = ->
-            test.ok e.impulse_drive.state == 1, "Impulse drive failed to repair. State: #{e.impulse_drive.state}"
+            test.ok close_to( e.impulse_drive.state, 1 ), "Impulse drive failed to repair. State: #{e.impulse_drive.state}"
+            System.REPAIR_TIME = original_repair_time
             do test.done
 
         time_out = 0.002 * System.REPAIR_TIME
@@ -265,6 +274,9 @@ exports.ShipTest =
 
 
     'test internal team movement': ( test ) ->
+
+        crew_t_per_deck = C.CREW_TIME_PER_DECK
+        C.CREW_TIME_PER_DECK /= 100
 
         test.expect 1
         e = new Constitution
@@ -277,9 +289,10 @@ exports.ShipTest =
 
         check_movement = ->
             test.ok t.deck is 'H' and t.section is 'Aft' and t.status is 'onboard', 'Failed to order team to a different deck'
+            C.CREW_TIME_PER_DECK = crew_t_per_deck
             do test.done
 
-        setTimeout check_movement, 11*1000
+        setTimeout check_movement, 11*10
 
 
     'test beam guests': ( test ) ->
@@ -351,6 +364,8 @@ exports.ShipTest =
     'test can go to warp': ( test ) ->
 
         e = new Constitution
+        e.port_warp_coil.charge = 1
+        e.starboard_warp_coil.charge = 1
         e.set_warp 1
 
         do test.done
@@ -584,3 +599,4 @@ exports.ShipTest =
         test.ok s.position.z isnt 0
 
         do test.done
+
