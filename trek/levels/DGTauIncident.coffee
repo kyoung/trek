@@ -389,7 +389,7 @@ class DGTauIncident extends Level
         has_z_coordinate = true
         at_harmonic = false
         max_radius = 12 * C.AU
-        for i in [ 1..3 ]
+        for i in [ 1 ]
             p = @_random_start_position has_z_coordinate, at_harmonic, max_radius
             s = new Station "Outpost_#{ i }", p
             s.star_system = system
