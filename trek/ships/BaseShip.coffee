@@ -810,6 +810,12 @@ class BaseShip extends BaseObject
         @_set_impulse impulse_speed, callback
 
 
+    computer_set_impulse: ( impulse_speed ) =>
+
+        @_log_navigation_action "Computer setting impulse: #{ impulse_speed }"
+        @_set_impulse impulse_speed
+
+
     _set_impulse: ( impulse_speed, callback ) ->
 
         do @_clear_rotation
@@ -1697,9 +1703,13 @@ class BaseShip extends BaseObject
             safe_speed = @navigational_computer.calculate_safe_warp_velocity(
                 @navigational_deflectors,
                 @environmental_conditions )
-            if @warp_speed > safe_speed
+            if @warp_speed > safe_speed and safe_speed >= 1
                 @computer_set_warp safe_speed
                 @message @prefix_code, 'Nav-Override', "Warp speed reduced to #{ safe_speed }. Local conditions limit maximum safe warp."
+
+            if @warp_speed > safe_speed and safe_speed < 1
+                @computer_set_impulse 1
+                @message @prefix_code, 'Nav-Override', "Warp is unsafe in this environment. Dropping to impulse."
 
         @_update_crew delta
 

@@ -409,6 +409,7 @@ class DGTauIncident extends Level
         # Central star
         s = new Star "DG Tau", "D", ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME * 1e12
         s.charted = true
+        s.misc = [ { name : 'Accretion Disk', value : "#{ Math.round( C.AU / 8 / 1000 ) } km" } ]
         system.add_star s
         @dgtau = s
         @space_objects.push s
