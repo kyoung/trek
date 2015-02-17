@@ -67,6 +67,7 @@ class LevelEvent
             return
 
         if @args.condition @game
+
             @args.do @game
 
         else

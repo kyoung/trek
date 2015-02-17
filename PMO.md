@@ -56,6 +56,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Hotfix
+- [ ] Send to mainviewer button missing from conn
 - [ ] Engineering overload is still busted
 - [ ] Charge refresh doesn't happen off of the main plasma relay in eng
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles

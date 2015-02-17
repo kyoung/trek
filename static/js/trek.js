@@ -173,6 +173,7 @@ var trek = (function($, _, Mustache, io) {
 
     } );
 
+
     t.checkBlastDamage = function () {
 
         // catch people trying to reset their window
@@ -324,7 +325,7 @@ var trek = (function($, _, Mustache, io) {
 
 
     // Game Over
-    function displayGameOver () {
+    function displayGameOver ( score ) {
 
         $.get( '/static/svg/gameover.svg', function( svg ) {
 
@@ -337,11 +338,15 @@ var trek = (function($, _, Mustache, io) {
             $( "body" ).append( $bg );
             $bg.css( 'visibility', 'visible' );
 
+            var score =  documet.getElementById( "gameover-score" );
+            score.node.textContent = "SCORE: " + score;
+
+
         } );
 
     }
 
-    t.socket.on("gameover", function( data ) {
+    t.socket.on("gameover", function( score ) {
 
         if ( alertCallbacks.length > 0 ) {
 
@@ -350,7 +355,7 @@ var trek = (function($, _, Mustache, io) {
         }
 
         // check score, and see if you won
-        displayGameOver();
+        displayGameOver( score );
 
     } );
 

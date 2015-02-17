@@ -31,7 +31,7 @@ class DGTauIncident extends Level
         do @_init_space_objects
         do @_init_environment
 
-        @_safe_distance = 5 * C.AU
+        @_safe_distance = 10 * C.AU
         @_initial_lives = do @_get_crew_count
 
 
@@ -73,22 +73,31 @@ class DGTauIncident extends Level
         return false
 
 
-    _is_mission_accomplished: =>
+    _is_mission_accomplished: ( game ) =>
 
         # Are all miners off of existing stations, and
         # the ships are clear of the system
         all_miners_are_off_the_stations = true
+        all_stations_destroyed = true
         for s in @stations
             if do s._check_if_still_alive and s.crew.length > 0
                 all_miners_are_off_the_stations = false
+            all_stations_destroyed = all_stations_destroyed and not s.alive
 
+        # Did you rescure miners
+        miners_rescued = false
         ships_are_clear_of_system = true
-        #for prefix, ship of @ships
-        #    if U.distance_between( @dgtau, ship ) < @_safe_distance
-        #        ships_are_clear_of_system = false
+        for prefix, ship of @ships
 
-        if all_miners_are_off_the_stations and ships_are_clear_of_system
-            console.log "Missiong is accomplished!"
+            if U.distance_between( @dgtau, ship ) < @_safe_distance
+                ships_are_clear_of_system = false
+
+            for c in ship.internal_personnel
+                if /Outpost/.test c.assignment
+                    miners_rescued = true
+
+        if all_miners_are_off_the_stations and all_stations_destroyed and ships_are_clear_of_system and miners_rescued
+            console.log "Missiong complete."
             return true
 
         # console.log "Mission is not accomplished"
@@ -327,6 +336,10 @@ class DGTauIncident extends Level
             conditions, and as such we will be required to route as much
             additional power to shields as possible for the duration of the
             mission.\n
+            \n
+            Starfleet Command has stressed that the mining station in DG Tau is
+            highly experimental, and classified. We have order to ensure that the
+            station is destroyed after we complete it's evacuation.
             \n
             I'm not certain how much longer the miners can hold out under these
             conditions; time, it seems, is not on our side.\n
