@@ -111,6 +111,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 Feedback taken from real user testing
 
 - [ ] Need some kind of "cadet" mode to teach each pannel
+- [ ] Zoom out bar for conn!
 - [x] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
 - [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
 - [-] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
