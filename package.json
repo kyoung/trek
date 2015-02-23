@@ -1,6 +1,6 @@
 {
   "name": "Trek",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "scripts": {
     "test": "./node_modules/.bin/nodeunit test",
     "runtest": "./node_modules/.bin/nodeunit",

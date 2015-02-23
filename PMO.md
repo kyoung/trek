@@ -3,7 +3,7 @@ Trek Project Management, because sometimes a checklist is all you need.
 
 # Coordinate System
 ## Headings
-Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing system is [LONGITUDE] mark [LATITUDE]. Latitudal movement is not yet implemented.
+Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing system is [LONGITUDE] mark [LATITUDE]. Latitudinal movement is not yet implemented.
 
 # Tech debt and refactoring: TODO Before v.1.0 can be declared
 - [ ] Consolidated CSS
@@ -28,31 +28,47 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 # Current Sprint
-- [x] z-axis implementation
-    - [x] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
-    - [x] display -/+ z values on system map displays
-    - [x] have the stations start at positions other than z : 0
-    - [x] figure out if/how to patch the rotation of the ship
-        - turning left/right while pitched up does different things depending on the angle of attack... we could get all fancy with quaternions, but at the end of the day, this is meant to be a ship, not a fighter. It would make sense for safety reasons to limit the accumulation of angular momentum, and if we decide we're okay with this, we don't have to do anything.
-- [x] have radiation levels increase the closer you get to the star
-    - [x] safety zone > 20AU should allow a safe muster point
-    - [x] science scans of the star should indicate this information
-- [ ] begin using the accretion disk
-    - [x] have radiation be dampened by the accretion disks / dust cloud objects
-    - [x] have the dust inform the particle density environmental value
-    - [x] have the particle density figures corelate to max-possible warp speed
-        - this gets super annoying... let's balance this a bit more
-        - [x] when the nav drops out of warp, display a message to the conn screen (socket it)
-        - [x] when the computer detects a lower required speed, drop to that speed, not zero
-        - [ ] play with lowering the particle density some more
-        - [ ] the visible gas clouds don't seem to line up with the observed particle density
-    - [x] display the distribution of gas clouds on the sector screen
-    - [x] have clouds appear more radially, and at harmonics
-- [x] have warp drive be a charge-depleting action on the nacelles
-- [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
-    - [ ] build new mesh
-    - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
-    - [ ] get rid of the station object. Merge into Ship
+- Academy!
+  - [ ] Academy web service to store player profiles
+      - Player ID maps to email, score, and completed training
+      - Rank is determined by number of successfully completed missions at each station
+        - 0: Cadet
+        - 1: Ensign
+        - 2: Lieutenant
+        - 3: Lieutenant Commander
+        - 4: Commander
+        - 5: Captain
+  - [ ] Training missions
+    - [ ] Comm
+      - [ ] How ship turning works
+      - [ ] How to read distance, bearing, and z-axis
+      - [ ] How warp works
+      - [ ] Warp vs impulse
+      - [ ] Thrusters and newtonian bits
+    - [ ] Ops
+      - [ ] Transporting cargo
+      - [ ] Moving crew
+      - [ ] Conducting repairs
+      - [ ] Checking cargo
+    - [ ] Tactical
+      - [ ] Operating the communications systems
+      - [ ] Tarteging
+      - [ ] Alerts
+      - [ ] Torpedoes
+      - [ ] Phasers
+    - [ ] Science
+      - [ ] Readings a scanner
+      - [ ] LR vs SR scanners
+      - [ ] Passive Hi-Res scans
+      - [ ] Detailed scans
+      - [ ] Internal Sensors
+    - [ ] Engineering
+      - [ ] Systems: Active / Online
+      - [ ] How power works on a star ship
+      - [ ] Regular systems
+      - [ ] Charged systems
+      - [ ] Relays
+- [ ] Zoom out for the navigation screen
 
 
 ## Hotfix
@@ -62,7 +78,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
 - [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
-- [ ] Engineering primary relay charge readout fails to auto-updated
+- [ ] Engineering primary relay charge readout fails to auto-update
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
 - [ ] Science Scanner circles don't show up on FF
@@ -73,8 +89,11 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 ## Next Sprint
 
 
-
 ## Backlog For Breakout
+- [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
+    - [ ] build new mesh
+    - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
+    - [ ] get rid of the station object. Merge into Ship
 - Configuration of scanners
   - Let the arc of the scanner be selected
   - Let LR sensors be selected
@@ -109,10 +128,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 # Alpha Test Issues
 Feedback taken from real user testing
-
-- [ ] Need some kind of "cadet" mode to teach each pannel
-- [ ] Zoom out bar for conn!
-- [x] Communication in the room is crazy, everyone's shouting at each other. While we don't neccessarily want to the stoic calm of the enterprise, cross-talk would be nice.
 - [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
 - [-] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
 
@@ -130,7 +145,7 @@ Feedback taken from real user testing
 - [x] Set course
   - [x] Fix the ship so that changes to heading will alter the velocity
 - [x] Set impulse to get closer to ship
-- [x] Raise sheilds
+- [x] Raise shields
 - [x] Target ship
 - [x] Fire at ship until a shield fails
 - [x] Warp out to escape
@@ -280,8 +295,8 @@ Feedback taken from real user testing
       - [x] Quadrant limiting
   - [x] Long Range scanners
     - [x] See scans and display them
-    - [x] Need to be able to set configuraton...
-  - [x] Detailed scans of targetted objects
+    - [x] Need to be able to set configuration...
+  - [x] Detailed scans of targeted objects
     - See discussion below on Highres scanning
   - [-] Spatial objects
     - [-] asteroids
@@ -392,14 +407,14 @@ Feedback taken from real user testing
   - [x] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
 - [x] Fix combat
   - [x] torpedo strikes don't seem to be working well
-  - close range manuvering is required for phasers
+  - close range maneuvering is required for phasers
 - [x] Captains log
   - [x] Get a captain's log displaying when the main viewer initiates
 - [x] Cooperative Mission Profile
   - [x] We need environmental and internal science screens
     - [x] Environmental
     - [x] Internal
-  - [-] We'll need subsystem targetting for weapons
+  - [-] We'll need subsystem targeting for weapons
     - Move this to the tactical refactor
   - [-] We'll need engineering and tactical to have a better shield status display
     - It's kind of nice that they have to check with engineering, and that engineering has to click around
@@ -453,11 +468,11 @@ Feedback taken from real user testing
 
 ## v 0.17 Navigation [COMPLETE]
 - [x] Navigation
-  - [x] Thruster manuvering
+  - [x] Thruster maneuvering
     - required for phaser combat
   - [x] Navigation status display
 
- ## v 0.18 Prettier display [COMPLETE]
+## v 0.18 Prettier display [COMPLETE]
  - [x] Viewscreen selection needs something other than the separate "viewscreen" page... either a mobile-friendly selector, or a flyout menu off of the main viewer
      - [x] Remove the iframe
      - [x] Make mobile friendly
@@ -468,3 +483,26 @@ Feedback taken from real user testing
          - http://design.tutsplus.com/tutorials/ringed-planet-supernova-photoshop--psd-12301
          - http://glennclovis.deviantart.com/art/Helio-Nebula-Tutorial-115604344?q=1&qo=1
      - [x] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
+
+## v 0.19 The third dimention! [COMPLETE-ISH]
+- [x] z-axis implementation
+    - [x] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
+    - [x] display -/+ z values on system map displays
+    - [x] have the stations start at positions other than z : 0
+    - [x] figure out if/how to patch the rotation of the ship
+        - turning left/right while pitched up does different things depending on the angle of attack... we could get all fancy with quaternions, but at the end of the day, this is meant to be a ship, not a fighter. It would make sense for safety reasons to limit the accumulation of angular momentum, and if we decide we're okay with this, we don't have to do anything.
+- [x] have radiation levels increase the closer you get to the star
+    - [x] safety zone > 20AU should allow a safe muster point
+    - [x] science scans of the star should indicate this information
+- [-] begin using the accretion disk
+    - [x] have radiation be dampened by the accretion disks / dust cloud objects
+    - [x] have the dust inform the particle density environmental value
+    - [x] have the particle density figures corelate to max-possible warp speed
+        - this gets super annoying... let's balance this a bit more
+        - [x] when the nav drops out of warp, display a message to the conn screen (socket it)
+        - [x] when the computer detects a lower required speed, drop to that speed, not zero
+        - [-] play with lowering the particle density some more
+        - [-] the visible gas clouds don't seem to line up with the observed particle density
+    - [x] display the distribution of gas clouds on the sector screen
+    - [x] have clouds appear more radially, and at harmonics
+- [x] have warp drive be a charge-depleting action on the nacelles
