@@ -1,6 +1,6 @@
 express = require "express"
 app = express()
-app.use express.cookieParser( 'darmok&jalad' )
+app.use express.cookieParser( "darmok&jalad" )
 app.use express.bodyParser()
 
 io = require "socket.io"
@@ -11,17 +11,19 @@ cookie = require "cookie"
 
 program = require "commander"
 
+fs = require "fs"
+
 program
-    .version( '0.1' )
-    .option( '-l, --level [level]', 'Select a level.', 'DGTauIncident' )
-    .option( '-t, --teams [count]', 'Enter the number of teams.', parseInt, 1 )
+    .version( "0.1" )
+    .option( "-l, --level [level]", "Select a level.", "DGTauIncident" )
+    .option( "-t, --teams [count]", "Enter the number of teams.", parseInt, 1 )
     .parse( process.argv )
 
-{Game} = require './Game'
+{Game} = require "./Game"
 
 game = new Game program.level, program.teams
 
-app.engine 'html', require( 'ejs' ).renderFile
+app.engine "html", require( "ejs" ).renderFile
 
 landingPage = ( req, res ) ->
 
@@ -46,6 +48,15 @@ postfix_validate = ( postfix ) -> return ships[ postfix ]
 
 
 atoi = ( str ) -> parseFloat str, 10
+
+
+### State
+___________________________________________________###
+players = JSON.parse( do fs.readFileSync("brain/players.json").toString )
+
+save_state = () ->
+
+    fs.writeFile "brain/players.json", JSON.stringify( players, null, 4 )
 
 
 ### Debug
@@ -73,12 +84,12 @@ shipSockets = {}
 socketAuth = ( data, accept ) ->
     if data.headers.cookie
         data.cookie = cookie.parse data.headers.cookie
-        data.postfix = data.cookie[ 'postfix' ]
+        data.postfix = data.cookie[ "postfix" ]
     else
-        return accept 'No cookie transmitted', false
+        return accept "No cookie transmitted", false
     accept null, true
 
-socket.set 'authorization', socketAuth
+socket.set "authorization", socketAuth
 
 
 socketConnection = ( socket ) ->
@@ -91,11 +102,11 @@ socketConnection = ( socket ) ->
     else
         shipSockets[ prefix ] = [ socket ]
 
-    socket.on( 'disconnect', ->
+    socket.on( "disconnect", ->
         shipSockets[ prefix ] = shipSockets[ prefix ].filter ( s ) -> s isnt socket
     )
 
-socket.on('connection', socketConnection)
+socket.on("connection", socketConnection)
 
 
 # Super socket feedback ability
@@ -131,7 +142,7 @@ handle_API = ( req, res ) ->
 
     method = req.route.method
 
-    if method == 'get'
+    if method == "get"
         params = req.query
     else
         params = req.body
@@ -139,15 +150,15 @@ handle_API = ( req, res ) ->
     command = req.params.command
 
     resp = switch category
-        when 'navigation' then navigation_api prefix, method, command, params
-        when 'tactical' then tactical_api prefix, method, command, params
-        when 'operations' then operations_api prefix, method, command, params
-        when 'transporters' then transporters_api prefix, method, command, params
-        when 'science' then science_api prefix, method, command, params
-        when 'engineering' then engineering_api prefix, method, command, params
-        when 'communications' then communications_api prefix, method, command, params
+        when "navigation" then navigation_api prefix, method, command, params
+        when "tactical" then tactical_api prefix, method, command, params
+        when "operations" then operations_api prefix, method, command, params
+        when "transporters" then transporters_api prefix, method, command, params
+        when "science" then science_api prefix, method, command, params
+        when "engineering" then engineering_api prefix, method, command, params
+        when "communications" then communications_api prefix, method, command, params
         # Command sets some cookies and requires the response object
-        when 'command' then command_api prefix, method, command, params, res
+        when "command" then command_api prefix, method, command, params, res
 
     if resp is undefined
         throw new Error "Undefined response object for #{ category }/#{ command }"
@@ -159,45 +170,45 @@ navigation_api = ( prefix, method, command, params ) ->
     q = params
     resp = switch command
 
-        when 'position'
-            if method == 'get'
+        when "position"
+            if method == "get"
                 { results : game.get_position prefix }
 
-        when 'course'
-            if method == 'put'
+        when "course"
+            if method == "put"
                 set_course prefix, q.bearing, q.mark
 
-        when 'turn'
-            if method == 'put'
+        when "turn"
+            if method == "put"
                 switch params.direction
-                    when 'stop' then game.stop_turn prefix
-                    when 'port' then game.turn_port prefix
-                    when 'starboard' then game.turn_starboard prefix
+                    when "stop" then game.stop_turn prefix
+                    when "port" then game.turn_port prefix
+                    when "starboard" then game.turn_starboard prefix
 
-        when 'thrust'
+        when "thrust"
             switch method
-                when 'post', 'put'
+                when "post", "put"
                     game.thrusters prefix, params.direction
 
-        when 'status'
+        when "status"
             game.get_navigation_report prefix
 
-        when 'warp'
-            if method == 'post'
+        when "warp"
+            if method == "post"
                 game.set_warp_speed prefix, atoi( q.speed )
 
-        when 'impulse'
-            if method == 'post'
+        when "impulse"
+            if method == "post"
                 game.set_impulse_speed prefix, atoi( q.speed )
 
-        when 'system'
+        when "system"
             # stellar telemetry
             game.get_system_information prefix, q.system
 
-        when 'charts'
+        when "charts"
             game.get_charted_objects prefix, q.system
 
-        when 'stelar-telemetry'
+        when "stelar-telemetry"
             game.get_stelar_telemetry prefix, q.target
 
 
@@ -205,54 +216,54 @@ tactical_api = ( prefix, method, command, params ) ->
 
     q = params
     resp = switch command
-        when 'alert'
+        when "alert"
             switch method
-                when 'post'
+                when "post"
                     game.set_alert prefix, q.status
-                when 'get'
+                when "get"
                     game.get_alert prefix
 
-        when 'scan'
+        when "scan"
             game.scan prefix
 
-        when 'status'
+        when "status"
             game.get_tactical_status prefix
 
-        when 'shields'
+        when "shields"
             switch method
-                when 'post'
+                when "post"
                     game.set_shields prefix, q.online
-                when 'get'
+                when "get"
                     game.get_shield_status prefix
 
-        when 'target'
+        when "target"
             switch method
-                when 'post'
+                when "post"
                     game.target prefix, q.target, q.deck, q.section
-                when 'get'
+                when "get"
                     game.get_target_subsystems prefix
 
-        when 'fireTorpedo'
+        when "fireTorpedo"
             game.fire_torpedo prefix, q.yield
 
-        when 'loadTorpedo'
+        when "loadTorpedo"
             game.load_torpedo_tube prefix, q.tube
 
-        when 'phasers'
+        when "phasers"
             switch method
-                when 'post'
+                when "post"
                     game.fire_phasers prefix
-                when 'get'
+                when "get"
                     game.get_phaser_status prefix
 
 
 communications_api = ( prefix, method, command, params ) ->
 
     resp = switch command
-        when 'comms'
+        when "comms"
             switch method
-                when 'get' then game.get_comms_history prefix
-                when 'post'
+                when "get" then game.get_comms_history prefix
+                when "post"
                     game.hail prefix, params.message
 
 
@@ -260,24 +271,24 @@ operations_api = ( prefix, method, command, params ) ->
 
     resp = switch command
 
-        when 'internalScan', 'internal-scan'
+        when "internalScan", "internal-scan"
             game.get_internal_lifesigns_scan prefix
 
-        when 'systems-layout'
+        when "systems-layout"
             game.get_systems_layout prefix
 
-        when 'cargo'
+        when "cargo"
             game.get_cargo_status prefix
 
-        when 'decks'
+        when "decks"
             game.get_decks prefix
 
-        when 'sections'
+        when "sections"
             game.get_sections prefix
 
-        when 'sendTeamToDeck', 'send-team-to-deck'
+        when "sendTeamToDeck", "send-team-to-deck"
             switch method
-                when 'post'
+                when "post"
                     game.send_team_to_deck(
                         prefix,
                         atoi( params.crew_id ),
@@ -285,12 +296,12 @@ operations_api = ( prefix, method, command, params ) ->
                         params.to_section
                     )
 
-        when 'repairTeam'
+        when "repairTeam"
             game.assign_repair_crews(
                 prefix,
                 params.system_name,
                 atoi( params.teams) ,
-                ( params.to == 'completion' )
+                ( params.to == "completion" )
             )
 
 
@@ -299,24 +310,24 @@ transporters_api = ( prefix, method, command, params ) ->
     q = params
     resp = switch command
 
-        when 'transporterRange'
+        when "transporterRange"
             game.in_transporter_range prefix
 
-        when 'crewReadyToTransport'
+        when "crewReadyToTransport"
             game.crew_ready_to_transport prefix
 
-        when 'transportCargo'
+        when "transportCargo"
             switch method
-                when 'post'
+                when "post"
                     game.transport_cargo(
                         prefix,
                         q.origin, q.origin_bay,
                         q.destination, atoi( q.destination_bay ),
                         q.cargo, atoi( q.qty ) )
 
-        when 'transportCrew'
+        when "transportCrew"
             switch method
-                when 'post'
+                when "post"
                     transporter_args =
                         crew_id: q.crew_id
                         source_name: q.origin
@@ -332,9 +343,9 @@ science_api = ( prefix, method, command, params ) ->
 
     q = params
     resp = switch command
-        when 'runScan'
+        when "runScan"
             switch method
-                when 'put'
+                when "put"
                     game.run_scan(
                         prefix,
                         q.type,
@@ -344,25 +355,25 @@ science_api = ( prefix, method, command, params ) ->
                         q.range,
                         q.resolution )
 
-        when 'scanResults'
+        when "scanResults"
             game.get_scan_results prefix, q.type
 
-        when 'scanConfiguration'
+        when "scanConfiguration"
             game.get_scan_configuration prefix, q.type
 
-        when 'LRScanResults'
+        when "LRScanResults"
             game.get_lr_scan_results prefix, q.type
 
-        when 'LRScanConfiguration'
+        when "LRScanConfiguration"
             game.get_lr_scan_configuration prefix, q.type
 
-        when 'internal-scan'
+        when "internal-scan"
             game.get_internal_scan prefix
 
-        when 'environmental-scan'
+        when "environmental-scan"
             game.get_environmental_scan prefix
 
-        when 'activeScan'
+        when "activeScan"
             game.get_active_scan( prefix, q.classification, q.distance,
                 q.bearing, q.tag )
 
@@ -372,40 +383,40 @@ engineering_api = ( prefix, method, command, params ) ->
     q = params
 
     resp = switch command
-        when 'getStatus', 'status'
+        when "getStatus", "status"
             game.get_damage_report prefix
 
-        when 'getPowerReport'
+        when "getPowerReport"
             game.get_power_report prefix
 
-        when 'setPowerToSystem'
+        when "setPowerToSystem"
             game.set_power_to_system prefix, q.system_name, q.level
 
-        when 'power'
+        when "power"
             switch method
-                when 'get'
+                when "get"
                     game.get_power_report prefix
-                when 'post'
+                when "post"
                     game.set_power_to_system prefix, q.system_name, q.level
 
-        when 'reactor'
+        when "reactor"
             switch method
-                when 'post'
+                when "post"
                     game.set_power_to_reactor prefix, q.reactor, q.level
 
-        when 'eps-route'
+        when "eps-route"
             switch method
-                when 'post'
+                when "post"
                     game.reroute_power_relay prefix, q.eps_relay, q.primary_power_relay
 
-        when 'online'
+        when "online"
             switch method
-                when 'post'
+                when "post"
                     game.set_system_online prefix, q.system, ( q.online != "offline" )
 
-        when 'active'
+        when "active"
             switch method
-                when 'post'
+                when "post"
                     game.set_system_active prefix, q.system, ( q.active != "inactive" )
 
 
@@ -414,29 +425,29 @@ command_api = ( prefix, method, command, params, res ) ->
     q = params
 
     resp = switch command
-        when 'getPostfixCode'
+        when "getPostfixCode"
             get_postfix_code prefix, q.ship, res
 
-        when 'getScan'
+        when "getScan"
             { results: game.scan prefix }
 
-        when 'getMap'
+        when "getMap"
             { results: game.get_map prefix }
 
-        when 'mainViewer', 'main-viewer'
-            if method == 'put'or method == 'post'
+        when "mainViewer", "main-viewer"
+            if method == "put" or method == "post"
                 set_main_viewer prefix, q
 
-        when 'getSystemScan'
+        when "getSystemScan"
             game.get_system_scan prefix, q.target
 
-        when 'targets-in-visual-range'
+        when "targets-in-visual-range"
             game.get_targets_in_visual_range prefix
 
-        when 'captains-log'
+        when "captains-log"
             game.get_captains_log prefix
 
-        when 'game'
+        when "game"
             game.uid
 
 
@@ -471,16 +482,57 @@ set_main_viewer = ( prefix, params ) ->
     for consoleSocket in shipSockets[ prefix ]
         consoleSocket.emit "setScreen", { screen : url }
 
-    return { status : 'OK' }
+    return { status : "OK" }
 
 
 ###
   View handling
 ___________________________________________________###
 
-get_postfix_code = ( req, res ) ->
+
+handle_view = ( req, res ) ->
 
     prefix = req.query.prefix
+    ship_name = req.query.ship
+
+    view = req.params.view
+
+    r =
+        ship : { name : req.cookies.ship }
+        title : ship_name
+        alignment : game.get_alignment prefix
+        port : PORT
+
+    switch view
+        when "postfix" then get_postfix_code req, res, prefix, r
+        when "ship" then shipPage req, res, prefix, r
+        when "mainviewer" then mainviewer req, res, prefix, r
+        when "viewscreen" then viewscreen req, res, prefix, r
+        when "viewscreen_screen" then viewscreen_screen req, res, prefix, r
+        when "ops" then ops req, res, prefix, r
+        when "ops_crew_screen" then ops_crew_screen req, res, prefix, r
+        when "ops_cargo_screen" then ops_cargo_screen req, res, prefix, r
+        when "ops_repair_screen" then ops_repair_screen req, res, prefix, r
+        when "ops_trans_screen" then ops_trans_screen req, res, prefix, r
+        when "tactical" then tactical req, res, prefix, r
+        when "tactical_screen" then tactical_screen req, res, prefix, r
+        when "conn" then conn req, res, prefix, r
+        when "conn_screen" then conn_screen req, res, prefix, r
+        when "science" then science req, res, prefix, r
+        when "engineering" then engineering req, res, prefix, r
+        when "engineering_screen" then engineering_screen req, res, prefix, r
+        when "engineering_power" then engineering_power req, res, prefix, r
+        when "comm_screen" then comm_screen req, res, prefix, r
+        when "science_scans" then science_scans req, res, prefix, r
+        when "science_scans_lr" then science_scans_lr req, res, prefix, r
+        when "science_details" then science_details req, res, prefix, r
+        when "science_environmental" then science_environmental req, res, prefix, r
+        when "science_internal" then science_internal req, res, prefix, r
+        when "error" then error req, res, prefix, r
+
+
+get_postfix_code = ( req, res, prefix, r ) ->
+
     ship_name = req.query.ship
     console.log "Getting postfix code"
 
@@ -492,264 +544,151 @@ get_postfix_code = ( req, res ) ->
             # Allow resetting a damaged console on start of new game
             res.cookie "cracked", false
 
-            res.json { status: "OK" }
+            res.json { status : "OK" }
 
-    res.json {status: "FAIL"}
+    res.json { status : "FAIL" }
 
 
-shipPage = ( req, res ) ->
+shipPage = ( req, res, prefix, r ) ->
 
     postfix = req.cookies.postfix
-    if ships[postfix] is undefined
+    if ships[ postfix ] is undefined
         res.render "error.html"
-    shipname = req.cookies.ship
-    res.render "ship.html", {ship: {name: shipname}}
+
+    res.render "ship.html", r
 
 
-error = ( req, res ) ->
-
-    res.render "error.html"
+error = ( req, res, prefix, r ) -> res.render "error.html"
 
 
-mainviewer = ( req, res ) ->
+mainviewer = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    r =
-        ship: {name: req.cookies.ship}
-        port: PORT
-        title: "#{ req.cookies.ship } Main Viewscreen"
+    r.title = "Main Viewscreen"
     res.render "mainviewer.html", r
 
 
-viewscreen = ( req, res ) ->
+viewscreen = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    direction = req.query.direction
-    r =
-        direction: direction
-        ship: {name: req.cookies.ship}
-        title: "#{ req.cookies.ship } viewscreen"
+    r.direction = req.query.direction
     res.render "viewscreen.html", r
 
 
-viewscreen_screen = ( req, res ) ->
+viewscreen_screen = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    target_name = req.query.target
-
+    # TODO: Why is this here? Viewscreen set should be over the api
     game.set_main_view_target prefix, target_name
 
-    r =
-        title: "#{ req.cookies.ship } viewscreen"
-        target: target_name
+    r.target = req.query.target
     res.render "viewscreen_screen.html", r
 
 
-ops = ( req, res ) ->
+ops = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    r =
-        title: "#{req.cookies.ship} Ops"
-        ship: {name: req.cookies.ship}
+    r.title += " Ops"
     res.render "ops.html", r
 
 
-ops_crew_screen = ( req, res ) ->
-
-    prefix = validate req, res
-    r =
-        ship : { name : req.cookies.ship }
-        title : "Crew Display"
-        alignment : game.get_alignment prefix
-    res.render "ops_crew_screen.html", r
+ops_crew_screen = ( req, res, prefix, r ) -> res.render "ops_crew_screen.html", r
 
 
-ops_cargo_screen = ( req, res ) ->
-
-    prefix = validate req, res
-    r =
-        ship : { name : req.cookies.ship }
-        title : "Cargo"
-    res.render "ops_cargo_screen.html", r
+ops_cargo_screen = ( req, res, prefix, r ) -> res.render "ops_cargo_screen.html", r
 
 
-ops_trans_screen = ( req, res ) ->
+ops_trans_screen = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    origin = req.query.origin
-    destination = req.query.destination
-    trans_type = req.query.trans_type
-    r =
-        ship : { name : req.cookies.ship }
-        title : "Transporter"
-        origin : origin
-        destination : destination
-        trans_type : trans_type
+    r.origin = origin
+    r.destination = destination
+    r.trans_type = trans_type
     res.render "ops_trans_screen.html", r
 
 
-ops_repair_screen = ( req, res ) ->
+ops_repair_screen = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    sys_name = req.query.system_name
-    r =
-        ship : { name : req.cookies.ship }
-        system_name : sys_name
-        title : "Repair Screen"
+    r.system_name = req.query.system_name
     res.render "ops_repair_screen.html", r
 
 
-tactical = ( req, res ) ->
+tactical = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    r =
-        title : "#{req.cookies.ship} Tactical"
-        ship : { name : req.cookies.ship }
-        port : PORT
+    r.title += " Tactical"
     res.render "tactical.html", r
 
 
-tactical_screen = ( req, res ) ->
+tactical_screen = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    zoom = req.query.zoom
     zoom_level = req.query.zoom_level
     zoom_level ?= 1
-    render =
-        title : "#{ req.cookies.ship } Tactical Screen"
-        ship :
-            name : req.cookies.ship
-        zoom : zoom
-        zoom_level : zoom_level
-    res.render "tactical_screen.html", render
+    r.zoom = req.query.zoom
+    r.zoom_level = zoom_level
+    res.render "tactical_screen.html", r
 
 
-comm_screen = ( req, res ) ->
-
-    prefix = validate req, res
-    r =
-        port : PORT
-        title : "Communications"
-    res.render "communications_screen.html", r
+comm_screen = ( req, res, prefix, r ) -> res.render "communications_screen.html", r
 
 
-conn = ( req, res ) ->
+conn = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } Conn"
-        currentSystem : game.ships[ prefix ].star_system.name
-    res.render "conn.html", render
+    r.currentSystem = game.ships[ prefix ].star_system.name
+    r.title += " Conn"
+    res.render "conn.html", r
 
 
-conn_screen = ( req, res ) ->
+conn_screen = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } Helm View"
-        system_name : req.query.system
-    res.render "conn_screen.html", render
+    r.system_name = req.query.system
+    res.render "conn_screen.html", r
 
 
-science = ( req, res ) ->
+science = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    res.render "science.html", {title: "#{req.cookies.ship} Science"}
-
-
-engineering = ( req, res ) ->
-
-    prefix = validate req, res
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } Engineering"
-    res.render "engineering.html", render
+    r.title += " Science"
+    res.render "science.html", r
 
 
-engineering_screen = ( req, res ) ->
+engineering = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } System Status"
-    res.render "engineering_screen.html", render
+    r.title += " Engineering"
+    res.render "engineering.html", r
 
 
-engineering_power = ( req, res ) ->
-
-    prefix = validate req, res
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } Power Distribution"
-        component : req.query.component
-        power_type : req.query.power_type
-    res.render "engineering_power.html", render
+engineering_screen = ( req, res, prefix, r ) -> res.render "engineering_screen.html", r
 
 
-science_scans = ( req, res ) ->
+engineering_power = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
+    r.power_type = req.query.power_type
+    r.component = req.query.component
+    res.render "engineering_power.html", r
+
+
+science_scans = ( req, res, prefix, r ) ->
+
     type = if req.query.type? then req.query.type else ""
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } Primary Scans"
-        type : type
-    res.render "science_scans.html", render
+    r.type = type
+    res.render "science_scans.html", r
 
 
-science_scans_lr = ( req, res ) ->
+science_scans_lr = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
     type = if req.query.type? then req.query.type else ""
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } Long Range Scans"
-        type : type
-    res.render "science_scans_lr.html", render
+    r.type = type
+    res.render "science_scans_lr.html", r
 
 
-science_details = ( req, res ) ->
+science_details = ( req, res, prefix, r ) ->
 
-    prefix = validate req, res
     {classification, distance, bearing, tag} = req.query
-    render =
-        ship :
-            name : req.cookies.ship
-        title : "#{ req.cookies.ship } Detail Scan"
-        classification : classification
-        bearing : bearing
-        distance : distance
-        tag : tag
-    res.render "science_details.html", render
+    r.classification = classification
+    r.bearing = bearing
+    r.distance = distance
+    r.tag = tag
+    res.render "science_details.html", r
 
 
-science_environmental = ( req, res ) ->
-
-    prefix = validate req, res
-    r =
-        ship :
-            name : req.cookies.ship
-        title : "Environmental Scan"
-    res.render "science_environmental.html", r
+science_environmental = ( req, res, prefix, r ) -> res.render "science_environmental.html", r
 
 
-science_internal = ( req, res ) ->
-
-    prefix = validate req, res
-    r =
-        ship :
-            name : req.cookies.ship
-        title : "Internal Scan"
-    res.render "science_internal.html", r
+science_internal = ( req, res, prefix, r ) -> res.render "science_internal.html", r
 
 
 # Debug views
@@ -763,47 +702,25 @@ test_socket = ( req, res ) ->
   Routing
 ___________________________________________________###
 
-# Views
-app.use '/static', express.static('static')
-app.get '/', landingPage
-app.get '/postfix', get_postfix_code
-app.get '/ship', shipPage
-app.get '/mainviewer', mainviewer
-app.get '/viewscreen', viewscreen
-app.get '/viewscreen_screen', viewscreen_screen
-app.get '/ops', ops
-app.get '/ops_crew_screen', ops_crew_screen
-app.get '/ops_cargo_screen', ops_cargo_screen
-app.get '/ops_repair_screen', ops_repair_screen
-app.get '/ops_trans_screen', ops_trans_screen
-app.get '/tactical', tactical
-app.get '/tactical_screen', tactical_screen
-app.get '/conn', conn
-app.get '/conn_screen', conn_screen
-app.get '/science', science
-app.get '/engineering', engineering
-app.get '/engineering_screen', engineering_screen
-app.get '/engineering_power', engineering_power
-app.get '/comm_screen', comm_screen
-app.get '/science_scans', science_scans
-app.get '/science_scans_lr', science_scans_lr
-app.get '/science_details', science_details
-app.get '/science_environmental', science_environmental
-app.get '/science_internal', science_internal
-app.get '/error', error
+
+app.use "/static", express.static("static")
 
 # API
-app.get '/api/:category/:command', handle_API
-app.put '/api/:category/:command', handle_API
-app.post '/api/:category/:command', handle_API
-app.get '/api/:command', legacy_API
+app.get "/api/:category/:command", handle_API
+app.put "/api/:category/:command", handle_API
+app.post "/api/:category/:command", handle_API
+app.get "/api/:command", legacy_API
 
 # Debug
-app.get '/debug', debug
-app.get '/debugMap', debugMap
-app.get '/debugCoordinateSpace', debugCoordinateSpace
-app.get '/debugBearings', debugBearings
-app.get '/test_socket', test_socket
+app.get "/debug", debug
+app.get "/debugMap", debugMap
+app.get "/debugCoordinateSpace", debugCoordinateSpace
+app.get "/debugBearings", debugBearings
+app.get "/test_socket", test_socket
+
+# Views
+app.get "/:view", handle_view
+app.get "/", landingPage
 
 
 ###

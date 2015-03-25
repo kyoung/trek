@@ -1,0 +1,36 @@
+{
+  "Young": {
+    "Completed Stations": [
+        "Conn",
+        "Tactical",
+        "Science",
+        "Ops",
+        "Engineering"
+    ],
+    "Scores": [
+        100,
+        81,
+        12,
+        18,
+        100,
+        100,
+        100,
+        120
+    ],
+    "Completed Training": [
+        "conn.1c531b3",
+        "conn.4f98421"
+    ]
+  },
+  "Smith": {
+    "Completed Stations": [
+        "Conn"
+    ],
+    "Scores": [
+        10
+    ],
+    "Completed Training": [
+        "conn.1c531b3"
+    ]
+  }
+}

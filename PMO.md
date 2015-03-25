@@ -16,15 +16,15 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] All HTML must use base templating
 - [ ] Fix the API
   - [x] Get the API turned into a RESTful API
-  - [ ] Consolidate the endpoints so that it's not just one method per url
+  - [ ] Consolidate the endpoints so that it"s not just one method per url
 - [x] Reduce the use of Constants
   - Rely more on class variables for these things
 - [ ] Speed up the test; rely less on timeouts by forcing the elapse of time through the delta_t ability
   - [ ] crew test
   - [ ] ship test
-      - [ ] ship.test.coffee -t 'test alert settings'
+      - [ ] ship.test.coffee -t "test alert settings"
   - [ ] game test
-- [ ] Get the authors of the Mesh's names in a credits file, ideally the main README.md, and as a menu item off of the main screen
+- [ ] Get the authors of the Mesh"s names in a credits file, ideally the main README.md, and as a menu item off of the main screen
 
 
 # Current Sprint
@@ -39,6 +39,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
         - 4: Commander
         - 5: Captain
   - [ ] Training missions
+    - [ ] Build an SVG training mission plugin
+    - [ ] Hash SVGs to know which training is complete, use local storage
+    - http://maxwellito.github.io/vivus/
     - [ ] Comm
       - [ ] How ship turning works
       - [ ] How to read distance, bearing, and z-axis
@@ -74,14 +77,17 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 ## Hotfix
 - [ ] Send to mainviewer button missing from conn
 - [ ] Engineering overload is still busted
-- [ ] Charge refresh doesn't happen off of the main plasma relay in eng
+- [ ] Use input sliders for engineering:
+  - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
+- [ ] Charge refresh doesn"t happen off of the main plasma relay in eng
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
-- [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
+- [ ] Repairing the bridge doesn"t seem to fix blast damage to consoles
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
 - [ ] Engineering primary relay charge readout fails to auto-update
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
-- [ ] Transporter doesn't stop you from trying to transport without having selected a destination
-- [ ] Science Scanner circles don't show up on FF
+- [ ] Transporter doesn"t stop you from trying to transport without having selected a destination
+- [ ] Science Scanner circles don"t show up on FF
+  - http://roadtolarissa.com/blog/2015/02/22/svg-path-strings/
 - [ ] We need to calibrate the rotation of the sky box to the position of the star of the local system
 
 
@@ -90,15 +96,18 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Backlog For Breakout
-- [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
+- [ ] get a new mesh for the outposts... they"re not Stations, they"re power collectors. Design appropriately.
     - [ ] build new mesh
     - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
     - [ ] get rid of the station object. Merge into Ship
+- AI
+  - We need to be able to create hostile players to fight
+  - We need to be able to create cooperative players to help, and to communicate with
 - Configuration of scanners
   - Let the arc of the scanner be selected
   - Let LR sensors be selected
   - Do something more with sensors
-  - Objects get tracked once we've done a detailed scan... so how do we untrack them? At some point, we should be able to loose them (ie clocked, moved out of range, etc)
+  - Objects get tracked once we"ve done a detailed scan... so how do we untrack them? At some point, we should be able to loose them (ie clocked, moved out of range, etc)
 - Lifesupport loss should mean the crew dies in N minutes
 - Show phaser fire, as we do torpedoes
 - Pretty Renders
@@ -107,18 +116,18 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   - Also, making the stations rotate a bit could help
 - Sector maps and other systems
   - Setup LY-based coordinates for objects not in systems
-  - Compound coordinates? LY coordinates, offset by metrics is you're in a system
+  - Compound coordinates? LY coordinates, offset by metrics is you"re in a system
   - In system sets your LY coordinates to that of the system, and calculates your offset as your position
   - Enter and leave systems when your delta to a system closes within 80AU
 - Tractor Beam
 - Shuttles
-  - If transporters and related systems are down, you'll need to be able to ferry cargo
+  - If transporters and related systems are down, you"ll need to be able to ferry cargo
 - The ability for engineering to salvage parts from non-essential systems during an emergency
-- All the render delay is in the loader... if we're going to cache anything in the display, it should be in the parent frame, and then into local storage...
+- All the render delay is in the loader... if we"re going to cache anything in the display, it should be in the parent frame, and then into local storage...
 - Use this for animating transporters:
   - http://julian.com/research/velocity/
 - Explosions disrupt warp fields (seems needed for realism, but if not, makes for good ability to run away); perhaps?
-  - Might not be needed; you'll want to drop out of warp to turn and fight
+  - Might not be needed; you"ll want to drop out of warp to turn and fight
 - Additional Screens
   + "Scotty" nback iframe
     + Minigame for engineering to allow miracle fixes
@@ -129,7 +138,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 # Alpha Test Issues
 Feedback taken from real user testing
 - [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
-- [-] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
+- [-] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What"s up with that?
 
 
 # Bug log
@@ -139,7 +148,7 @@ Feedback taken from real user testing
 
 ## v0.1 [COMPLETE]
 ### Basic Combat, pt III
-- [x] Start a game and get given a prefix code, and captain's log
+- [x] Start a game and get given a prefix code, and captain"s log
 - [x] Scan for ships
 - [x] Get bearings to enemy ship
 - [x] Set course
@@ -163,7 +172,7 @@ Feedback taken from real user testing
   + [x] have torpedoes plot intercept coordinates
   + [x] torpedoes set to steer in warp, and tuned the honing parameters (otherwise no chance)
 - [x] get shot (MVP = no AI: used `command` instead)
-- [x] phasers shouldn't work at warp
+- [x] phasers shouldn"t work at warp
 - [x] destroy a target
 - [x] set alerts
 
@@ -194,8 +203,8 @@ Feedback taken from real user testing
   + Notes:
     * Phaser range = 1,000km
     * Torp range = 300,000km
-    * 16 yield levels (let's make this exponential)
-    * Phasers can fire at warp if you're *very* close together (5km)
+    * 16 yield levels (let"s make this exponential)
+    * Phasers can fire at warp if you"re *very* close together (5km)
     * http://www.ex-astris-scientia.org/inconsistencies/treknology-weapons.htm
   + [x] Select yield options
   + [x] Weapons range viewer / zoom ability
@@ -265,7 +274,7 @@ Feedback taken from real user testing
 - [x] Power Systems
   - [x] Systems must have a greyout, operational, and maxrated power level
   - [x] Systems are tied together via EPS grids
-  - [x] System power status should be checked as part of it's health check
+  - [x] System power status should be checked as part of it"s health check
   - [x] Systems above operational rating should experience damage
   - [x] Systems above max rated should have a probability of blowing
   - [x] EPS Grids must distribute all their power to all sub systems
@@ -310,21 +319,21 @@ Feedback taken from real user testing
   - [x] Scanner have multiple subarrays... refactor so that scanners can run multiple scan types simultaneously, and store those results
   - [x] Passive HighRes is the scan that detects ships, and should get special treatment...
   - [x] Active HighRes, (as well as navigation and weapons targeting) should be available once Passive HighRes has successfully isolated a target
-  - [-] While it's nice that plasma clouds block scans, they should also be able to simply limit/attenuate scans
+  - [-] While it"s nice that plasma clouds block scans, they should also be able to simply limit/attenuate scans
   - [x] Expose a "scanStatus" api, and include a time-to-complete/progress property on the scanner system
 - [x] Hotfix: Plot intercept course appears to be 0.5 off of the actual required bearing (WTF?)
-- [-] Hotfix: Gravimetric scans should always detect the local star, why doesn't it? *Totally not a problem... the LR scan only displays a quarter of the ring (fwd sweep) We should just make sure the ring in the browser only shows those grids.*
+- [-] Hotfix: Gravimetric scans should always detect the local star, why doesn"t it? *Totally not a problem... the LR scan only displays a quarter of the ring (fwd sweep) We should just make sure the ring in the browser only shows those grids.*
 - [x] Hotfix: The grid numbers on the display are arranged backwards...
 - [x] Hotfix: When "setcourse" gets called, we end up seeing it mulptile times on the server?
 - [-] Hotfix: Changing scan resolution settings seems to now clear the device..
-- [x] Hotfix: The sensor_sub screens don't handle red alerts correctly
+- [x] Hotfix: The sensor_sub screens don"t handle red alerts correctly
 - [x] Hotfix: Wire the transporter scans to use what the sensors see
 
 ## v 0.7 [COMPLETE]
 - [x] Comm Refactor
   - [x] Clearing out underscores from names
   - [-] Plotting course to stationary objects is broken
-  - [-] Velocity doesn't work at warp
+  - [-] Velocity doesn"t work at warp
   - [x] Setting speed above warp 6 is broken in the interface
   - [x] Ability to zoom around
   - [x] Fix the "Plot intercept" menu as a fly out that display over the screen to select a target
@@ -348,15 +357,15 @@ Feedback taken from real user testing
   - [x] Ensure inventory is managed
   - [x] Firing a torpedo without a target needs to be addressed/disabled
 - [x] Ensure that jumping to warp would allow you to evade a torpedo
-- [x] Have torpedoes send out notices to anyone looking at a target that they're about to hit
+- [x] Have torpedoes send out notices to anyone looking at a target that they"re about to hit
 - [x] On torpedo hit, have every screen show damage
 - [x] When you destroy a target, have it blow up in displays
-  - [x] There's a bug with stations getting hit where they seem to all disapear
+  - [x] There"s a bug with stations getting hit where they seem to all disapear
   - [x] How do stations process damage?
 
 ## v 0.9 [COMPLETE]
 - [x] Ops Love
-  - [x] Transporters don't seem to be working
+  - [x] Transporters don"t seem to be working
   - [x] Crews en-route to destinations should be displayed as such
   - [-] ... make more awesome?
 
@@ -378,7 +387,7 @@ Feedback taken from real user testing
 ## v 0.12 [Sidetracked and reprioritized]
 - [x] Battle Ratios
   - [x] Balance the torpedo hits, sheild balances and hull strengths required for accurate combat simulation
-  - [x] Check to see if it's possible to get phasers working correctly here
+  - [x] Check to see if it"s possible to get phasers working correctly here
   - [x] Torpedoes need to clear post-detonation
   - [x] White flash for explosions...
 - [ ] Navigation
@@ -406,23 +415,23 @@ Feedback taken from real user testing
 - [x] Fix the Impulse direction indicator
   - [x] Also note, the direction indicator on the tactical screen is a flipped representation from the conn screen.
 - [x] Fix combat
-  - [x] torpedo strikes don't seem to be working well
+  - [x] torpedo strikes don"t seem to be working well
   - close range maneuvering is required for phasers
 - [x] Captains log
-  - [x] Get a captain's log displaying when the main viewer initiates
+  - [x] Get a captain"s log displaying when the main viewer initiates
 - [x] Cooperative Mission Profile
   - [x] We need environmental and internal science screens
     - [x] Environmental
     - [x] Internal
-  - [-] We'll need subsystem targeting for weapons
+  - [-] We"ll need subsystem targeting for weapons
     - Move this to the tactical refactor
-  - [-] We'll need engineering and tactical to have a better shield status display
-    - It's kind of nice that they have to check with engineering, and that engineering has to click around
+  - [-] We"ll need engineering and tactical to have a better shield status display
+    - It"s kind of nice that they have to check with engineering, and that engineering has to click around
   - [x] Create a scenario where two teams must cooperate
     - [x] Make it possible to win solo
   - [x] Create game level events to trigger actions
 - [-] Engineer minigame miracle fixes
-  - This may still be needed later on, but shouldn't strictly be neccessary
+  - This may still be needed later on, but shouldn"t strictly be neccessary
 - [x] Engineering power allocation fixes
 - [x] Music/sound (Theme music, and red alerts. Phasers and torpedo hits.)
   - [x] https://www.youtube.com/watch?v=7J-y2rFfny8 (red alert)
@@ -449,7 +458,7 @@ Feedback taken from real user testing
 - [x] Tactical
   - [x] Breakout the phaser, torpedo, targeting, alert, and comms screens
   - [x] Phaser screen should indicate charge buildup of each bank
-    - [x] *Bug* Phasers won't fire
+    - [x] *Bug* Phasers won"t fire
   - [x] Targeting will need to have subsection targeting
   - [x] Shield screen should indicate the strength, charge, and status of each shield
 
@@ -482,15 +491,15 @@ Feedback taken from real user testing
          - http://www.webdesign.org/photoshop/special-effects/space-nebula.13396.html
          - http://design.tutsplus.com/tutorials/ringed-planet-supernova-photoshop--psd-12301
          - http://glennclovis.deviantart.com/art/Helio-Nebula-Tutorial-115604344?q=1&qo=1
-     - [x] It would be nice to be able to scan the star: We'd need a basic mesh for it, but that seems pretty simple
+     - [x] It would be nice to be able to scan the star: We"d need a basic mesh for it, but that seems pretty simple
 
 ## v 0.19 The third dimention! [COMPLETE-ISH]
 - [x] z-axis implementation
-    - [x] Allow ships to set course using 'm': 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
+    - [x] Allow ships to set course using "m": 0-250, 750-1000 are both valid sets... anything else, just turn the ship around
     - [x] display -/+ z values on system map displays
     - [x] have the stations start at positions other than z : 0
     - [x] figure out if/how to patch the rotation of the ship
-        - turning left/right while pitched up does different things depending on the angle of attack... we could get all fancy with quaternions, but at the end of the day, this is meant to be a ship, not a fighter. It would make sense for safety reasons to limit the accumulation of angular momentum, and if we decide we're okay with this, we don't have to do anything.
+        - turning left/right while pitched up does different things depending on the angle of attack... we could get all fancy with quaternions, but at the end of the day, this is meant to be a ship, not a fighter. It would make sense for safety reasons to limit the accumulation of angular momentum, and if we decide we"re okay with this, we don"t have to do anything.
 - [x] have radiation levels increase the closer you get to the star
     - [x] safety zone > 20AU should allow a safe muster point
     - [x] science scans of the star should indicate this information
@@ -498,11 +507,11 @@ Feedback taken from real user testing
     - [x] have radiation be dampened by the accretion disks / dust cloud objects
     - [x] have the dust inform the particle density environmental value
     - [x] have the particle density figures corelate to max-possible warp speed
-        - this gets super annoying... let's balance this a bit more
+        - this gets super annoying... let"s balance this a bit more
         - [x] when the nav drops out of warp, display a message to the conn screen (socket it)
         - [x] when the computer detects a lower required speed, drop to that speed, not zero
         - [-] play with lowering the particle density some more
-        - [-] the visible gas clouds don't seem to line up with the observed particle density
+        - [-] the visible gas clouds don"t seem to line up with the observed particle density
     - [x] display the distribution of gas clouds on the sector screen
     - [x] have clouds appear more radially, and at harmonics
 - [x] have warp drive be a charge-depleting action on the nacelles
