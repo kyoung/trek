@@ -29,7 +29,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 # Current Sprint
 - Academy!
-  - [ ] Academy web service to store player profiles
+  - [ ] Academy storage, .gitignored
       - Player ID maps to email, score, and completed training
       - Rank is determined by number of successfully completed missions at each station
         - 0: Cadet
@@ -39,7 +39,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
         - 4: Commander
         - 5: Captain
   - [ ] Training missions
-    - [ ] Build an SVG training mission plugin
+    - [ ] Build an SVG/HTML training mission plugin
     - [ ] Hash SVGs to know which training is complete, use local storage
     - http://maxwellito.github.io/vivus/
     - [ ] Comm
@@ -76,16 +76,17 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 ## Hotfix
 - [ ] Send to mainviewer button missing from conn
+- [ ] JS injection in the tactial comms pannel
 - [ ] Engineering overload is still busted
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
-- [ ] Charge refresh doesn"t happen off of the main plasma relay in eng
+- [ ] Charge refresh doesn't happen off of the main plasma relay in eng
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
-- [ ] Repairing the bridge doesn"t seem to fix blast damage to consoles
+- [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
 - [ ] Engineering primary relay charge readout fails to auto-update
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
-- [ ] Transporter doesn"t stop you from trying to transport without having selected a destination
+- [ ] Transporter doesn't stop you from trying to transport without having selected a destination
 - [ ] Science Scanner circles don"t show up on FF
   - http://roadtolarissa.com/blog/2015/02/22/svg-path-strings/
 - [ ] We need to calibrate the rotation of the sky box to the position of the star of the local system

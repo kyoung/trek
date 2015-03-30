@@ -37,17 +37,20 @@ validate = ( req, res ) ->
 
     # take a request, response and validate for a prefix code
     postfix = req.cookies.postfix
-    if not postfix in ship_postfixes
+    if postfix of ships
+        return ships[ postfix ]
+    else
         res.render "error.html"
         return false
-    else
-        return ships[ postfix ]
 
 
 postfix_validate = ( postfix ) -> return ships[ postfix ]
 
 
 atoi = ( str ) -> parseFloat str, 10
+
+
+itoa = ( n ) -> do n.toString
 
 
 ### State
@@ -61,17 +64,21 @@ save_state = () ->
 
 ### Debug
 ___________________________________________________###
-debug = ( req, res ) ->
-    res.json { state : do game.state }
+
+debug = ( req, res ) -> res.json { state : do game.state }
+
 
 debugMap = ( req, res ) ->
+
     prefix = validate req, res
     res.json game.debug_space_map prefix
 
-debugCoordinateSpace = ( req, res ) ->
-    res.json do game.debug_positions
+
+debugCoordinateSpace = ( req, res ) -> res.json do game.debug_positions
+
 
 debugBearings = ( req, res ) ->
+
     prefix = validate req, res
     res.json game.debug_bearings prefix
 
@@ -159,6 +166,7 @@ handle_API = ( req, res ) ->
         when "communications" then communications_api prefix, method, command, params
         # Command sets some cookies and requires the response object
         when "command" then command_api prefix, method, command, params, res
+        when "academy" then academy_api prefix, method, command, params
 
     if resp is undefined
         throw new Error "Undefined response object for #{ category }/#{ command }"
@@ -166,7 +174,24 @@ handle_API = ( req, res ) ->
     res.json resp
 
 
+academy_api = ( prefix, method, command, params ) ->
+
+    classes = fs.readdirSync 'views/academy'
+    screen = do params.screen.toLowerCase
+
+    resp = switch command
+
+        when "courses"
+            if method == "get"
+                for c in classes when c.split( "_" )[ 0 ] is screen
+                    screen : c.split( '_' )[ 0 ],
+                    sequence : c.split( '_' )[ 1 ],
+                    hash : c.split( '_' )[ 2 ].split( '.' )[ 0 ]
+                    html : String( fs.readFileSync( 'views/academy/' + c ) )
+
+
 navigation_api = ( prefix, method, command, params ) ->
+
     q = params
     resp = switch command
 
@@ -492,7 +517,16 @@ ___________________________________________________###
 
 handle_view = ( req, res ) ->
 
-    prefix = req.query.prefix
+    if not prefix = validate req, res
+        # DEBUG
+        console.log "View: ", req.params.view
+        console.log "Debug prefix lookup failure\nGame.ships:"
+        console.log (k for k, v of game.ships)
+        console.log "Postfix: #{ req.cookies.postfix }"
+        console.log "Ship prefixes: ", ship_postfixes
+        console.log "Ships: ", ships
+        return
+
     ship_name = req.query.ship
 
     view = req.params.view
@@ -504,7 +538,6 @@ handle_view = ( req, res ) ->
         port : PORT
 
     switch view
-        when "postfix" then get_postfix_code req, res, prefix, r
         when "ship" then shipPage req, res, prefix, r
         when "mainviewer" then mainviewer req, res, prefix, r
         when "viewscreen" then viewscreen req, res, prefix, r
@@ -531,8 +564,9 @@ handle_view = ( req, res ) ->
         when "error" then error req, res, prefix, r
 
 
-get_postfix_code = ( req, res, prefix, r ) ->
+get_postfix_code = ( req, res ) ->
 
+    prefix = req.query.prefix
     ship_name = req.query.ship
     console.log "Getting postfix code"
 
@@ -704,11 +738,14 @@ ___________________________________________________###
 
 
 app.use "/static", express.static("static")
+app.get "/favicon.ico", ( req, res ) ->
+    res.status( 200 ).end()
 
 # API
 app.get "/api/:category/:command", handle_API
 app.put "/api/:category/:command", handle_API
 app.post "/api/:category/:command", handle_API
+
 app.get "/api/:command", legacy_API
 
 # Debug
@@ -719,6 +756,7 @@ app.get "/debugBearings", debugBearings
 app.get "/test_socket", test_socket
 
 # Views
+app.get "/postfix", get_postfix_code
 app.get "/:view", handle_view
 app.get "/", landingPage
 

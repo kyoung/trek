@@ -32,7 +32,7 @@ function submitPrefix () {
 
             if ( data.status == "OK" ) {
 
-                window.location.replace( "/ship" )
+                window.location.replace( "/ship" );
 
             } else {
 
@@ -42,7 +42,7 @@ function submitPrefix () {
             }
 
         } );
-        
+
 }
 
 function setLoginColor ( color ) {

@@ -3,6 +3,21 @@ var trek = (function($, _, Mustache, io) {
     var t = {};
     t.socket = io.connect( window.location.protocol + "//" + window.location.host );
 
+
+    // What screen are we?
+    t.screenName = "";
+
+    function registerDisplay ( screenName ) {
+
+        // set the screenName var
+        t.screenName = screenName;
+        loadTraining();
+
+    }
+
+    t.registerDisplay = registerDisplay;
+
+
     // Red Alert
     var alertCallbacks = [];
 
@@ -95,16 +110,7 @@ var trek = (function($, _, Mustache, io) {
 
     // Battle damage
 
-    t.screenName = "";
 
-    function registerDisplay ( screenName ) {
-
-        // set the screenName var
-        t.screenName = screenName;
-
-    }
-
-    t.registerDisplay = registerDisplay;
 
     function clearBlastDamage () {
 
@@ -286,6 +292,7 @@ var trek = (function($, _, Mustache, io) {
         $bg.css( 'visibility', 'visible' );
 
     }
+
     t.displayRed = displayRed;
 
 
@@ -421,6 +428,92 @@ var trek = (function($, _, Mustache, io) {
         } );
 
     };
+
+
+    // Training Levels
+
+    var academyStorageKey = "academyRecord";
+
+    function loadTraining () {
+
+        // Called after screenName is set
+        t.api( 'academy/courses', { screen : t.screenName }, showTraining );
+
+    }
+
+
+    function getLessonsLearned () {
+
+        // Returns all records for lessons learned
+        return JSON.parse( localStorage.getItem( academyStorageKey ) );
+
+    }
+
+    function setLessonLearned ( screenName, hash ) {
+
+        record = getLessonsLearned();
+
+        if ( ! _.has( record, screenName ) ) {
+
+            record[ screenName ] = [];
+
+        }
+
+        record[ screenName ].push( hash );
+
+        localStorage.setItem( academyStorageKey, JSON.stringify( record ) );
+
+    }
+
+
+    function showTraining ( lessons ) {
+
+        // Expecting an object of lessons:
+        // { screen : 'conn', sequence : '01', hash : '123441abfdsa2', html : '[html]' }
+        console.log( "Setting lessons for: " + t.screenName );
+
+        // Check which lessons have already been learned.
+        var learnedLessons = getLessonsLearned();
+
+        lessons = _.filter( lessons, function ( l ) {
+
+            return l.screen == t.screenName.toLowerCase();
+
+        } );
+
+        // Display the lowest-ranking lesson to be learned.
+        var validLessons = _.sortBy( lessons, function ( l ) {
+
+            return l.sequence
+
+        } );
+
+        if ( validLessons.length == 0 ) {
+
+            return;
+
+        }
+
+        var nextLesson = validLessons[ 0 ];
+
+        var $bg = $( "<div class='blackout'></div>" );
+        $bg.append( $( nextLesson.html ) );
+
+        $bg.click( function () {
+
+            $bg.remove();
+
+        } );
+
+        $( "body" ).append( $bg );
+        $bg.css( 'visibility', 'visible' );
+
+    }
+
+    t.showTraining = showTraining;
+    t.setLessonLearned = setLessonLearned;
+    t.getLessonsLearned = getLessonsLearned;
+    t.loadTraining = loadTraining;
 
 
     // Utility
