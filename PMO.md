@@ -49,11 +49,11 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
       - [x] How warp works
       - [x] Warp vs impulse
       - [x] Thrusters and newtonian bits
-    - [ ] Ops
-      - [ ] Transporting cargo
-      - [ ] Moving crew
-      - [ ] Conducting repairs
-      - [ ] Checking cargo
+    - [x] Ops
+      - [x] Transporting cargo
+      - [x] Moving crew
+      - [x] Conducting repairs
+      - [x] Checking cargo
     - [ ] Tactical
       - [ ] Operating the communications systems
       - [ ] Tarteging
@@ -102,6 +102,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [ ] build new mesh
     - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
     - [ ] get rid of the station object. Merge into Ship
+- Cargo run: we should be able to transmit to Starfleet that we need a given supply and have a supply ship bring it from the nearest starbase.
 - AI
   - We need to be able to create hostile players to fight
   - We need to be able to create cooperative players to help, and to communicate with
