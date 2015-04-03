@@ -179,7 +179,6 @@ function engage () {
                 { bearing : e[ 0 ], mark : e[ 1 ] },
                 'PUT',
                 dummyLog );
-
             break;
 
         case "setWarp":
@@ -189,8 +188,6 @@ function engage () {
                 { speed : e[ 0 ] },
                 'POST',
                 dummyLog );
-
-
             break;
 
         case "setImpulse":
@@ -200,6 +197,7 @@ function engage () {
                 { speed : e[ 0 ] },
                 'POST',
                 dummyLog );
+            break;
 
         default:
             $inputbox.html( "" );

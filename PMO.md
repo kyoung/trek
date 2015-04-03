@@ -39,15 +39,16 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
         - 4: Commander
         - 5: Captain
   - [ ] Training missions
-    - [ ] Build an SVG/HTML training mission plugin
+    - [x] Build an SVG/HTML training mission plugin
+    - [ ] Style training render
     - [ ] Hash SVGs to know which training is complete, use local storage
     - http://maxwellito.github.io/vivus/
-    - [ ] Comm
-      - [ ] How ship turning works
-      - [ ] How to read distance, bearing, and z-axis
-      - [ ] How warp works
-      - [ ] Warp vs impulse
-      - [ ] Thrusters and newtonian bits
+    - [x] Comm
+      - [x] How ship turning works
+      - [x] How to read distance, bearing, and z-axis
+      - [x] How warp works
+      - [x] Warp vs impulse
+      - [x] Thrusters and newtonian bits
     - [ ] Ops
       - [ ] Transporting cargo
       - [ ] Moving crew
@@ -87,7 +88,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] Engineering primary relay charge readout fails to auto-update
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
-- [ ] Science Scanner circles don"t show up on FF
+- [ ] Science Scanner circles don't show up on FF
   - http://roadtolarissa.com/blog/2015/02/22/svg-path-strings/
 - [ ] We need to calibrate the rotation of the sky box to the position of the star of the local system
 
@@ -97,7 +98,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Backlog For Breakout
-- [ ] get a new mesh for the outposts... they"re not Stations, they"re power collectors. Design appropriately.
+- [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
     - [ ] build new mesh
     - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
     - [ ] get rid of the station object. Merge into Ship

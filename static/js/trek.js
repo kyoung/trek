@@ -445,7 +445,14 @@ var trek = (function($, _, Mustache, io) {
     function getLessonsLearned () {
 
         // Returns all records for lessons learned
-        return JSON.parse( localStorage.getItem( academyStorageKey ) );
+        lessonString = localStorage.getItem( academyStorageKey );
+        if ( !lessonString ) {
+
+            lessonString = "{}";
+
+        }
+
+        return JSON.parse( lessonString );
 
     }
 
@@ -470,12 +477,23 @@ var trek = (function($, _, Mustache, io) {
 
         // Expecting an object of lessons:
         // { screen : 'conn', sequence : '01', hash : '123441abfdsa2', html : '[html]' }
-        console.log( "Setting lessons for: " + t.screenName );
+        console.log( "Lessons for: " + t.screenName );
+        console.log( lessons );
 
         // Check which lessons have already been learned.
         var learnedLessons = getLessonsLearned();
+        console.log( "learned lessons:" );
+        console.log( learnedLessons );
 
         lessons = _.filter( lessons, function ( l ) {
+
+            // Filter out lessons already learned!
+            if ( learnedLessons[ l.screen ] &&
+                learnedLessons[ l.screen ].indexOf( l.hash ) >= 0 ) {
+
+                return false;
+
+            }
 
             return l.screen == t.screenName.toLowerCase();
 
@@ -502,6 +520,8 @@ var trek = (function($, _, Mustache, io) {
         $bg.click( function () {
 
             $bg.remove();
+            setLessonLearned( nextLesson.screen, nextLesson.hash );
+            showTraining( lessons );
 
         } );
 

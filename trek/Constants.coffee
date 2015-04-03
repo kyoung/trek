@@ -12,8 +12,10 @@ exports.SYSTEM_WIDTH = 80 * exports.AU
 # Meters per ms
 exports.SPEED_OF_LIGHT = 299792.458
 
-# Anything faster than this without warp has relativistic effects
-exports.IMPULSE_SPEED = exports.SPEED_OF_LIGHT / 4
+# TODO: Maximum impulse velocity is relative to ship class:
+# Constitutions can do 0.8c, whereas early romulan warp would have been closer
+# to a a 2c impulse system.
+exports.IMPULSE_SPEED = exports.SPEED_OF_LIGHT * 0.8
 exports.WARP_SPEED = exports.SPEED_OF_LIGHT
 exports.SECTOR_SIZE = exports.LY * 20
 
