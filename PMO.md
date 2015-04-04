@@ -54,12 +54,13 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
       - [x] Moving crew
       - [x] Conducting repairs
       - [x] Checking cargo
-    - [ ] Tactical
-      - [ ] Operating the communications systems
-      - [ ] Tarteging
-      - [ ] Alerts
-      - [ ] Torpedoes
-      - [ ] Phasers
+    - [x] Tactical
+      - [x] Operating the communications systems
+      - [x] Alerts
+      - [x] Torpedoes
+      - [x] Phasers
+      - [x] Shields
+      - [x] Tarteging
     - [ ] Science
       - [ ] Readings a scanner
       - [ ] LR vs SR scanners
@@ -77,7 +78,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 ## Hotfix
 - [ ] Send to mainviewer button missing from conn
-- [ ] JS injection in the tactial comms pannel
 - [ ] Engineering overload is still busted
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/

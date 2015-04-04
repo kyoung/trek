@@ -289,7 +289,9 @@ communications_api = ( prefix, method, command, params ) ->
             switch method
                 when "get" then game.get_comms_history prefix
                 when "post"
-                    game.hail prefix, params.message
+                    # HTML escape user input
+                    msg = params.message.replace( /</g, "&lt;" ).replace( />/g, "&gt;" )
+                    game.hail prefix, msg
 
 
 operations_api = ( prefix, method, command, params ) ->
