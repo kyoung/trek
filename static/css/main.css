@@ -296,6 +296,31 @@ ul.informational li {
     margin-top: 100px;
 }
 
+
+/* Training
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.academy-wrapper {
+    width: 600px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-x: scroll;
+    height: 100%;
+}
+
+.academy-wrapper p {
+    font-size: 0.8em;
+    line-height: 1.8em;
+    padding-right: 10px;
+}
+
+.academy-wrapper path, .academy-wrapper circle {
+    stroke: #60DDF7;
+}
+
+.academy-wrapper text {
+    fill: #60DDF7;
+}
+
 /* Conn Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
@@ -312,7 +337,7 @@ svg.conn-arrow.up, svg.conn-arrow.down {
 }
 
 .conn-scannerObject {
-  position: fixed;
+    position: fixed;
     font-size: 8px;
 }
 .conn-scannerObject p {

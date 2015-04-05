@@ -6,7 +6,8 @@
     "runtest": "./node_modules/.bin/nodeunit",
     "start": "coffee ./trek/Server.coffee",
     "lint": "find ./trek -name '*.coffee' -exec coffeelint {} -f coffeelint.conf \\; && node_modules/jscs/bin/jscs static/js/trek.js && node_modules/jscs/bin/jscs static/js/trek/*.js",
-    "todo": "grep -A 5 -r TODO trek/*; grep -A 5 -r TODO static/*; grep -A 5 -r TODO test/*; grep -A 5 -r TODO views/*"
+    "todo": "grep -A 5 -r TODO trek/*; grep -A 5 -r TODO static/*; grep -A 5 -r TODO test/*; grep -A 5 -r TODO views/*",
+    "compile_academy": "scripts/build_academy.sh"
   },
   "dependencies": {
     "coffee-script": "1.7.1",
