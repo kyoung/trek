@@ -4,6 +4,9 @@ var sensorObjects = {};
 var map;
 var scanInterval;
 var $displayGrid = $( "#displayScreen" );
+var selfScanObject;
+
+var $zoomBar = $( "#zoomSlider" );
 
 var system;
 
@@ -15,6 +18,8 @@ var zoomCoordinateX = _.has( qs_values, "zoomCoordinateX" ) ?
     parseFloat( qs_values.zoomCoordinateX ) : 0;
 var zoomCoordinateY = _.has( qs_values, "zoomCoordinateY" ) ?
     parseFloat( qs_values.zoomCoordinateY ) : 0;
+
+$zoomBar.val( zoomLevel );
 
 var minX, minY, maxX, maxY;
 
@@ -116,6 +121,7 @@ function paintScan ( data ) {
         if ( e.name == shipName ) {
 
             distAndBearing = "";
+            selfScanObject = e;
 
         }
 
@@ -209,7 +215,18 @@ function zoom ( click ) {
 }
 
 
+function zoomWithBar () {
+
+    zoomLevel = $zoomBar.val();
+
+    // We center on the current zoomCoordinate
+    window.location.search = "system=" + systemName + "&zoomLevel=" + zoomLevel + "&zoomCoordinateY=" + zoomCoordinateY + "&zoomCoordinateX=" + zoomCoordinateX;
+
+}
+
+
 $displayGrid.click( zoom );
+$zoomBar.change( zoomWithBar );
 
 
 trek.onAlert( function( data ) {

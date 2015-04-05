@@ -480,10 +480,12 @@ svg.conn-arrow.up, svg.conn-arrow.down {
     border: 1px solid #B30900;
     background-color: #B30900;
 }
+
 .ops-crew-beacon.intruder.selected {
     -webkit-animation: red-blink 1s step-end infinite;
     animation: red-blink 1s step-end infinite;
 }
+
 .ops-crew-beacon.intruder.enroute {
     color: #B30900;
     border: 1px solid #B30900;
@@ -495,32 +497,6 @@ svg.conn-arrow.up, svg.conn-arrow.down {
     left: -15px;
     position: absolute;
     font-size: 0.7em;
-}
-
-/* Navigation Systems
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
-.nav-menu li {
-    width: 242px;
-    margin: 0px 0px 10px 10px;
-}
-
-.nav-input-info {
-    font-size: 0.8em;
-}
-
-.nav-helm-menu {
-    display: none;
-}
-
-.nav-flyout {
-    position: absolute;
-    left: 290px;
-    top: 0;
-}
-
-ul.trans {
-    font-size: 0.8em;
 }
 
 .ops-trans-from_menu {
@@ -554,6 +530,125 @@ ul.trans {
     right: 0;
     clear: both;
 }
+
+
+/* Navigation Systems
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+.nav-menu li {
+    width: 242px;
+    margin: 0px 0px 10px 10px;
+}
+
+.nav-input-info {
+    font-size: 0.8em;
+}
+
+.nav-helm-menu {
+    display: none;
+}
+
+.nav-flyout {
+    position: absolute;
+    left: 290px;
+    top: 0;
+}
+
+ul.trans {
+    font-size: 0.8em;
+}
+
+.nav-zoom-wrapper {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    width: 100%
+}
+
+input[type=range].nav-zoom {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    width: 100%; /* Specific width is required for Firefox. */
+}
+
+/* Needs to be repeated owing to CSS parsing droping the whole selector otherwise */
+input[type=range].nav-zoom::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 1px solid #60DDF7;
+    height: 36px;
+    width: 16px;
+    border-radius: 3px;
+    background: rgba(15, 138, 166, 0.6);
+    cursor: pointer;
+    margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+}
+input[type=range].nav-zoom::-moz-range-thumb {
+    border: 1px solid #60DDF7;
+    height: 36px;
+    width: 16px;
+    border-radius: 3px;
+    background: rgba(15, 138, 166, 0.6);
+    cursor: pointer;
+}
+input[type=range].nav-zoom::-ms-thumb {
+    border: 1px solid #60DDF7;
+    height: 36px;
+    width: 16px;
+    border-radius: 3px;
+    background: rgba(15, 138, 166, 0.6);
+    cursor: pointer;
+}
+
+input[type=range].nav-zoom:focus {
+    outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range].nav-zoom::-ms-track {
+  width: 100%;
+  cursor: pointer;
+  background: transparent; /* Hides the slider so custom styles can be added */
+  border-color: transparent;
+  color: transparent;
+}
+
+/* track styling */
+input[type=range].nav-zoom::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 2px;
+  cursor: pointer;
+  background: rgba(15, 138, 166, 0.3);
+}
+input[type=range].nav-zoom:focus::-webkit-slider-runnable-track {
+  background: rgba(15, 138, 166, 0.6);
+}
+input[type=range].nav-zoom::-moz-range-track {
+    width: 100%;
+    height: 2px;
+    cursor: pointer;
+    background: rgba(15, 138, 166, 0.3);
+}
+input[type=range].nav-zoom::-ms-track {
+    width: 100%;
+    height: 2px;
+    cursor: pointer;
+    background: rgba(15, 138, 166, 0.3);
+}
+input[type=range].nav-zoom::-ms-fill-lower {
+    height: 2px;
+    cursor: pointer;
+    background: rgba(15, 138, 166, 0.3);
+}
+input[type=range].nav-zoom:focus::-ms-fill-lower {
+    background: rgba(15, 138, 166, 0.6);
+}
+input[type=range].nav-zoom::-ms-fill-upper {
+    height: 2px;
+    cursor: pointer;
+    background: rgba(15, 138, 166, 0.3);
+}
+input[type=range].nav-zoom:focus::-ms-fill-upper {
+    background: rgba(15, 138, 166, 0.6);
+}
+
 
 /* Tactical Systems
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

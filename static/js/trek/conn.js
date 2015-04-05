@@ -138,7 +138,6 @@ setInterval( getNavStats, 1000 );
 $( "#mainViewer" ).click( function () {
 
     var x = document.getElementById( "viewScreen" );
-    // TODO this doesn't work... fix it
     var searchTerms = x.contentWindow.location.search.replace( "?", "" );
 
     trek.api(
