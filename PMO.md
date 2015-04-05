@@ -61,12 +61,11 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
       - [x] Phasers
       - [x] Shields
       - [x] Tarteging
-    - [ ] Science
-      - [ ] Readings a scanner
-      - [ ] LR vs SR scanners
-      - [ ] Passive Hi-Res scans
-      - [ ] Detailed scans
-      - [ ] Internal Sensors
+    - [x] Science
+      - [x] Readings a scanner
+      - [x] LR vs SR scanners
+      - [x] Detailed scans
+      - [x] Internal Sensors
     - [ ] Engineering
       - [ ] Systems: Active / Online
       - [ ] How power works on a star ship
