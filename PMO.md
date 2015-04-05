@@ -66,12 +66,12 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
       - [x] LR vs SR scanners
       - [x] Detailed scans
       - [x] Internal Sensors
-    - [ ] Engineering
-      - [ ] Systems: Active / Online
-      - [ ] How power works on a star ship
-      - [ ] Regular systems
-      - [ ] Charged systems
-      - [ ] Relays
+    - [x] Engineering
+      - [x] Systems: Active / Online
+      - [x] How power works on a star ship
+      - [x] Regular systems
+      - [x] Charged systems
+      - [x] Relays
 - [ ] Zoom out for the navigation screen
 
 
