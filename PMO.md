@@ -29,19 +29,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 # Current Sprint
 - Academy!
-  - [ ] Academy storage, .gitignored
-      - Player ID maps to email, score, and completed training
-      - Rank is determined by number of successfully completed missions at each station
-        - 0: Cadet
-        - 1: Ensign
-        - 2: Lieutenant
-        - 3: Lieutenant Commander
-        - 4: Commander
-        - 5: Captain
-  - [ ] Training missions
+  - [x] Training missions
     - [x] Build an SVG/HTML training mission plugin
-    - [ ] Style training render
-    - [ ] Hash SVGs to know which training is complete, use local storage
+    - [x] Hash SVGs to know which training is complete, use local storage
     - http://maxwellito.github.io/vivus/
     - [x] Comm
       - [x] How ship turning works
@@ -72,11 +62,10 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
       - [x] Regular systems
       - [x] Charged systems
       - [x] Relays
-- [ ] Zoom out for the navigation screen
+- [x] Zoom out for the navigation screen
 
 
 ## Hotfix
-- [ ] Send to mainviewer button missing from conn
 - [ ] Engineering overload is still busted
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
@@ -136,6 +125,15 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   + Library / Logs
   + Working sector nav
 - Some kind of computer interface for querying and library functions
+- [ ] Academy storage, .gitignored
+  - Player ID maps to email, score, and completed training
+  - Rank is determined by number of successfully completed missions at each station
+    - 0: Cadet
+    - 1: Ensign
+    - 2: Lieutenant
+    - 3: Lieutenant Commander
+    - 4: Commander
+    - 5: Captain
 
 # Alpha Test Issues
 Feedback taken from real user testing

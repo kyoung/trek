@@ -611,9 +611,6 @@ viewscreen = ( req, res, prefix, r ) ->
 
 viewscreen_screen = ( req, res, prefix, r ) ->
 
-    # TODO: Why is this here? Viewscreen set should be over the api
-    game.set_main_view_target prefix, target_name
-
     r.target = req.query.target
     res.render "viewscreen_screen.html", r
 
