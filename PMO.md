@@ -28,41 +28,14 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 # Current Sprint
-- Academy!
-  - [x] Training missions
-    - [x] Build an SVG/HTML training mission plugin
-    - [x] Hash SVGs to know which training is complete, use local storage
-    - http://maxwellito.github.io/vivus/
-    - [x] Comm
-      - [x] How ship turning works
-      - [x] How to read distance, bearing, and z-axis
-      - [x] How warp works
-      - [x] Warp vs impulse
-      - [x] Thrusters and newtonian bits
-    - [x] Ops
-      - [x] Transporting cargo
-      - [x] Moving crew
-      - [x] Conducting repairs
-      - [x] Checking cargo
-    - [x] Tactical
-      - [x] Operating the communications systems
-      - [x] Alerts
-      - [x] Torpedoes
-      - [x] Phasers
-      - [x] Shields
-      - [x] Tarteging
-    - [x] Science
-      - [x] Readings a scanner
-      - [x] LR vs SR scanners
-      - [x] Detailed scans
-      - [x] Internal Sensors
-    - [x] Engineering
-      - [x] Systems: Active / Online
-      - [x] How power works on a star ship
-      - [x] Regular systems
-      - [x] Charged systems
-      - [x] Relays
-- [x] Zoom out for the navigation screen
+- AI
+  - We need to be able to create hostile players to fight
+  - We need to be able to create cooperative players to help, and to communicate with
+- Sector maps and other systems
+    - Setup LY-based coordinates for objects not in systems
+    - Compound coordinates? LY coordinates, offset by metrics is you"re in a system
+    - In system sets your LY coordinates to that of the system, and calculates your offset as your position
+    - Enter and leave systems when your delta to a system closes within 80AU
 
 
 ## Hotfix
@@ -91,9 +64,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
     - [ ] get rid of the station object. Merge into Ship
 - Cargo run: we should be able to transmit to Starfleet that we need a given supply and have a supply ship bring it from the nearest starbase.
-- AI
-  - We need to be able to create hostile players to fight
-  - We need to be able to create cooperative players to help, and to communicate with
 - Configuration of scanners
   - Let the arc of the scanner be selected
   - Let LR sensors be selected
@@ -105,11 +75,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   - http://devlog-martinsh.blogspot.ca/2011/12/glsl-depth-of-field-with-bokeh-v24.html
   - Just putting a minor blur on the material might be enough
   - Also, making the stations rotate a bit could help
-- Sector maps and other systems
-  - Setup LY-based coordinates for objects not in systems
-  - Compound coordinates? LY coordinates, offset by metrics is you"re in a system
-  - In system sets your LY coordinates to that of the system, and calculates your offset as your position
-  - Enter and leave systems when your delta to a system closes within 80AU
 - Tractor Beam
 - Shuttles
   - If transporters and related systems are down, you"ll need to be able to ferry cargo
@@ -515,3 +480,40 @@ Feedback taken from real user testing
     - [x] display the distribution of gas clouds on the sector screen
     - [x] have clouds appear more radially, and at harmonics
 - [x] have warp drive be a charge-depleting action on the nacelles
+
+## v0.20 Academy Courses [COMPLETE]
+- Academy!
+  - [x] Training missions
+    - [x] Build an SVG/HTML training mission plugin
+    - [x] Hash SVGs to know which training is complete, use local storage
+    - http://maxwellito.github.io/vivus/
+    - [x] Comm
+      - [x] How ship turning works
+      - [x] How to read distance, bearing, and z-axis
+      - [x] How warp works
+      - [x] Warp vs impulse
+      - [x] Thrusters and newtonian bits
+    - [x] Ops
+      - [x] Transporting cargo
+      - [x] Moving crew
+      - [x] Conducting repairs
+      - [x] Checking cargo
+    - [x] Tactical
+      - [x] Operating the communications systems
+      - [x] Alerts
+      - [x] Torpedoes
+      - [x] Phasers
+      - [x] Shields
+      - [x] Tarteging
+    - [x] Science
+      - [x] Readings a scanner
+      - [x] LR vs SR scanners
+      - [x] Detailed scans
+      - [x] Internal Sensors
+    - [x] Engineering
+      - [x] Systems: Active / Online
+      - [x] How power works on a star ship
+      - [x] Regular systems
+      - [x] Charged systems
+      - [x] Relays
+- [x] Zoom out for the navigation screen
