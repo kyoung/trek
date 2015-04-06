@@ -7,6 +7,7 @@
 
 
 {Constitution} = require '../trek/ships/Constitution'
+{D7} = require '../trek/ships/D7'
 
 C = require '../trek/Constants'
 U = require '../trek/Utility'
@@ -36,6 +37,9 @@ exports.ShipTest =
         # console.log util.inspect pow_report, { depth : null, colors : true }
 
         do test.done
+
+        d = new D7
+        test.ok d, 'D7 failed to initialize'
 
 
     'test course setting': ( test ) ->
@@ -599,4 +603,3 @@ exports.ShipTest =
         test.ok s.position.z isnt 0
 
         do test.done
-

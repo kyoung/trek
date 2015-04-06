@@ -72,7 +72,7 @@ class BaseShip extends BaseObject
         @_viewscreen_target = ""
 
         # Assume navigation is working
-        if @port_warp_coil? and @starboard_warp_coil
+        if @port_warp_coil? and @starboard_warp_coil?
             do @port_warp_coil.bring_online
             @port_warp_coil.charge = 1
             do @starboard_warp_coil.bring_online
@@ -1132,7 +1132,7 @@ class BaseShip extends BaseObject
     _rebuild_crew_checks: ->
 
         # Override to rebuild the internal personnel
-        @internal_personnel = []
+        @internal_personnel = ( c for c in @internal_personnel when do c.is_alive )
 
 
     _consume_cargo_inventory: ( materials ) ->
