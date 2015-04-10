@@ -1,5 +1,6 @@
 ai = require '../trek/AI'
 
+# Mock game object
 game = {
     get_startup_stats : () ->
         {
@@ -10,6 +11,33 @@ game = {
                 }
             ]
         }
+
+    get_internal_lifesigns_scan : () ->
+        [
+            { description : 'Repair Team', currently_repairing : undefined },
+            { description : 'Repair Team', currently_repairing : "something" }
+        ]
+
+    get_damage_report : () ->
+        [
+            { name : "do-hikky", integrity : 0.1, repair_requirements : [
+                { material : "unobtainium", quantity : 1 } ]
+            }
+        ]
+
+    get_cargo_status : () ->
+        {
+            1 : [
+                { unobtainium : 5 }
+            ]
+        }
+
+    assign_repair_crews : ( prefix, system, crew_count, to_completion ) ->
+        @repair =
+            prefix : prefix
+            system : system
+            crew_count : crew_count
+            to_completion : to_completion
 }
 prefix = "0000"
 
@@ -49,3 +77,15 @@ exports.PatrolTest =
         test.ok new_state is "Holding", "Failed to revert to hold state: #{ new_state }"
         test.ok ai_.state_stack.length is 3, "Failed to set the expected number of states"
         do test.done
+
+
+    'test that a ship in holding will initiate repairs': ( test ) ->
+
+        ai_ = new ai.AI game, prefix
+        do ai_.update
+        test.ok game.repair?, "Never called repair crew command"
+        test.ok game.repair.system is "do-hikky", "Failed to send order to repair do-hikky"
+        do test.done
+
+
+    

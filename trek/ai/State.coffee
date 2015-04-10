@@ -1,7 +1,6 @@
 ###
-HOLDING
-PATROLING
-HUNTING
+TODO:
+
 FIGHTING
 EVADING
 RETREATING
@@ -39,8 +38,48 @@ class HoldingState extends AIState
             return new_state
 
 
+    # Check for damaged systems and assign repair crews
     update: ( ai, game ) ->
-        # Check for damaged systems and assign repair crews
+
+        repair_teams = ( team for team in game.get_internal_lifesigns_scan( ai.prefix ) when ( team.description is "Repair Team" and not team.currently_repairing? ) )
+        if repair_teams.length is 0
+            return
+
+        damaged_systems = game.get_damage_report ai.prefix # [ {name:, integrity:, repair_requirements:, } ]
+        if damaged_systems.length is 0
+            return
+
+        resources = game.get_cargo_status ai.prefix # { 1 : [{item : qty}] }
+        inventory = {}
+        for bay in resources
+            for item, qty of bay
+                if inventory[ item ]?
+                    inventory[ item ] += qty
+                else
+                    inventory[ item ] = qty
+
+        can_fix = ( system, resources ) ->
+            for material, qty of system.repair_requirements
+                if resources[ material ] < qty
+                    return false
+            return true
+
+        possible_to_fix_systems = ( sys for sys in damaged_systems when can_fix sys, inventory )
+
+        # find the most damaged system which we have the materials to repair
+        most_damaged_system = undefined
+        for sys in damaged_systems
+            if not most_damaged_system?
+                most_damaged_system = sys
+                continue
+            if sys.integrity < most_damaged_system.integrity
+                most_damaged_system = sys
+
+        if not most_damaged_system?
+            return
+
+        to_completion = most_damaged_system.operability is "Operable"
+        game.assign_repair_crews ai.prefix, most_damaged_system.name, 1, to_completion
 
 
 class PatrollingState extends AIState
