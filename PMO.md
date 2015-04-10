@@ -31,6 +31,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - AI
   - We need to be able to create hostile players to fight
   - We need to be able to create cooperative players to help, and to communicate with
+  - [x] Create a klingon enemy ship
+  - [ ] Create a new level where we have to fight a hostile
+  - [ ] Write an AI client that can act and respond with the API
 - Sector maps and other systems
     - Setup LY-based coordinates for objects not in systems
     - Compound coordinates? LY coordinates, offset by metrics is you"re in a system

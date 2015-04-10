@@ -14,7 +14,6 @@ C= Constants
 U = require "../Utility"
 
 
-
 class DGTauIncident extends Level
 
     background_radiation: ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME * .2
@@ -36,18 +35,6 @@ class DGTauIncident extends Level
 
 
     get_environment: -> @game_environment
-
-
-    get_ships: -> @ships
-
-
-    get_space_objects: -> @space_objects
-
-
-    get_game_objects: -> @game_objects
-
-
-    get_map: -> @map
 
 
     _get_crew_count: ->

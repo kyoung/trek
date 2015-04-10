@@ -14,12 +14,13 @@ program = require "commander"
 fs = require "fs"
 
 program
-    .version( "0.1" )
+    .version( "0.21" )
     .option( "-l, --level [level]", "Select a level.", "DGTauIncident" )
     .option( "-t, --teams [count]", "Enter the number of teams.", parseInt, 1 )
     .parse( process.argv )
 
 {Game} = require "./Game"
+ai = require "./AI"
 
 game = new Game program.level, program.teams
 
@@ -769,10 +770,14 @@ console.log "Ships in game..."
 ships = {}
 ship_postfixes = []
 
-for ship in game.get_startup_stats()
+game_stats = do game.get_startup_stats
+for ship in game_stats.player_ships
     console.log "#{ship.name} #{ship.prefix}"
     ships[ship.postfix] = ship.prefix
     ship_postfixes.push ship.postfix
+
+# Setup AI
+ai.play game, ships.ai_ships
 
 PORT = 8080
 server.listen PORT, "0.0.0.0"

@@ -12,3 +12,42 @@
 
 C = require "../Constants"
 U = require "../Utility"
+
+
+class TinkerTaylor extends Level
+
+    constructor: ( @team_count ) ->
+
+        super()
+        @name = "Tinker Taylor"
+        @stardate = do U.stardate
+        do @_init_map
+        do @_init_logs
+        do @_init_ships
+        do @_init_game_objects
+        do @_init_space_objects
+        do @_init_environment
+
+        @_initial_lives = do @_get_crew_count
+
+
+    _init_map: () ->
+
+
+    _init_logs: () ->
+
+
+    _init_ships: () ->
+
+
+    _init_game_objects: () ->
+
+
+    _init_space_objects: () ->
+
+
+    _init_environment: () ->
+
+
+
+exports.Level = TinkerTaylor

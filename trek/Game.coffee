@@ -49,6 +49,7 @@ class Game
     load_level: ( level ) ->
 
         @ships = do level.get_ships
+        @ai_ships = do level.get_ai_ships
         @game_objects = do level.get_game_objects
         @space_objects = do level.get_space_objects
         @map = do level.get_map
@@ -105,15 +106,26 @@ class Game
 
     get_startup_stats: ->
 
-        r = (
-            for k, s of @ships
-                {
-                    name : s.name,
-                    prefix : s.prefix_code,
-                    postfix : s.postfix_code,
-                    position : s.position
-                }
-        )
+        ships = for k, s of @ships
+            {
+                name : s.name,
+                prefix : s.prefix_code,
+                postfix : s.postfix_code,
+                position : s.position
+            }
+
+        ai_ships = for k, s of @ai_ships
+            {
+                name : s.name,
+                prefix : s.prefix_code,
+                postfix : s.postfix_code,
+                position : s.position
+
+            }
+
+        r =
+            player_ships : ships
+            ai_ships : []
 
 
     get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @ships )

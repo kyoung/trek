@@ -7,6 +7,9 @@ C = require './Constants'
 up_to = (n) ->
     n * do Math.random
 
+between = (a, b) ->
+    a + ( ( b - a ) * do Math.random )
+
 # Possible classifications:
 #  star:[CLASS]
 #  singularity
@@ -53,6 +56,67 @@ class CelestialObject extends BaseObject
 
         # fast method for finding if point is withing self
         false
+
+
+class Planet extends CelestialObject
+
+
+    constructor: ( name, @classification, @orbit ) ->
+
+        super()
+        @charted = true
+        # Set name this way because super overrides it
+        @name = name
+        @_scan_density = {}
+        @_scan_density[ LongRangeSensorSystem.SCANS.GRAVIMETRIC ] = switch classification
+            when 'D' then between 0.1, 1
+            when 'M', 'L', 'K', 'N' then between 1, 1e2
+            when 'J' then between 3e4, 3e6
+            when 'T' then between 3e6, 3e8
+            when 'Y' then between 3, 3e3
+
+        @_scan_density[ SensorSystem.SCANS.HIGHRES ] = up_to 2e8
+        @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = up_to 1e8
+        @_scan_density[ SensorSystem.SCANS.MAGNETON ] = up_to 20
+
+        @model_url = "planet.json"
+        @model_display_scale = 0.5
+
+
+    block_for: ( type ) ->
+
+        blocks = [
+            SensorSystem.SCANS.HIGHRES
+            SensorSystem.SCANS.P_HIGHRES
+            SensorSystem.SCANS.WIDE_EM
+        ]
+
+        type in blocks
+
+
+    get_detail_scan: ->
+
+        random_energy = -> ( Math.random() for i in [ 0...10 ] )
+
+        misc = if @misc? then @misc else []
+
+        r =
+            classification : @classification
+            name : @name
+            mesh : @model_url
+            mesh_scale : @model_display_scale
+            radiation_output : @radiation_output
+            radiation_safe_distance : 20 * C.AU
+            misc : misc
+            power_readings : [
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy,
+                do random_energy
+            ]
 
 
 class Star extends CelestialObject
@@ -180,3 +244,4 @@ class GasCloud extends CelestialObject
 exports.CelestialObject = CelestialObject
 exports.Star = Star
 exports.GasCloud = GasCloud
+exports.Planet = Planet
