@@ -160,7 +160,7 @@ class SensorSystem extends System
             return 0
 
         for key, type of SensorSystem.SCANS
-            if not @_expected_result_sets[type]? or @_expected_result_sets[type]?.length == 0
+            if not @_expected_result_sets[ type ]? or @_expected_result_sets[ type ]?.length == 0
                 @scan world_scan, position, bearing, type
 
 
@@ -423,20 +423,20 @@ class LongRangeSensorSystem extends SensorSystem
                 @scan world_scan, position, bearing, type
 
 
-    configure_scan: ( type, bearing, scan_grids, range_level, resolution ) ->
+    configure_scan: ( type, bearing, range_level, resolution ) ->
 
         if type not in @configured_scans
             @configured_scans.push type
 
         resolution ?= 64
-        scan_grids ?= @visible_grids
+        scan_grids = @visible_grids
         range_level ?= 0.5
 
-        @resolution[type] = resolution
-        @scan_grids[type] = scan_grids
-        @range_levels[type] = range_level
-        @reference_bearing[type] = bearing
-        @etc_for_scans[type] = 0
+        @resolution[ type ] = resolution
+        @scan_grids[ type ] = scan_grids
+        @range_levels[ type ] = range_level
+        @reference_bearing[ type ] = bearing
+        @etc_for_scans[ type ] = 0
         @_check_buckets type
 
 

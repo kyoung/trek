@@ -40,7 +40,7 @@ class BaseShip extends BaseObject
         @state_stamp = do Date.now
         @alert = 'clear'
         @repairing = false
-        @prefix_code = 1e4 + Math.round( Math.random() * 9e4 )
+        @prefix_code = ( 1e4 + Math.round( Math.random() * 9e4 ) ).toString()
         @postfix_code =  do U.UID
         @bearing =
             bearing: 0
@@ -51,6 +51,7 @@ class BaseShip extends BaseObject
         @_navigation_lock = false
 
         @star_system = undefined
+        @enroute_to_system = undefined
 
         do @initialize_systems
         do @initialize_hull
@@ -104,6 +105,7 @@ class BaseShip extends BaseObject
         @navigation_log = new Log "Navigation"
         @weapons_log = new Log "Tactical"
         @captains_log = new Log "Captain's"
+        @sensor_log = new Log "Sensors"
 
 
     initialize_systems: ->
@@ -716,7 +718,7 @@ class BaseShip extends BaseObject
             throw new Error "Structural Integrity Fields are offlne.
                 Safety protocols prevent acceleration."
 
-        if not 0 <= bearing <= 1
+        if not ( 0 <= bearing <= 1 )
             throw new Error "Illegal bearing #{ bearing }"
 
         if not ( mark < 0.25 or mark > 0.75 )
@@ -960,7 +962,8 @@ class BaseShip extends BaseObject
         if not system
             throw new Error "Invalid system name #{system_name}"
 
-        teams = ( c for c in @repair_teams when not c.currently_repairing )
+        # teams = ( c for c in @repair_teams when not c.currently_repairing )
+        teams = ( c for c in @internal_personnel when c instanceof RepairTeam and not c.currently_repairing )
         if teams.length < team_count
             throw new Error "Insufficient free teams: asked for #{team_count}, only #{teams.length} available"
 
@@ -1337,16 +1340,14 @@ class BaseShip extends BaseObject
         return union
 
 
-    run_long_range_scan: ( world_scan, type, bearing_from, bearing_to, positive_sweep, range_level, resolution ) ->
+    run_long_range_scan: ( world_scan, type, range_level, resolution ) ->
 
         if not do @long_range_sensors.is_online
             throw new Error "Long-Range Sensors are offline"
 
         # NB scanners take absolute bearings as arguments
-        abs_bearing_from = ( bearing_from + @bearing.bearing ) % 1
-        abs_bearing_to = ( bearing_to + @bearing.bearing ) % 1
-        @long_range_sensors.scan( world_scan, type, abs_bearing_from,
-            abs_bearing_to, positive_sweep, range_level, resolution )
+        @long_range_sensors.configure_scan type, @bearing.bearing, range_level, resolution
+        @long_range_sensors.scan world_scan, @position, @bearing.bearing, type
 
 
     get_scan_results: ( type ) ->
@@ -1394,7 +1395,6 @@ class BaseShip extends BaseObject
                 atmosphere: []
             mesh: @model_url
             meshScale: @model_display_scale
-
 
 
     ### Engineering

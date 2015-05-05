@@ -11,7 +11,19 @@ class Level
         @map = {}
 
 
-    get_ships: -> @ships
+    get_ships: ->
+
+        ships = {}
+        for p, s of @ships
+            console.log ">>>DEBUG #{ typeof p }"
+            ships[ p ] = s
+        for p, s of @ai_ships
+            console.log ">>>DEBUG #{ typeof p }"
+            ships[ p ] = s
+        return ships
+
+
+    get_player_ships: -> @ships
 
 
     get_ai_ships: -> @ai_ships
@@ -26,10 +38,11 @@ class Level
     get_map: -> @map
 
 
-    get_events: ->
+    get_events: -> []
+
     get_environment: ->
-    get_final_score: ->
-        return false
+    get_final_score: -> return false
+
     handle_hail: ( prefix, message ) ->
 
 

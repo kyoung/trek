@@ -49,7 +49,11 @@ class Game
     load_level: ( level ) ->
 
         @ships = do level.get_ships
+
+        # two seperate lists for convenience
         @ai_ships = do level.get_ai_ships
+        @player_ships = do level.get_player_ships
+
         @game_objects = do level.get_game_objects
         @space_objects = do level.get_space_objects
         @map = do level.get_map
@@ -106,7 +110,7 @@ class Game
 
     get_startup_stats: ->
 
-        ships = for k, s of @ships
+        player_ships = for k, s of @player_ships
             {
                 name : s.name,
                 prefix : s.prefix_code,
@@ -124,8 +128,8 @@ class Game
             }
 
         r =
-            player_ships : ships
-            ai_ships : []
+            player_ships : player_ships
+            ai_ships : ai_ships
 
 
     get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @ships )
@@ -178,6 +182,7 @@ class Game
 
         # Get charted objects,
         ## Don't pass gas clouds, as these get handled by the system scan
+        ## TODO: Fix this^ gas clouds should be considered charted system objects
         r = ( @get_public_space o, you for o in star_system.stars when o.charted )
 
         # Overlay any subspace becons
@@ -286,13 +291,13 @@ class Game
 
     set_warp_speed: ( prefix, warp ) ->
 
-        @message prefix, "Navigation", { set_speed : "warp" }
+        @message prefix, "Navigation", { set_speed : "warp", value : warp }
         @ships[ prefix ].set_warp warp
 
 
     set_impulse_speed: ( prefix, impulse ) ->
 
-        @message prefix, "Navigation", { set_speed : "impulse" }
+        @message prefix, "Navigation", { set_speed : "impulse", value: impulse }
         @ships[ prefix ].set_impulse impulse
 
 
@@ -360,6 +365,7 @@ class Game
         m = @ships[ prefix ].set_alert color
         # @message( prefix, "alert", color )
         return m
+
 
     get_alert: ( prefix ) -> @ships[ prefix ].alert
 
@@ -492,6 +498,16 @@ class Game
             positive_sweep,
             range,
             resolution )
+
+
+    run_long_range_scan: ( prefix, type, range_level, resolution ) ->
+
+        @ships[ prefix ].run_long_range_scan(
+            @world_scan,
+            type,
+            range_level,
+            resolution
+        )
 
 
     get_scan_results: ( prefix, type ) ->
@@ -734,8 +750,11 @@ class Game
         # TODO: Should we know the name? Transponders? Silent running?
         if object.transponder? and not object.transponder.is_online() and object isnt you
             return false
+
         p =
             name : object.name
+            classification : object.classification
+            alignment : object.alignment
             heading : object.bearing
             velocity : object.velocity
             impulse : object.impulse

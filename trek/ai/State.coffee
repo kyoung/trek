@@ -1,3 +1,7 @@
+Analysis = require './Analysis'
+
+C = require '../Constants'
+
 ###
 TODO:
 
@@ -10,13 +14,16 @@ DEFENDING
 
 class AIState
 
-    entry: () ->
+    constructor: ->
 
-    exit: () ->
+        @state_name = 'BaseState'
 
     # receive_order handles pushed messages, as strings, and changes state
-    # accordingly
+    # accordingly. A new state (or states) returned pushes onto the stack;
+    # otherwise this state may terminate itself by poping the ai object's state
+    # stack.
     receive_order: ( ai, order ) ->
+
 
     # update is called on every update "frame" and is where the base behaviours
     # are expressed
@@ -94,6 +101,9 @@ class PatrollingState extends AIState
         @systems_to_patrol = for order_string in system_strings
             match = system_re.exec order_string
             match[1]
+        # The system to visit in this tour
+        @systems_to_visit = ( s for s in @systems_to_patrol )
+        @systems_visited = []
 
         @state_name = 'Patrolling'
 
@@ -105,10 +115,280 @@ class PatrollingState extends AIState
             new_state = new HoldingState()
             return new_state
 
+
     # Activities when Patrolling:
-    # Move to the system, fly around, and attack any unaligned ships
+    # Move to the next system,
+    # Scan the system for EM and Subspace
+    # Approach anything uncharted
+    # Attack any hostiles
     # If not continuous, return to base
     update: ( ai, game ) ->
+
+        ship = game.ai_ships[ ai.prefix ]
+
+        # Tell the AI to go to the system, when it's done it will pop off and we
+        # can resume the scan
+        if ship.star_system? or not ship.star_system in @systems_to_visit
+            return new MoveToSystemState @systems_to_visit[ 0 ]
+
+        # Arrived in the next system
+        if ship.star_system? is @systems_to_visit[ 0 ] and not ship.star_system in @systems_visited
+            # Check if we've completed a scan of the system
+            last_log = ship.sensor_log.retrieve -1
+            if last_log.text is ship.star_system
+                # If anything is out of the ordinary, investigate
+                charts = game.get_charted_objects ai.prefix, ship.star_system
+                anomalies = Analysis.identify_unexpected_readings(
+                    last_log.data,
+                    charts,
+                    ship.bearing )
+                if anomalies.length > 0
+                    return new InvestigateCourseState anomalies[ 0 ]
+
+                # Otherwise, time to leave
+                @systems_visited.push do @systems_to_visit.pop
+                return
+
+            # Yes, strings are bad, but to avoid the circular dependency
+            # non-sense, let's just leave it and see what happens
+            return new SystemScannningState [], [ "EM Field Scan", "Subspace Field Stressor Scan" ]
+
+        if @systems_to_patrol.length is @systems_visited.length and not @continuous
+            # We're done! return to base, or hold position, or whatever
+            do ai.state_stack.pop
+            return
+
+
+class InvestigateCourseState extends AIState
+
+    # InvestigateCourseState sets a course for the anomaly while continuously
+    # scanning to ensure it doesn't pass the origin. When within range of the
+    # passive SR detection grid, scans for origin.
+    # If none found, pop state.
+    constructor: ( @anomaly ) ->
+
+        @range = @anomaly.range
+        @type = @anomaly.type
+        @initial_bearing = @anomaly.bearing
+        @state_name = 'Investigating'
+
+
+    update: ( ai, game ) ->
+        # set cource to match the bearing
+        # set a slow speed; we need to run SR passive highres scans
+        # re-reader the range/type to make sure it's still in front us
+
+
+class SystemScannningState extends AIState
+
+    # ScannningState scans the current system for the passed in fields
+    constructor: ( @sr_fields_to_scan, @lr_fields_to_scan ) ->
+
+        @state_name = 'Scanning System'
+
+        # Substates are used as a soft internal state-machine for time-consuming
+        # activities.
+        @substates =
+            TURNING: 'Turning'
+            SCANING: 'Scanning'
+
+    receive_order: ( ai, order ) ->
+
+    # Scan the system for the fields provided
+    update: ( ai, game ) ->
+
+        switch @substate
+            when @substates.TURNING
+                return @turning ai, game
+            when @substates.SCANING
+                return @scanning ai, game
+
+
+        # Orient the long range sensors at the system's interior
+        # Configure the sensors for an in-system scan (for LR sensors)
+        # Scan for the given fields
+        # Compare against the expected charted data
+        # Enter a log in the ship's sensor_log
+        # # Text: system_name
+        # # Data:
+        # # {
+        # #   EM Field (bucket and reading): { 2 : 20, 3 : 1 },
+        # #   Subspace : { 1 : 0 }
+        # # }
+
+    turning: ( ai, game ) ->
+
+
+    scanning: ( ai, game ) ->
+
+
+class BattleState extends AIState
+
+    # BattleState is used for AI combat
+    constructor: () ->
+
+        @state_name = 'Battle'
+
+        @target_name
+
+        @substates =
+            CLOSING: 'Closing'
+            ATTACKING: 'Attacking'
+            EVADING: 'Evading'
+            TARGETING: 'Targeting'
+
+        @substate = @substates.TARGETING
+
+        @overshot_flag = false
+
+
+    receive_order: ( ai, order ) ->
+
+
+    update: ( ai, game ) ->
+
+        # ensure we're at Red Alert
+        if game.get_alert( ai.prefix ) isnt 'red'
+            game.set_alert ai.prefix, 'red'
+
+        # Is target destroyed? pop state
+
+        ship = game.ai_ships[ ai.prefix ]
+        switch @substate
+            when @substates.CLOSING then @close ai, game
+            when @substates.ATTACKING then @attack ai, game
+            when @substates.EVADING then @evade ai, game
+            when @substates.TARGETING then @target ai, game
+
+
+    target: ( ai, game ) ->
+
+        console.log ">>> AI: targetting"
+
+        self = game.ai_ships[ ai.prefix ]
+
+        ships_in_area = ( t for t in game.scan( ai.prefix ) when /starship|space station/i.test( t.classification ) )
+
+        friendly_alignments = [ self.alignment ]
+        if not ai.is_agro
+            friendly_alignments.push C.ALIGNMENT.NEUTRAL
+        hostiles_in_area = ( t for t in ships_in_area when t.alignment not in friendly_alignments )
+
+        if not hostiles_in_area.length
+            # nothing to target, exit battle state
+            do ai.state_stack.pop
+            return
+
+        # find the closest target
+        closest_target = hostiles_in_area[0]
+        for h in hostiles_in_area
+            if h.distance < closest_target.distance
+                closest_target = h
+
+        @target_name = closest_target.name
+        game.target ai.prefix, closest_target.name
+        @substate = @substates.CLOSING
+
+        return
+
+
+    close: ( ai, game ) ->
+
+        # what is the bearing to the target?
+        i = game.scan ai.prefix
+        targets = ( t for t in i when t.name is @target_name )
+        if targets.length <= 0
+            # identified target is not in area... retarget
+            @substate = @substates.TARGETING
+            return
+        target = targets[ 0 ]
+
+        console.log ">>> AI: closing on target #{ target.distance / C.AU } AU"
+
+        ship = game.ai_ships[ ai.prefix ]
+        tactical_report = do ship.tactical_report
+
+        if target.distance < tactical_report.torpedo_range
+            console.log "    >>> AI: closing on target: Firing torpedoes"
+            # fire torpedoes as we close
+            game.fire_torpedoe ai.prefix, 8
+
+        if target.distance < tactical_report.phaser_range
+            console.log "    >>> AI: beginning phaser attack"
+            # we're there; begin attack
+            @substate = @substates.ATTACKING
+            game.set_impulse_speed ai.prefix, 0
+            return
+
+        if ( 0.9 <  target.bearing.bearing ) or ( target.bearing.bearing < 0.1 )
+            # approch
+            recommended_speed = Analysis.select_appropriate_speed target.distance
+            console.log "    >>> AI: target ahead, setting speed #{ recommended_speed.scale } #{ recommended_speed.value }"
+            switch recommended_speed.scale
+                when 'warp' then game.set_warp_speed ai.prefix, recommended_speed.value
+                when 'impulse' then game.set_impulse_speed ai.prefix, recommended_speed.value
+        else
+            console.log "    >>> AI: turning for target"
+            if target.distance / C.AU <  1
+                @overshot_flag = true
+            game.set_course ai.prefix, target.bearing.bearing, target.bearing.mark
+
+        return
+
+
+    attack: ( ai, game ) ->
+
+        console.log ">>> AI: Attacking"
+
+        i = game.scan ai.prefix
+        targets = ( t for t in i when t.name is @target_name )
+        if targets.length == 0
+            # lost target
+            @substate = @substates.TARGETING
+            return
+        target = targets[ 0 ]
+
+        # if target is ahead, fire
+        if ( 0.75 < target.bearing.bearing ) or ( target.bearing.bearing < 0.25 )
+            phaser_stats = game.get_phaser_status ai.prefix
+            for p in phaser_stats
+                if /forward/i.test( p.name ) and p.charge > 0.8
+                    game.fire_phasers ai.prefix
+
+        else
+            game.set_course ai.prefix, target.bearing.bearing, target.bearing.mark
+
+        return
+
+
+    evade: ( ai, game ) ->
+
+        # soooo... when do we evade?
+
+
+class TurningState extends AIState
+
+    # TurningState is used to set course and rotate by X
+    constructor: ( @bearing, @mark ) ->
+
+        @state_name = 'Turning'
+
+
+    update: ( ai, game ) ->
+
+
+class MoveToSystemState extends AIState
+
+    # MoveToSystemState gets us from wherever we are to the destination system,
+    # and then removes itself from the ai's stack.
+    constructor: ( @destination_system ) ->
+
+        @state_name = 'MovingToSystem'
+
+
+    receive_order: ( ai, order ) ->
+
+    update: ( ai, order ) ->
 
 
 class HuntingState extends AIState
@@ -116,6 +396,8 @@ class HuntingState extends AIState
     # HuntingState expects to be initialized with a target_name and a system to
     # look in, so that it may set course.
     constructor: ( target_name, system ) ->
+
+        @state_name = 'Hunting'
 
 
     # Activities when hunting:
@@ -125,6 +407,8 @@ class HuntingState extends AIState
     update: ( ai, game ) ->
 
 
+exports.AIState = AIState
 exports.HuntingState = HuntingState
 exports.PatrollingState = PatrollingState
 exports.HoldingState = HoldingState
+exports.BattleState = BattleState

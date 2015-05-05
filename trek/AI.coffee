@@ -1,9 +1,9 @@
-{HoldingState, PatrollingState, HuntingState} = require './ai/State'
+{AIState, HoldingState, PatrollingState, HuntingState} = require './ai/State'
 
 
 class AI
 
-    @RESPONSE_TIME = 1000
+    @RESPONSE_TIME = 5000
 
     constructor: ( @game, @prefix ) ->
 
@@ -15,18 +15,23 @@ class AI
         @state_stack = [ new HoldingState() ]
 
 
+    set_agro: ( @is_agro ) ->
+
+
     receive_order: ( order ) ->
 
         ai = @
         new_state = @state_stack[ @state_stack.length - 1 ].receive_order ai, order
-        if new_state?
-            @state_stack.push new_state
+        if new_state instanceOf AIState
+            @state_stack = @state_stack.concat new_state
 
 
-    update: () ->
+    update: () =>
 
         ai = @
-        @state_stack[ @state_stack.length - 1 ].update ai, @game
+        new_state = @state_stack[ @state_stack.length - 1 ].update ai, @game
+        if new_state instanceof AIState
+            @state_stack = @state_stack.concat new_state
 
 
     play: () ->
@@ -39,10 +44,13 @@ class AI
         @state_stack[ @state_stack.length - 1 ].state_name
 
 
-play = ( game, prefixes ) ->
+play = ( game, prefixes, init_states ) ->
 
-    for prefix in prefixes
+    for prefix, i in prefixes
         m5 = new AI game, prefix
+        # Allow the passing of initial states
+        if init_states?
+            m5.state_stack.push init_states[ i ]
         do m5.play
 
 

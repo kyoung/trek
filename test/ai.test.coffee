@@ -1,4 +1,6 @@
 ai = require '../trek/AI'
+{HuntingState, PatrollingState, HoldingState, BattleState} = require '../trek/ai/State.coffee'
+
 
 # Mock game object
 game = {
@@ -7,7 +9,10 @@ game = {
             ai_ships : [
                 {
                     prefix : "0000",
-                    name : "C'Tag"
+                    name : "C'Tag",
+                    star_system : 'Chin\'ta System',
+                    weapons_targeting : { target : 'Enterprise' },
+                    alignment : 'Klingon'
                 }
             ]
         }
@@ -38,8 +43,38 @@ game = {
             system : system
             crew_count : crew_count
             to_completion : to_completion
+
+    scan : ( prefix ) ->
+        [
+            { name : 'Enterprise',
+              alignment : 'Federation',
+              classification : 'Starship' }
+        ]
+
 }
 prefix = "0000"
+
+
+exports.HoldingTest =
+
+    'test autorepairs': ( test ) ->
+
+        ai_ = new ai.AI game, prefix
+        do ai_.update
+        test.ok game.repair?, "Never called repair crew command"
+        test.ok game.repair.system is "do-hikky", "Failed to send order to repair do-hikky"
+        do test.done
+
+
+exports.BattleTest =
+
+    'test initialization': ( test ) ->
+
+        ai_ = new ai.AI game, prefix
+        test.ok ai_.state_stack.push new BattleState
+
+        do test.done
+
 
 exports.PatrolTest =
 
@@ -79,13 +114,11 @@ exports.PatrolTest =
         do test.done
 
 
-    'test that a ship in holding will initiate repairs': ( test ) ->
+    'test system scanning': ( test ) ->
 
         ai_ = new ai.AI game, prefix
-        do ai_.update
-        test.ok game.repair?, "Never called repair crew command"
-        test.ok game.repair.system is "do-hikky", "Failed to send order to repair do-hikky"
+        # Ship is already in the Chin'ta System
+        ai_.receive_order 'patrol the Chin\'ta System'
+        test.ok false, "Finish this test"
+
         do test.done
-
-
-    

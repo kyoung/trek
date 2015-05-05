@@ -39,6 +39,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - Compound coordinates? LY coordinates, offset by metrics is you"re in a system
     - In system sets your LY coordinates to that of the system, and calculates your offset as your position
     - Enter and leave systems when your delta to a system closes within 80AU
+- Patch Long-Range Sensors and SR Sensors
+    - Simplify the models
+    - Have LR sensors detect ships and allow configuration
 
 
 ## Hotfix
