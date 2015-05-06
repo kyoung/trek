@@ -266,6 +266,30 @@ class MedicalTeam extends BaseTeam
         @code = "M"
 
 
+class Spy extends BaseTeam
+
+    constructor: ( @deck, @section, impersonating_team_class ) ->
+
+        super 1
+        @impersonating = new impersonating_team_class @deck, @section, 1
+        @description = @impersonating.description
+        @code = @impersonating.code
+
+        # assume properties of your identity
+        for key of @impersonating
+            if not ( key of @ )
+                @[ key ] = @impersonating[ key ]
+                
+
+    # Persona alignment, not actual
+    set_alignment: ( @alignment ) -> @impersonating.set_alignment @alignment
+
+
+    # Who does the spy actually work for
+    set_true_alignment: ( @true_alignment ) ->
+
+
+
 
 exports.RepairTeam = RepairTeam
 exports.ScienceTeam = ScienceTeam
@@ -273,3 +297,4 @@ exports.EngineeringTeam = EngineeringTeam
 exports.SecurityTeam = SecurityTeam
 exports.DiplomaticTeam = DiplomaticTeam
 exports.MedicalTeam = MedicalTeam
+exports.Spy = Spy

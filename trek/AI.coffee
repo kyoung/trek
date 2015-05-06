@@ -22,7 +22,7 @@ class AI
 
         ai = @
         new_state = @state_stack[ @state_stack.length - 1 ].receive_order ai, order
-        if new_state instanceOf AIState
+        if new_state instanceof AIState
             @state_stack = @state_stack.concat new_state
 
 

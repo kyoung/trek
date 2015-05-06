@@ -1,4 +1,4 @@
-{RepairTeam, ScienceTeam, EngineeringTeam, SecurityTeam, DiplomaticTeam, MedicalTeam} = require '../trek/Crew'
+{RepairTeam, ScienceTeam, EngineeringTeam, SecurityTeam, DiplomaticTeam, MedicalTeam, Spy} = require '../trek/Crew'
 {System, ChargedSystem} = require '../trek/BaseSystem'
 Constants = require '../trek/Constants'
 
@@ -168,3 +168,9 @@ exports.CrewTest =
 		do test.done
 
 
+	'test spy': ( test ) ->
+
+		a = new Spy 'A', 'Forward', SecurityTeam
+		test.ok 'fight' of a, "Spy failed to inherit his cover's abilities"
+
+		do test.done
