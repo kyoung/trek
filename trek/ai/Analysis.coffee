@@ -21,7 +21,7 @@ select_appropriate_speed = ( distance ) ->
         when AUs < 1 then { scale : 'warp', value : 2 }
         when AUs < 2 then { scale : 'warp', value : 3 }
         when AUs < 5 then { scale : 'warp', value : 4 }
-        when AUs < 20 then { sclae : 'warp', value : 5 }
+        when AUs < 20 then { scale : 'warp', value : 5 }
         else { scale : 'warp', value : 6 }
 
 
