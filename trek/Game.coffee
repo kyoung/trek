@@ -316,7 +316,7 @@ class Game
     get_target_subsystems: ( prefix ) -> do @ships[ prefix ].get_target_subsystems
 
 
-    fire_phasers: ( prefix ) -> do @ships[ prefix ].fire_phasers
+    fire_phasers: ( prefix, threshold ) -> @ships[ prefix ].fire_phasers threshold
 
 
     get_phaser_status: ( prefix ) -> do @ships[ prefix ].phaser_report
@@ -749,6 +749,9 @@ class Game
 
         # TODO: Should we know the name? Transponders? Silent running?
         if object.transponder? and not object.transponder.is_online() and object isnt you
+            return false
+
+        if not object.alive
             return false
 
         p =

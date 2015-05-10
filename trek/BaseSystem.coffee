@@ -339,6 +339,10 @@ class ChargedSystem extends System
 
         @charge = Math.min @charge + charge_accumulated, 1
 
+        # DEBUG
+        if (@name is 'Port Phaser Cannon' or @name is 'Starboard Phaser Cannon') and @change < 1
+            console.log "    >>> DEBUG charging #{ @name } : #{ @charge }"
+
         # bah
         if 0.99 < @charge < 1
             @charge = 1

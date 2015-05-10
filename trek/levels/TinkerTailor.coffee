@@ -71,6 +71,7 @@ class TinkerTaylor extends Level
         e.star_sysem = system
         e.set_coordinate system_entry_point
         e.set_alignment C.ALIGNMENT.FEDERATION
+        e.set_alert 'red'
         e.enter_captains_log @enterprise_logs[ 0 ]
         @ships[ e.prefix_code ] = e
 
@@ -86,7 +87,7 @@ class TinkerTaylor extends Level
 
         for k, v of @ai_ships
             @game_objects.push v
-            
+
         for k, v of @ships
             @game_objects.push v
 

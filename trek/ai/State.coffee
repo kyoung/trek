@@ -239,7 +239,7 @@ class BattleState extends AIState
 
         @substate = @substates.TARGETING
 
-        @overshot_flag = false
+        @overshot_speed = ''
 
 
     receive_order: ( ai, order ) ->
@@ -311,7 +311,7 @@ class BattleState extends AIState
         if target.distance < tactical_report.torpedo_range
             console.log "    >>> AI: closing on target: Firing torpedoes"
             # fire torpedoes as we close
-            game.fire_torpedoe ai.prefix, 8
+            game.fire_torpedoe ai.prefix, 12
 
         if target.distance < tactical_report.phaser_range
             console.log "    >>> AI: beginning phaser attack"
@@ -323,14 +323,24 @@ class BattleState extends AIState
         if ( 0.9 <  target.bearing.bearing ) or ( target.bearing.bearing < 0.1 )
             # approch
             recommended_speed = Analysis.select_appropriate_speed target.distance
+            current_speed = game.get_position ai.prefix
             console.log "    >>> AI: target ahead, setting speed #{ recommended_speed.scale } #{ recommended_speed.value }"
+            if ship.pretty_print_speed() == @overshot_speed
+                recommended_speed.value /= 2
+                console.log "    >>> AI: trimming speed from overshot"
             switch recommended_speed.scale
-                when 'warp' then game.set_warp_speed ai.prefix, recommended_speed.value
-                when 'impulse' then game.set_impulse_speed ai.prefix, recommended_speed.value
+                when 'warp'
+                    if current_speed.warp != recommended_speed.value
+                        game.set_warp_speed ai.prefix, recommended_speed.value
+                when 'impulse'
+                    if current_speed.impulse != recommended_speed.value
+                        game.set_impulse_speed ai.prefix, recommended_speed.value
         else
             console.log "    >>> AI: turning for target"
+            console.log "    >>> >>> #{ @overshot_speed }"
+            console.log "    >>> >>> #{ do ship.pretty_print_speed }"
             if target.distance / C.AU <  1
-                @overshot_flag = true
+                @overshot_speed = do ship.pretty_print_speed
             game.set_course ai.prefix, target.bearing.bearing, target.bearing.mark
 
         return
@@ -352,8 +362,13 @@ class BattleState extends AIState
         if ( 0.75 < target.bearing.bearing ) or ( target.bearing.bearing < 0.25 )
             phaser_stats = game.get_phaser_status ai.prefix
             for p in phaser_stats
-                if /forward/i.test( p.name ) and p.charge > 0.8
-                    game.fire_phasers ai.prefix
+                if ( p.targetting is 'Forward' ) and p.charge > 0.8
+                    game.fire_phasers ai.prefix, 0.8
+                    console.log "    >>> firing #{ p.name }"
+                else
+                    console.log "    >>> charging #{ p.name }"
+
+            # Torpedoes?
 
         else
             game.set_course ai.prefix, target.bearing.bearing, target.bearing.mark

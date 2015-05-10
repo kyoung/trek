@@ -2,7 +2,7 @@
 
 {System, ChargedSystem} = require '../BaseSystem'
 {Transporters} = require '../systems/TransporterSystems'
-{ShieldSystem, PhaserSystem, TorpedoSystem, WeaponsTargetingSystem} = require '../systems/WeaponSystems'
+{ShieldSystem, PhaserSystem, TorpedoSystem, WeaponsTargetingSystem, DisruptorSystem} = require '../systems/WeaponSystems'
 {WarpSystem} = require '../systems/WarpSystems'
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
@@ -315,7 +315,7 @@ class D7 extends BaseShip
         @warp_relay.add_route @aft_eps
         @warp_relay.add_route @port_eps
         @warp_relay.add_route @starboard_eps
-        @warp_relay.add_route phaser for phaser in @phasers
+        @warp_relay.add_route( phaser ) for phaser in @phasers
         @warp_relay.add_route @starboard_warp_coil
         @warp_relay.add_route @port_warp_coil
         @warp_relay.add_route @navigational_deflectors
@@ -397,13 +397,13 @@ class D7 extends BaseShip
 
     initialize_weapons: ->
 
-        @forward_phaser_bank_a = new PhaserSystem(
-            'Port Phaser Cannon',
+        @forward_phaser_bank_a = new DisruptorSystem(
+            'Port Phaser Disruptor',
             @DECKS['18'],
             @SECTIONS.FORWARD )
 
-        @forward_phaser_bank_b = new PhaserSystem(
-            'Starboard Phaser Cannon',
+        @forward_phaser_bank_b = new DisruptorSystem(
+            'Starboard Phaser Disruptor',
             @DECKS['18'],
             @SECTIONS.FORWARD )
 

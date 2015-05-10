@@ -1,6 +1,6 @@
 {System, ChargedSystem} = require '../BaseSystem'
 {Transporters} = require '../systems/TransporterSystems'
-{ShieldSystem, PhaserSystem, TorpedoSystem} = require '../systems/WeaponSystems'
+{ShieldSystem, PhaserSystem, TorpedoSystem, DisruptorSystem} = require '../systems/WeaponSystems'
 {WarpSystem} = require '../systems/WarpSystems'
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
@@ -272,8 +272,9 @@ class BaseShip extends BaseObject
         ( { name : s.name, deck : s.deck, section: s.section } for s in @weapons_targeting.target.systems )
 
 
-    fire_phasers: ( target=@weapons_targeting.target ) ->
+    fire_phasers: ( threshold=0 ) ->
 
+        target = @weapons_targeting.target
         if target is null
             throw new Error 'No target selected'
 
@@ -287,20 +288,18 @@ class BaseShip extends BaseObject
 
         quad = @calculate_quadrant target.position
 
-        if quad == @SECTIONS.FORWARD
-            phaser = if @forward_phaser_bank_a.charge > @forward_phaser_bank_b.charge then @forward_phaser_bank_a else @forward_phaser_bank_b
-        else if quad == @SECTIONS.PORT
-            phaser = @port_phaser_bank
-        else if quad == @SECTIONS.STARBOARD
-            phaser = @starboard_phaser_bank
-        else if quad == @SECTIONS.AFT
-            phaser = @aft_phaser_bank
+        banks = ( p for p in @phasers when p.section is quad and p.charge > threshold and do p.is_online )
+        phaser = banks[ 0 ]
+        for b in banks
+            if b.charge > phaser.charge
+                phaser = b
 
         if not do phaser.is_online
             throw new Error "Phaser system offline"
 
         #console.log "Firing #{ phaser.name } with #{ do phaser.energy_level } power"
         intensity = PhaserSystem.DAMAGE * do phaser.energy_level
+        intensity = do phaser.intensity
         phaser.charge_down phaser.energy_level(), true
 
         target.process_phaser_damage @position, intensity, @weapons_targeting.target_deck, @weapons_targeting.target_section
@@ -1579,6 +1578,17 @@ class BaseShip extends BaseObject
 
 
     set_viewscreen_target: ( target_name ) -> @_viewscreen_target = target_name
+
+
+    pretty_print_speed: ->
+
+        if @warp_speed > 0
+            return "warp #{ @warp_speed }"
+
+        if @impulse > 0
+            return "#{ @impulse } impulse"
+
+        return "drift"
 
 
     _check_if_still_alive: -> @alive
