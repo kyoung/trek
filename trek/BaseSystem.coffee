@@ -282,6 +282,12 @@ class ChargedSystem extends System
         do @power_on
 
 
+    deactivate: ->
+
+        do @power_down
+        @online = false
+
+
     power_down: ->
 
         @active = false

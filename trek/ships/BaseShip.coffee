@@ -4,6 +4,7 @@
 {WarpSystem} = require '../systems/WarpSystems'
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
+{CloakingSystem} = require '../systems/CloakingSystem'
 {SIFSystem} = require '../systems/SIFSystems'
 {BridgeSystem} = require '../systems/BridgeSystems'
 {Torpedo} = require '../Torpedo'
@@ -613,6 +614,7 @@ class BaseShip extends BaseObject
         @_rebuild_crew_checks()
 
 
+
     ### Navigation
     _________________________________________________###
 
@@ -1002,7 +1004,7 @@ class BaseShip extends BaseObject
         bay = ( c for c in @cargobays when c.number is number )[0]
 
 
-    get_internal_lifesigns_scan: -> ( team for team in @internal_personnel )
+    get_internal_lifesigns_scan: -> ( team.internal_scan @alignment for team in @internal_personnel )
 
 
     get_systems_layout: -> ( s.layout() for s in @systems )
@@ -1511,6 +1513,7 @@ class BaseShip extends BaseObject
 
 
     set_online: ( system_name, is_online ) ->
+        # bring a system online... this is turning on base systems
 
         system = ( s for s in @systems when s.name == system_name )[ 0]
         if not system?
@@ -1523,15 +1526,67 @@ class BaseShip extends BaseObject
 
 
     set_active: ( system_name, is_active ) ->
+        # begin charging an ChargedSystem
 
         system = ( s for s in @systems when s.name == system_name )[ 0 ]
         if not system?
             throw new Error "Invalid system name #{ system_name }"
 
+        # special case of the cloak
+        if system instanceof CloakingSystem
+            console.log "#{ @name } cloak engaged"
+            return do @cloak
+        else
+            throw new Error "Failed to detect type of cloak system"
+
+        # do not allow the activation of certain systems while cloak
+        # is engaged
+        cloak = do @_get_cloak_system
+        if cloak? and cloak.active
+            if system instanceof PhaserSystem or system instanceof DisruptorSystem or system instanceof TorpedoSystem or system instanceof ShieldSystem
+                throw new Error "Cannot activate #{ system_name } while cloak is operational"
+
+
         if is_active
             do system.power_on
         else
             do system.power_down
+
+
+    cloak: ->
+
+        cloak = do @_get_cloak_system
+        if not cloak?
+            throw new Error "No cloaking system available"
+        # Deactivate weapons systems to redirect power to the cloak
+        do p.deactivate for p in @phasers
+        do t.deactivate for t in @torpedo_banks
+        do s.deactivate for s in @shields
+        do cloak.power_on
+
+
+    decloak: ->
+
+        cloak = do @_get_cloak_system
+        if not cloak?
+            throw new Error "No cloaking system available"
+        # Deactivate cloak
+        do cloak.power_down
+
+
+    _get_cloak_system: ->
+
+        system = ( s for s in @systems when s instanceof CloakingSystem )
+        if system.length == 0
+            return undefined
+
+        return system[ 0 ]
+
+
+    is_cloaked: ->
+
+        cloak = do @_get_cloak_system
+        cloak?.active
 
 
     ### Communications
@@ -1781,7 +1836,7 @@ class BaseShip extends BaseObject
             else
                 health_locaitons[ crew.deck ] = [ crew.section ]
 
-        for c in @internal_personnel when c.alignment is @alignment
+        for c in @internal_personnel when c.alignment is @alignment or c.true_alignment? is @alignment
             if health_locaitons[ c.deck ]? and c.section in health_locaitons[ c.deck ]
                 c.receive_medical_treatment delta_t
 
@@ -1791,7 +1846,7 @@ class BaseShip extends BaseObject
 
         # Any security forces in the area of boarding parties will fight and win/lose
         intruders = ( crew for crew in @internal_personnel when (
-            crew.alignment != @alignment and
+            (crew.alignment != @alignment or crew.true_alignment? != @alignment) and
             not do crew.is_captured and
             crew.description == "Security Team" ) )
 

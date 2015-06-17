@@ -4,6 +4,7 @@
 {Transporters} = require '../systems/TransporterSystems'
 {ShieldSystem, PhaserSystem, TorpedoSystem, WeaponsTargetingSystem, DisruptorSystem} = require '../systems/WeaponSystems'
 {WarpSystem} = require '../systems/WarpSystems'
+{CloakingSystem} = require '../systems/CloakingSystem'
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
 {NavigationComputerSystem} = require '../systems/NavigationComputerSystem'
@@ -160,6 +161,12 @@ class D7 extends BaseShip
             @SECTIONS.STARBOARD,
             System.DAMPENER_POWER )
 
+        @cloak_system = new CloakingSystem(
+            'Cloaking System',
+            @DECKS[ '15' ],
+            @SECTIONS.PORT
+        )
+
         @secondary_SIF = new SIFSystem(
             'Secondary SIF',
             @DECKS['5'],
@@ -212,6 +219,7 @@ class D7 extends BaseShip
             @navigational_deflectors
             @weapons_targeting
             @brig
+            @cloak_system
         ] )
 
 
@@ -322,6 +330,7 @@ class D7 extends BaseShip
         @warp_relay.add_route @long_range_sensors
         @warp_relay.add_route @primary_SIF
         @warp_relay.add_route @secondary_SIF
+        @warp_relay.add_route @cloak_system
 
         # Connect impulse power systems
         @impulse_relay.add_route @impulse_drive

@@ -598,6 +598,9 @@ class Game
 
         target = matches[ 0 ]
 
+        if target.is_cloaked?()
+            throw new Error "Cannot detect target"
+
         # is relevant sensor array online?
         # NM. It has to be, or you wouldn't have gotten the passive scan
         # TODO: validate that assumption later
@@ -626,7 +629,7 @@ class Game
         ###
 
         # Find all objects in range, that respond to type
-        game_hits = ( o for o in @game_objects when 0 < U.distance( position, o.position ) < range )
+        game_hits = ( o for o in @game_objects when 0 < U.distance( position, o.position ) < range and !o.is_cloaked?() )
         space_hits = ( o for o in @space_objects when 0 < U.distance( position, o.position ) < range or o.charted )
         hits = game_hits.concat space_hits
         hits = ( h for h in hits when h.scan_for type )

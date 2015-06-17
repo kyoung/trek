@@ -171,6 +171,16 @@ exports.CrewTest =
 	'test spy': ( test ) ->
 
 		a = new Spy 'A', 'Forward', SecurityTeam
+		a.set_true_alignment 'Federation'
 		test.ok 'fight' of a, "Spy failed to inherit his cover's abilities"
+
+		spy_on_federation_ship = a.internal_scan 'Federation'
+		spy_on_klingon_ship = a.internal_scan 'Klingon'
+
+		test.ok spy_on_federation_ship.alignment is 'Federation', "Failed to disguise alignment"
+		test.ok spy_on_klingon_ship.alignment is 'Klingon', "Failed to disguise alignment on enemy ship"
+
+		test.ok spy_on_federation_ship.code is "I", "Failed to reveal self as spy on friendly ship: #{ spy_on_federation_ship.code }"
+		test.ok spy_on_klingon_ship.code is "F", "Failed to disguise self on internal scans: #{ spy_on_klingon_ship.code }"
 
 		do test.done

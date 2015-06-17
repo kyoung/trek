@@ -10,6 +10,8 @@
 {ShieldSystem, PhaserSystem, TorpedoSystem} = require '../systems/WeaponSystems'
 {SpaceSector, StarSystem} = require '../Maps'
 
+{Spy, EngineeringTeam} = require '../Crew'
+
 C = require "../Constants"
 U = require "../Utility"
 
@@ -29,6 +31,38 @@ class TinkerTaylor extends Level
         do @_init_environment
 
         @_initial_lives = do @_get_crew_count
+
+
+    _is_ship_destroyed: => !@enterprise.alive
+
+
+    _is_mission_accomplished: =>
+        @spy in @enterprise.internal_personnel and !@klingon.alive
+
+
+    get_events: ->
+
+        end_game = ( game ) ->
+            console.log ">>> Game Over <<<"
+            game.is_over = true
+
+
+        loose = new LevelEvent {
+            name : 'Defeat',
+            condition : @_is_ship_destroyed,
+            do : end_game
+        }
+
+        win = new LevelEvent {
+            name : 'Victory',
+            condition : @_is_mission_accomplished,
+            do : end_game }
+
+        events = [
+            loose,
+            win
+        ]
+
 
 
     _get_crew_count: ->
@@ -74,6 +108,7 @@ class TinkerTaylor extends Level
         e.set_alert 'red'
         e.enter_captains_log @enterprise_logs[ 0 ]
         @ships[ e.prefix_code ] = e
+        @enterprise = e
 
         kling_position = do @_random_start_position
         k = new D7 'Chin\'Tok'
@@ -81,6 +116,11 @@ class TinkerTaylor extends Level
         k.set_coordinate kling_position
         k.set_alignment C.ALIGNMENT.KLINGON
         @ai_ships[ k.prefix_code ] = k
+        @klingon = k
+
+        @spy = new Spy D7.DECKS['10'], D7.SECTIONS['Aft'], EngineeringTeam
+        @spy.set_true_alignment C.ALIGNMENT.FEDERATION
+        @klingon.internal_personnel.push @spy
 
 
     _init_game_objects: () ->

@@ -92,6 +92,14 @@ class BaseTeam
             id: @id
 
 
+    internal_scan: ->
+        r = do @scan
+        r['members'] = @members
+        r['status'] = @status
+        r['code'] = @code
+        return r
+
+
     count: -> @members.length
 
 
@@ -279,16 +287,21 @@ class Spy extends BaseTeam
         for key of @impersonating
             if not ( key of @ )
                 @[ key ] = @impersonating[ key ]
-                
-
-    # Persona alignment, not actual
-    set_alignment: ( @alignment ) -> @impersonating.set_alignment @alignment
-
 
     # Who does the spy actually work for
     set_true_alignment: ( @true_alignment ) ->
 
 
+    internal_scan: (ship_alignment) ->
+        r = do @scan
+        r['alignment'] = ship_alignment
+        if @true_alignment is ship_alignment
+            r['code'] = "I"
+        else
+            r['code'] = @code
+        r['members'] = @members
+        r['status'] = @status
+        return r
 
 
 exports.RepairTeam = RepairTeam

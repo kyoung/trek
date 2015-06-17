@@ -603,3 +603,27 @@ exports.ShipTest =
         test.ok s.position.z isnt 0
 
         do test.done
+
+
+    'test cloaking behaviour': ( test ) ->
+
+        k = new D7
+        k.calculate_state undefined, 2000
+
+        # test that the cloak isn't enabled by default
+        test.ok !k.cloak_system.active, "Cloaking system was active on startup"
+        k.set_alert 'red'
+        for p in k.phasers
+            test.ok p.active, "Phasers failed to activate in uncloaked mode"
+
+        k.set_active "Cloaking System", true
+
+        k.calculate_state undefined, 2000
+
+        test.ok k.cloak_system.active, "Cloak failed to activate"
+        for p in k.phasers
+            test.ok !p.active, "Phasers failed to deactivate in cloak"
+        for s in k.shields
+            test.ok !s.active, "Shileds failed to deactivate in cloak"
+
+        do test.done
