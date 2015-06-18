@@ -118,7 +118,7 @@ class TinkerTaylor extends Level
         @ai_ships[ k.prefix_code ] = k
         @klingon = k
 
-        @spy = new Spy D7.DECKS['10'], D7.SECTIONS['Aft'], EngineeringTeam
+        @spy = new Spy k.DECKS['10'], k.SECTIONS['Aft'], EngineeringTeam
         @spy.set_true_alignment C.ALIGNMENT.FEDERATION
         @klingon.internal_personnel.push @spy
 
