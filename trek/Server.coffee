@@ -20,6 +20,7 @@ program
     .parse( process.argv )
 
 {Game} = require "./Game"
+{BattleState} = require './ai/State'
 ai = require "./AI"
 
 game = new Game program.level, program.teams
@@ -777,7 +778,8 @@ for ship in game_stats.player_ships
     ship_postfixes.push ship.postfix
 
 # Setup AI
-ai.play game, ships.ai_ships
+ai_prefixes = ( s.prefix for s in game_stats.ai_ships )
+ai.play game, ai_prefixes, [ new BattleState(), ]
 
 PORT = 8080
 server.listen PORT, "0.0.0.0"
