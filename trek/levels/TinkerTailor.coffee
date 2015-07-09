@@ -15,6 +15,25 @@
 C = require "../Constants"
 U = require "../Utility"
 
+# Premise:
+# There's an agent undercover onboard a Klingon D7 trying to get a new
+# cloak off of the ship to starfleet intelligence. As part of his plan,
+# he's sent instructions to starfleet to have a starship in a disputed
+# system that his ship will be assigned to chase off. Once in the system,
+# he will sabotage his ship, and take the cloaking device in an escape
+# pod. The Enterprise will have to race to rescue the pod and agent, as
+# he reports that a second D7 is enroute.
+#
+# The second D7 will be cloaked, so the Enterprise will have to remain
+# at red alert while hunting for the escape pod (?).
+
+# Problem: why does the E need to linger in the system (smash and grab?),
+# why fight?
+#
+# Ans: the operative destroyed a klingon ship, this is an act of war if
+# the Klingon cruiser finds the E with the device. They have no choice
+# but to engage and destroy the ship.
+
 
 class TinkerTaylor extends Level
 
@@ -76,7 +95,7 @@ class TinkerTaylor extends Level
     _init_map: () ->
 
         sector = new SpaceSector "2531"
-        klthos = new StarSystem "K'lthos"
+        klthos = new StarSystem "K`lthos"
 
         klthos_position =
             x : 3.8
@@ -90,19 +109,20 @@ class TinkerTaylor extends Level
     _init_logs: () ->
 
         @enterprise_logs = [
-            'Captains Log, stardate #{ @stardate }\n
+            "Captains Log, stardate #{ @stardate }\n
             \n
-            Klingons!'
+            Klingons!"
         ]
 
 
     _init_ships: () ->
 
-        system = @map.get_star_system 'K\'lthos'
+        system = @map.get_star_system "K`lthos"
+        console.log "Loading game in the #{ system.name } system"
 
         system_entry_point = do @_random_start_position
         e = new Constitution 'Enterprise', '1701-A'
-        e.star_sysem = system
+        e.star_system = system
         e.set_coordinate system_entry_point
         e.set_alignment C.ALIGNMENT.FEDERATION
         e.set_alert 'red'
@@ -111,7 +131,7 @@ class TinkerTaylor extends Level
         @enterprise = e
 
         kling_position = do @_random_start_position
-        k = new D7 'Chin\'Tok'
+        k = new D7 'Chin`Tok'
         k.star_system = system
         k.set_coordinate kling_position
         k.set_alignment C.ALIGNMENT.KLINGON
@@ -134,8 +154,8 @@ class TinkerTaylor extends Level
 
     _init_space_objects: () ->
 
-        system = @map.get_star_system 'K\'lthos'
-        s = new Star 'K\'lthos Prime', 'B', 0
+        system = @map.get_star_system 'K`lthos'
+        s = new Star 'K`lthos Prime', 'B', 0
         s.charted = true
         system.add_star s
         @klthos = s

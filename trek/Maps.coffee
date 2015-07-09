@@ -26,6 +26,14 @@ class SpaceSector extends BaseMap
     get_star_system: ( star_system_name ) -> @systems[ star_system_name ]
 
 
+    index: ->
+        # Returns the sector name, and it's system names
+
+        r =
+            name : @name
+            systems : ( k for k, v of @systems )
+
+
 class StarSystem extends BaseMap
 
     constructor: ( @name ) ->

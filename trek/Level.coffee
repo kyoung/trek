@@ -15,10 +15,8 @@ class Level
 
         ships = {}
         for p, s of @ships
-            console.log ">>>DEBUG #{ typeof p }"
             ships[ p ] = s
         for p, s of @ai_ships
-            console.log ">>>DEBUG #{ typeof p }"
             ships[ p ] = s
         return ships
 

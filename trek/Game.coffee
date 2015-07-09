@@ -132,7 +132,7 @@ class Game
             ai_ships : ai_ships
 
 
-    get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @ships )
+    get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @player_ships )
 
 
     ### Prefix Requisit Codes
@@ -194,7 +194,14 @@ class Game
         resp = r.concat( s )
 
 
-    get_system_information: ( prefix, system_name ) -> @map.get_star_system system_name
+    get_system_information: ( prefix, system_name ) ->
+        # Stellar system, not systems system
+        @map.get_star_system system_name
+
+
+    get_sector_telemetry: ( prefix ) ->
+        # Sector informaiton
+        do @map.index
 
 
     scan: ( prefix ) ->

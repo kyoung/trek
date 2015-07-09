@@ -238,7 +238,7 @@ trek.onAlert( function( data ) {
 
 trek.api(
     'navigation/system',
-    { system: systemName },
+    { system : systemName },
     function( data ) {
 
         system = data;

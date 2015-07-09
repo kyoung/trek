@@ -171,6 +171,7 @@ handle_API = ( req, res ) ->
         when "academy" then academy_api prefix, method, command, params
 
     if resp is undefined
+        console.log params
         throw new Error "Undefined response object for #{ category }/#{ command }"
 
     res.json resp
@@ -238,6 +239,8 @@ navigation_api = ( prefix, method, command, params ) ->
         when "stelar-telemetry"
             game.get_stelar_telemetry prefix, q.target
 
+        when "sector-telemetry"
+            game.get_sector_telemetry prefix
 
 tactical_api = ( prefix, method, command, params ) ->
 
@@ -574,7 +577,7 @@ get_postfix_code = ( req, res ) ->
     ship_name = req.query.ship
     console.log "Getting postfix code"
 
-    for ship in game.get_startup_stats()
+    for ship in game.get_startup_stats().player_ships
         if ship.name == ship_name and ship.prefix.toString() == prefix
             res.cookie "postfix", ship.postfix
             res.cookie "ship", ship.name
