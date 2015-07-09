@@ -4,7 +4,11 @@ var lightAngle = 0.75;
 
 var torpedos = [];
 
-    // the main three.js components
+
+// default skybox
+var skyboxImage = 'static/images/Milky_way.jpg';
+
+// the main three.js components
 var camera, scene, renderer;
 
 var visibleRadius = 4000;
@@ -37,34 +41,33 @@ var starViews = [
     "aft"
 ];
 
-if ( amLookingAtTarget() ) {
+trek.api(
+    "navigation/stelar-telemetry",
+    { target : targetName },
+    parseTelemetry );
+    
 
-    trek.api(
-        "navigation/stelar-telemetry",
-        { target : targetName },
-        parseTargetDrawData );
+function parseTelemetry ( data ) {
 
-} else {
+    if ( amLookingAtTarget() ) {
 
-    init();
+        var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
 
-}
+        shipRotation = data.bearing_to_viewer.bearing;
+        lightAngle = netBearingToLight;
 
+        if ( lightAngle > 1 ) {
 
-function parseTargetDrawData ( data ) {
+            lightAngle -= 1;
 
-    var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
+        }
 
-    shipRotation = data.bearing_to_viewer.bearing;
-    lightAngle = netBearingToLight;
-
-    if ( lightAngle > 1 ) {
-
-        lightAngle -= 1;
+        targetURL = data.target_model;
 
     }
 
-    targetURL = data.target_model;
+    skyboxImage = data.skybox;
+
     init();
 
 }
@@ -133,7 +136,7 @@ function loadGalaxy () {
     var material;
 
     THREE.ImageUtils.loadTexture(
-        '/static/images/dg_tau.jpg',
+        skyboxImage,
         THREE.SphericalReflectionMapping,
         function ( texture ) {
 

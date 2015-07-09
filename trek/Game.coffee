@@ -392,17 +392,21 @@ class Game
     get_stelar_telemetry: ( prefix, target_name ) ->
 
         ship = @ships[ prefix ]
-        if target_name == ""
-            return {}
-        target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
         stars = ( o for o in @space_objects when o.classification.indexOf( "Star" ) >= 0 )
 
         telemetry =
-            bearing_to_viewer: U.bearing( target, ship )
-            bearing_to_target: U.bearing( ship, target )
-            bearing_to_star: U.bearing( ship, stars[ 0 ] )
-            distance_from_star: U.distance( target.position, stars[ 0 ].position )
-            target_model: target.model_url
+            bearing_to_star : U.bearing( ship, stars[ 0 ] )
+
+            skybox : ship.star_system.skybox
+
+        target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
+        if target?
+            telemetry[ 'bearing_to_viewer' ] = U.bearing( target, ship )
+            telemetry[ 'bearing_to_target' ] = U.bearing( ship, target )
+            telemetry[ 'target_model' ] = target.model_url
+            telemetry[  'distance_from_star' ] = U.distance( target.position, stars[ 0 ].position )
+
+        return telemetry
 
 
     get_internal_lifesigns_scan: ( prefix ) -> do @ships[ prefix ].get_internal_lifesigns_scan

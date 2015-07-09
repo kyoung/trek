@@ -44,6 +44,9 @@ class StarSystem extends BaseMap
         @planets = []
         @clouds = []
 
+        # Default skybox
+        @skybox = 'static/images/Milky_way.jpg'
+
 
     add_star: ( star ) -> @stars.push star
 

@@ -256,6 +256,7 @@ class DGTauIncident extends Level
 
         sector = new SpaceSector "2298"
         dg_tau = new StarSystem "DG Tau"
+        dg_tau.skybox = 'static/images/dg_tau.jpg'
         dg_tau_b = new StarSystem "DG Tau B"
 
         dg_tau_position =

@@ -616,7 +616,7 @@ viewscreen = ( req, res, prefix, r ) ->
 
 viewscreen_screen = ( req, res, prefix, r ) ->
 
-    r.target = req.query.target
+    r.target = req.query.target or req.query.direction
     res.render "viewscreen_screen.html", r
 
 
