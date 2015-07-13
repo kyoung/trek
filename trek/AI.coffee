@@ -28,10 +28,15 @@ class AI
 
     update: () =>
 
-        ai = @
-        new_state = @state_stack[ @state_stack.length - 1 ].update ai, @game
-        if new_state instanceof AIState
-            @state_stack = @state_stack.concat new_state
+        # Wrap all of this in a try statement, to prevent it
+        # from crashing the main event loop
+        try
+            ai = @
+            new_state = @state_stack[ @state_stack.length - 1 ].update ai, @game
+            if new_state instanceof AIState
+                @state_stack = @state_stack.concat new_state
+        catch error
+            console.log error
 
 
     play: () ->

@@ -295,6 +295,9 @@ class BaseShip extends BaseObject
             if b.charge > phaser.charge
                 phaser = b
 
+        if not phaser?
+            throw new Error "No phaser system covering that quadrent"
+
         if not do phaser.is_online
             throw new Error "Phaser system offline"
 

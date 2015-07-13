@@ -38,7 +38,7 @@ class D7 extends BaseShip
     DECKS: DECKS
 
     @REGISTRY = [
-        { name : "Gr'Oth", registry : "" }
+        { name : "Gr`Oth", registry : "" }
         { name : "Klothos", registry : "" }
     ]
 
@@ -76,8 +76,8 @@ class D7 extends BaseShip
             @serial = registry
 
         super @name, @serial
-        @model_url = "d7.js"
-        @model_display_scale = 5
+        @model_url = "d7.json"
+        @model_display_scale = 4
         @ship_class = "D7"
 
 

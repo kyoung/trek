@@ -534,7 +534,7 @@ handle_view = ( req, res ) ->
         console.log "Ships: ", ships
         return
 
-    ship_name = req.query.ship
+    ship_name = req.cookies.ship
 
     view = req.params.view
 
