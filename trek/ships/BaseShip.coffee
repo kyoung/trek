@@ -408,7 +408,7 @@ class BaseShip extends BaseObject
         if target_section? and target_section in quads
             quad = target_section
         else
-            quad = quads[ Math.floor( Math.random() * 2 ) ]
+            quad = quads[ Math.floor( Math.random() * quads.length ) ]
 
         if not target_deck?
             deck_list = ( k for k, v of @DECKS )
@@ -1662,6 +1662,8 @@ class BaseShip extends BaseObject
     calculate_quadrant: ( from_point ) ->
 
         # Returns which quadrant of the ship is facing a given point
+        if not from_point?
+            throw new Error "Cannot calculate the quadrant from a null point"
 
         if from_point == @position
             from_point.x += 1
@@ -1681,6 +1683,9 @@ class BaseShip extends BaseObject
         # calculate quadrant, which just returns the immediate facing
         # section
 
+        if not from_point?
+            throw new Error "Invalid origin point"
+
         if from_point == @position
             from_point.x += 1
 
@@ -1689,6 +1694,9 @@ class BaseShip extends BaseObject
             { position : from_point } )
         if not b?
             throw new Error "Invalid origin point #{from_point}"
+
+        if b.bearing < 0 or b.bearing > 1
+            throw new Error "Invalid bearing calculated: #{ b.bearing }"
 
         if 0 < b.bearing <= 0.25
             return [ @SECTIONS.FORWARD, @SECTIONS.PORT ]

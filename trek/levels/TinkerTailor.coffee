@@ -56,7 +56,8 @@ class TinkerTaylor extends Level
 
 
     _is_mission_accomplished: =>
-        @spy in @enterprise.internal_personnel and !@klingon.alive
+        # @spy in @enterprise.internal_personnel and !@klingon.alive
+        !@klingon.alive
 
 
     get_events: ->

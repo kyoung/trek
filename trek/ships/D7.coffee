@@ -77,7 +77,7 @@ class D7 extends BaseShip
 
         super @name, @serial
         @model_url = "d7.json"
-        @model_display_scale = 4
+        @model_display_scale = 2.5
         @ship_class = "D7"
 
 

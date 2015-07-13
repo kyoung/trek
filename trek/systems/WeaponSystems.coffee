@@ -23,7 +23,7 @@ class WeaponsTargetingSystem extends System
         super @name, @deck, @section, WeaponsTargetingSystem.POWER
 
 
-    set_target: ( @target, @target_deck, @target_section ) -> @target
+    set_target: ( @target, @target_deck, @target_section ) -> @target.name
 
 
     clear: ->
