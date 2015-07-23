@@ -38,7 +38,7 @@ class D7 extends BaseShip
     DECKS: DECKS
 
     @REGISTRY = [
-        { name : "Gr`Oth", registry : "" }
+        { name : "GrOth", registry : "" }
         { name : "Klothos", registry : "" }
     ]
 

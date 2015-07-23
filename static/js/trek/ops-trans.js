@@ -236,7 +236,7 @@ function buildCargoFromMenu ( transScan, cargo ) {
             }
 
             var s = k2 + ", Bay " + k + ": " + v2;
-            var c = $( "<li class='blue' trans_selection'>" + s + "</li>" );
+            var c = $( "<li class='blue trans_selection'>" + s + "</li>" );
 
             c.click( function () {
 
@@ -381,7 +381,7 @@ function beamBarClicked () {
                     $transportLi.removeClass( 'blink' );
 
                 } )
-                
+
             beam();
 
         } );

@@ -51,21 +51,72 @@ class TinkerTaylor extends Level
 
         @_initial_lives = do @_get_crew_count
 
+        @code_word = /tinker tailor/i
+
 
     _is_ship_destroyed: => !@enterprise.alive
 
 
     _is_mission_accomplished: =>
-        # @spy in @enterprise.internal_personnel and !@klingon.alive
-        !@klingon.alive
+
+        @spy in @enterprise.internal_personnel and !@klingon.alive
 
 
-    get_events: ->
+    _is_message_sent: =>
+
+        message_sent = do @enterprise.get_comms
+        for m in message_sent
+            if m.type is 'sent'
+                if @code_word.test m.message
+                    console.log "[[LVL]] trigger word detected!"
+                    return true
+        return false
+
+
+    get_events: =>
 
         end_game = ( game ) ->
             console.log ">>> Game Over <<<"
             game.is_over = true
 
+        commit_sabotage = ( game ) =>
+            console.log ">>> Sabott <<<"
+
+            k = @klingon
+
+            # damage the klingon ship
+            # # destroy primary power systems (warp core breach?)
+            do k.warp_core.deactivate
+            k.warp_core.state = 0.2 * do Math.random
+
+            # # vent warp plasma
+            k.port_warp_coil.charge = 0
+            k.starboard_warp_coil.charge = 0
+
+            # # deactivate the cloak system, and hide it in the cargo bay
+            do k.decloak
+            k.cloak_system = undefined
+            k.cargobays[0].add_cargo "Cloaking Device", 1
+
+            send_distress = ->
+                # route emergency power to the communications systems
+                # route port eps to emergency power
+                k.reroute_power_relay k.port_eps.name, k.e_power_relay.name
+                k.set_power_to_system k.communication_array.name, 1
+
+                # have the klingon ship send out a distress call
+                game.hail k.prefix_code, "[Translated from Klingon] This is the
+                #{ k.name }. We have suffered damage to our warp core. [ STATIC ]
+                . A breach is immenent; we require assistance."
+
+            setTimeout send_distress, 15000 * Math.random()
+
+
+        sabotage = new LevelEvent {
+            name : 'Sabotage',
+            condition : @_is_message_sent,
+            do : commit_sabotage
+        }
 
         loose = new LevelEvent {
             name : 'Defeat',
@@ -80,7 +131,8 @@ class TinkerTaylor extends Level
 
         events = [
             loose,
-            win
+            win,
+            sabotage
         ]
 
 
@@ -96,7 +148,7 @@ class TinkerTaylor extends Level
     _init_map: () ->
 
         sector = new SpaceSector "2531"
-        klthos = new StarSystem "K`lthos"
+        klthos = new StarSystem "Klthos"
 
         klthos_position =
             x : 3.8
@@ -112,13 +164,35 @@ class TinkerTaylor extends Level
         @enterprise_logs = [
             "Captains Log, stardate #{ @stardate }\n
             \n
-            Klingons!"
+            Starfleet intelligence has an operative aboard the Klingon cruiser
+            KDF ChinTok, in an effort to retrieve one of their new cloaking
+            devices. The operative has signaled that he requires extraction and
+            has a plan to take the cloaking device with him.\n
+            \n
+            We are hiding the Enterprise in the Klthos system. The Klthos star
+            puts out an intense amount of Kreller radiation, which masks our
+            ship's power signature. Our intel indicates that the Chin`Tok will
+            be patrolling the system.\n
+            \n
+            Once in the system, our operative will sabotage the ChinTok,
+            causing the crew to flee in escape pods. In it's disabled state, we
+            will be able to approach and recover both the operative and cloaking
+            device.\n
+            \n
+            Starfleet intelligence warns that there may be a second battle
+            cruiser in the area, and any distress call from the ChinTok might
+            draw them near. We will have to act fast if we want to avoid an all
+            out war with Klingons.\n
+            \n
+            It goes without saying that we can't afford to have the Klingons
+            reporting back to the High Council what we do here today.\n\n
+            "
         ]
 
 
     _init_ships: () ->
 
-        system = @map.get_star_system "K`lthos"
+        system = @map.get_star_system "Klthos"
         console.log "Loading game in the #{ system.name } system"
 
         system_entry_point = do @_random_start_position
@@ -132,16 +206,24 @@ class TinkerTaylor extends Level
         @enterprise = e
 
         kling_position = do @_random_start_position
-        k = new D7 'Chin`Tok'
+        k = new D7 'ChinTok'
         k.star_system = system
         k.set_coordinate kling_position
         k.set_alignment C.ALIGNMENT.KLINGON
         @ai_ships[ k.prefix_code ] = k
         @klingon = k
 
-        @spy = new Spy k.DECKS['10'], k.SECTIONS['Aft'], EngineeringTeam
+        @spy = new Spy k.DECKS['15'], k.SECTIONS.PORT, EngineeringTeam
         @spy.set_true_alignment C.ALIGNMENT.FEDERATION
         @klingon.internal_personnel.push @spy
+
+        # kling2_position = do @_random_start_position
+        # k2 = new D7 'ChoRe'
+        # k2.star_system = system
+        # k2.set_coordinate kling2_position
+        # k2.set_alignment C.ALIGNMENT.KLINGON
+        # @ai_ships[ k2.prefix_code ] = k2
+        # @klingon2 = k2
 
 
     _init_game_objects: () ->
@@ -155,8 +237,8 @@ class TinkerTaylor extends Level
 
     _init_space_objects: () ->
 
-        system = @map.get_star_system 'K`lthos'
-        s = new Star 'K`lthos Prime', 'B', 0
+        system = @map.get_star_system 'Klthos'
+        s = new Star 'Klthos Prime', 'B', 0
         s.charted = true
         system.add_star s
         @klthos = s

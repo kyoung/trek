@@ -311,7 +311,7 @@ class BattleState extends AIState
         if target.distance < tactical_report.torpedo_range
             console.log "    >>> AI: closing on target: Firing torpedoes"
             # fire torpedoes as we close
-            game.fire_torpedoe ai.prefix, 12
+            game.fire_torpedo ai.prefix, 12
 
         if target.distance < tactical_report.phaser_range
             console.log "    >>> AI: beginning phaser attack"
@@ -357,6 +357,14 @@ class BattleState extends AIState
             @substate = @substates.TARGETING
             return
         target = targets[ 0 ]
+
+        # if target is out of range, switch to closing
+        ship = game.ai_ships[ ai.prefix ]
+        tactical_report = do ship.tactical_report
+
+        if target.distance > tactical_report.phaser_range
+            @substate = @substates.CLOSING
+            return
 
         # if target is ahead, fire
         if ( 0.75 < target.bearing.bearing ) or ( target.bearing.bearing < 0.25 )

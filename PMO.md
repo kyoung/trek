@@ -29,11 +29,11 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 # Current Sprint
 - AI
-  - We need to be able to create hostile players to fight
+  - [x] We need to be able to create hostile players to fight
   - We need to be able to create cooperative players to help, and to communicate with
   - [x] Create a klingon enemy ship
   - [x] Create a new level where we have to fight a hostile
-    - [ ] Create the level such that there is a spy
+    - [x] Create the level such that there is a spy
     aboard the enemy ship, and we must beam them off
   - [x] Write an AI client that can act and respond with the API
 - Sector maps and other systems
@@ -47,7 +47,12 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Hotfix
+- [ ] AI doesn't know how to handle ship operations/emergencies etc...
+- [ ] Cutting warp power doesn't seem to affect the power output graph too much
+- [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted
+- [ ] Engineering system actions blink on refresh - (only draw if there's a change?)
+- [ ] Hull damage isn't displayed anywhere
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
 - [ ] Charge refresh doesn't happen off of the main plasma relay in eng
@@ -67,6 +72,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Backlog For Breakout
+- Engineering systems should be grouped / filterable by functional requirements (IE goto warp requires nacels, nav, dampeners, integrity fields, etc)
 - [ ] get a new mesh for the outposts... they're not Stations, they're power collectors. Design appropriately.
     - [ ] build new mesh
     - [ ] instantiate the new stations as a new Ship Class, not as a "Station" objects
@@ -111,7 +117,8 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 # Alpha Test Issues
 Feedback taken from real user testing
 - [ ] Justin/Tactical still just wants to shoot things... we might need more responsibilities, or to keep them busy with chatter traffic.
-- [-] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What"s up with that?
+  - Comms-based minigame?
+- [-] There was a strange error where going to warp was prevented by the Inertial Dampeners being offline... Engineering showed that they were completely online... What's up with that?
 
 
 # Bug log

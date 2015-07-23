@@ -375,6 +375,43 @@ exports.ShipTest =
         do test.done
 
 
+    'test cant turn at warp': ( test ) ->
+
+        e = new Constitution
+        e.port_warp_coil.charge = 1
+        e.starboard_warp_coil.charge = 1
+        e.set_warp 1
+
+        test.throws -> do e.turn_port
+
+        do test.done
+
+
+    'test warp power balance': ( test ) ->
+
+        s = new Constitution
+        tic = 250
+        tok = 60 * 1000
+        s.port_warp_coil.charge = 1
+        s.starboard_warp_coil.charge = 1
+        s.set_power_to_system s.port_warp_coil.name, 0.01
+        s.set_power_to_system s.starboard_warp_coil.name, 0.01
+
+        s.calculate_state undefined, tic
+
+        # warp 5 should require a power alotment of 5/6 to maintain full charge
+        s.set_warp 6
+
+        s.calculate_state undefined, tic
+        test.ok s.port_warp_coil.charge < 1, "Failed to drain warp plasma: #{ s.port_warp_coil.charge }"
+
+        s.calculate_state undefined, tok
+        test.ok s.port_warp_coil.charge < 0.51, "Failed to drain warp plasma (extended): #{ s.port_warp_coil.charge }"
+
+
+        do test.done
+
+
     'test can reroute EPS relay': ( test ) ->
 
         e = new Constitution

@@ -16,6 +16,11 @@ class CargoBay
         @inventory = {}
         for cargo, name of Cargo
             init_count = up_to 10
+
+            # without this, it is impossible to fix a warp core blow out
+            if name is Cargo.WARP_PLASMA
+                init_count = up_to 30
+                
             @add_cargo name, init_count
 
 

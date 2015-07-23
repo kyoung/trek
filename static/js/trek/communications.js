@@ -59,3 +59,9 @@ function loadComms () {
 };
 
 loadComms();
+
+trek.onAlert( function( data ) {
+
+    return;
+
+    } );

@@ -638,6 +638,9 @@ class BaseShip extends BaseObject
         if @_navigation_lock
             throw new Error "Cannot engage thruster control while Navigational Computers are piloting."
 
+        if @warp_speed > 0
+            throw new Error "Cannot turn while at warp."
+
         @bearing_v.bearing = 1 / C.TIME_FOR_FULL_ROTATION
         @message @prefix_code, "Turning", do @navigation_report
         do @navigation_report
@@ -647,6 +650,9 @@ class BaseShip extends BaseObject
 
         if @_navigation_lock
             throw new Error "Cannot engage thruster control while Navigational Computers are piloting."
+
+        if @warp_speed > 0
+            throw new Error "Cannot turn while at warp."
 
         @bearing_v.bearing = -1 / C.TIME_FOR_FULL_ROTATION
         @message @prefix_code, "Turning", do @navigation_report
@@ -1115,13 +1121,22 @@ class BaseShip extends BaseObject
 
     _remove_crew: ( id ) ->
 
-        @repair_teams = ( t for t in @repair_teams when t.id isnt id )
-        @science_teams = ( t for t in @science_teams when t.id isnt id )
-        @engineering_teams = ( t for t in @engineering_teams when t.id isnt id )
-        @security_teams = ( t for t in @security_teams when t.id isnt id )
-        @prisoners = ( t for t in @prisoners when t.id isnt id )
-        @boarding_parties = ( b for b in @boarding_parties when b.id isnt id )
-        @guests = ( t for t in @guests when t.id isnt id )
+        if @repair_teams?
+            @repair_teams = ( t for t in @repair_teams when t.id isnt id )
+        if @science_teams?
+            @science_teams = ( t for t in @science_teams when t.id isnt id )
+        if @engineering_teams?
+            @engineering_teams = ( t for t in @engineering_teams when t.id isnt id )
+        if @security_teams?
+            @security_teams = ( t for t in @security_teams when t.id isnt id )
+        if @prisoners?
+            @prisoners = ( t for t in @prisoners when t.id isnt id )
+        if @boarding_parties?
+            @boarding_parties = ( b for b in @boarding_parties when b.id isnt id )
+        if @guests?
+            @guests = ( t for t in @guests when t.id isnt id )
+
+        @internal_personnel = ( c for c in @internal_personnel when c.id isnt id )
 
         do @_rebuild_crew_checks
 
@@ -1535,7 +1550,7 @@ class BaseShip extends BaseObject
         if not system?
             throw new Error "Invalid system name #{ system_name }"
 
-        # special case of the cloak
+        # special case of the
         if system instanceof CloakingSystem
             console.log "#{ @name } cloak engaged"
             return do @cloak
@@ -1698,7 +1713,7 @@ class BaseShip extends BaseObject
         if b.bearing < 0 or b.bearing > 1
             throw new Error "Invalid bearing calculated: #{ b.bearing }"
 
-        if 0 < b.bearing <= 0.25
+        if 0 <= b.bearing <= 0.25
             return [ @SECTIONS.FORWARD, @SECTIONS.PORT ]
         if 0.25 < b.bearing <= 0.5
             return [ @SECTIONS.PORT, @SECTIONS.AFT ]
@@ -1767,6 +1782,13 @@ class BaseShip extends BaseObject
 
         engineering_locations = ( { deck : c.deck, section : c.section } for c in @internal_personnel when c.description is "Engineering Team" and not do c.is_enroute )
         @_update_system_state delta, engineering_locations
+
+        # drop out of warp... I hope your SI is on...
+        if not @warp_core.is_online() and @warp_speed > 0
+            @warp_speed = 0
+            @velocity.x = 0
+            @velocity.y = 0
+            @velocity.z = 0
 
         if @warp_speed > 0
             # You've lost warp plasma charge and can no longer maintain your speed

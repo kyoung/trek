@@ -634,9 +634,9 @@ ops_cargo_screen = ( req, res, prefix, r ) -> res.render "ops_cargo_screen.html"
 
 ops_trans_screen = ( req, res, prefix, r ) ->
 
-    r.origin = origin
-    r.destination = destination
-    r.trans_type = trans_type
+    r.origin = req.query.origin
+    r.destination = req.query.destination
+    r.trans_type = req.query.trans_type
     res.render "ops_trans_screen.html", r
 
 
