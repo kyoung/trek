@@ -47,7 +47,11 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 ## Hotfix
+- [ ] When transporting a target off of a ship onto yours, with your shields raised, the action
+        of removing the crew seems to complete... meaning you're killing teams in the process
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
+- [ ] Torpedoes don't seem to ever hit a target anymore
+- [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] Cutting warp power doesn't seem to affect the power output graph too much
 - [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted

@@ -263,7 +263,7 @@ class BattleState extends AIState
 
     target: ( ai, game ) ->
 
-        console.log ">>> AI: targetting"
+        # console.log ">>> AI: targetting"
 
         self = game.ai_ships[ ai.prefix ]
 
@@ -348,7 +348,7 @@ class BattleState extends AIState
 
     attack: ( ai, game ) ->
 
-        console.log ">>> AI: Attacking"
+        # console.log ">>> AI: Attacking"
 
         i = game.scan ai.prefix
         targets = ( t for t in i when t.name is @target_name )
@@ -374,7 +374,7 @@ class BattleState extends AIState
                     game.fire_phasers ai.prefix, 0.8
                     console.log "    >>> firing #{ p.name }"
                 else
-                    console.log "    >>> charging #{ p.name }"
+                    # console.log "    >>> charging #{ p.name }"
 
             # Torpedoes?
 

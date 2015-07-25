@@ -31,6 +31,7 @@ class BaseTeam
             @members.push 1
         @deck
         @section
+        @description = ''
         @status = STATUS.ONBOARD
         @alignment = undefined
         @assignment = undefined
@@ -94,9 +95,10 @@ class BaseTeam
 
     internal_scan: ->
         r = do @scan
-        r['members'] = @members
-        r['status'] = @status
-        r['code'] = @code
+        r[ 'members' ] = @members
+        r[ 'status' ] = @status
+        r[ 'code' ] = @code
+        r[ 'description' ] = @description
         return r
 
 
@@ -209,6 +211,17 @@ class RepairTeam extends BaseTeam
 
         @goto system.deck, system.section, on_arrival
         @currently_repairing = system.name
+
+
+    internal_scan: ->
+        
+        r = do @scan
+        r[ 'members' ] = @members
+        r[ 'status' ] = @status
+        r[ 'code' ] = @code
+        r[ 'description' ] = @description
+        r[ 'currently_repairing' ] = @currently_repairing
+        return r
 
 
 class ScienceTeam extends BaseTeam

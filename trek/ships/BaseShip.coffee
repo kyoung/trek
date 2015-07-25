@@ -1063,7 +1063,7 @@ class BaseShip extends BaseObject
     beam_away_crew: ( crew_id, deck, section ) ->
 
         # Called when personnel are being beamed away.
-        if @_are_all_shields_up()
+        if do @_are_all_shields_up
             throw new Error 'Shields are up. No transport possible'
 
         teams = ( t for t in @internal_personnel when t.id is crew_id )
@@ -1121,6 +1121,7 @@ class BaseShip extends BaseObject
 
     _remove_crew: ( id ) ->
 
+        #TODO: get rid of these specialized subteams
         if @repair_teams?
             @repair_teams = ( t for t in @repair_teams when t.id isnt id )
         if @science_teams?
@@ -1552,10 +1553,12 @@ class BaseShip extends BaseObject
 
         # special case of the
         if system instanceof CloakingSystem
-            console.log "#{ @name } cloak engaged"
-            return do @cloak
-        else
-            throw new Error "Failed to detect type of cloak system"
+            if is_active
+                console.log "#{ @name } cloak engaged"
+                do @cloak
+            else
+                console.log "#{ @name } cloak disengaged"
+                do @decloak
 
         # do not allow the activation of certain systems while cloak
         # is engaged
@@ -1577,10 +1580,10 @@ class BaseShip extends BaseObject
         if not cloak?
             throw new Error "No cloaking system available"
         # Deactivate weapons systems to redirect power to the cloak
+        # TODO actually figure out how to shunt that much power to this system
         do p.deactivate for p in @phasers
         do t.deactivate for t in @torpedo_banks
         do s.deactivate for s in @shields
-        do cloak.power_on
 
 
     decloak: ->
@@ -1589,7 +1592,8 @@ class BaseShip extends BaseObject
         if not cloak?
             throw new Error "No cloaking system available"
         # Deactivate cloak
-        do cloak.power_down
+        # no actual steps required?
+        # maybe bring weapons systems back online?
 
 
     _get_cloak_system: ->

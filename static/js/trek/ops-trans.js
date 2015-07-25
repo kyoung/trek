@@ -223,7 +223,10 @@ function buildCrewMenu ( transScan ) {
 
 function buildCargoFromMenu ( transScan, cargo ) {
 
+    console.log( 'emptying list' );
     originList.empty();
+
+    console.log( transScan.cargo );
 
     _.each( transScan.cargo, function ( v, k, l ) {
 
@@ -248,6 +251,7 @@ function buildCargoFromMenu ( transScan, cargo ) {
 
                 } );
 
+            console.log( 'adding to origin list' );
             originList.append( c );
 
             } );
@@ -262,6 +266,7 @@ function buildCargoMenu ( transScan ) {
     originList.empty();
     var available_cargo = {};
 
+    // resort API data into chunked cargo groups
     _.each( transScan.cargo, function ( v, k, l ) {
 
         _.each( v, function ( v2, k2, l2 ) {
@@ -286,6 +291,7 @@ function buildCargoMenu ( transScan ) {
 
         } );
 
+    // build menu
     _.each( available_cargo, function ( v, k, l ) {
 
         var c = $( "<li class='blue trans_selection'>" + k + " " + v + "</li>" );
@@ -295,6 +301,7 @@ function buildCargoMenu ( transScan ) {
             $( ".trans_selection" ).removeClass( 'lightblue' );
             $( this ).addClass( 'lightblue' );
             transportArgs[ 'cargo' ] = k;
+            console.log( 'trigger build menu' );
             buildCargoFromMenu( transScan, k );
 
             } );
