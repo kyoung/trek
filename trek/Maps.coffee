@@ -43,6 +43,7 @@ class StarSystem extends BaseMap
         @stars = []
         @planets = []
         @clouds = []
+        @asteroids = []
 
         # Default skybox
         @skybox = 'static/images/Milky_way.jpg'
@@ -55,6 +56,10 @@ class StarSystem extends BaseMap
 
 
     add_clouds: ( cloud ) -> @clouds.push cloud
+
+
+    # This works for lagrange points and asteroid belts
+    add_asteroids: ( asteroid_field ) -> @asteroids.push asteroid_field
 
 
     set_position: ( @position ) ->

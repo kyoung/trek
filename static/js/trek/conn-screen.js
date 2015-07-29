@@ -1,5 +1,7 @@
 
 var tmpl = $( "#scannerObjectTmpl" ).html();
+var tmplPoint = $( "#scannerObjectTmplPoint" ).html();
+var tmplHollow = $( "#scannerObjectTmplHollow" ).html();
 var sensorObjects = {};
 var map;
 var scanInterval;
@@ -152,14 +154,23 @@ function paintScan ( data ) {
 
         };
 
+        var t = tmpl;
+        if ( /(alpha|beta|gamma|delta|epsilon)/i.test( name ) || /[a-z][0-9]/i.test( name ) ) {
+            t = tmplHollow;
+        }
+        if ( /lagrange/i.test( name ) ) {
+            t = tmplPoint;
+        }
+
+
         if ( _.has( sensorObjects, e.name ) ) {
 
             sensorObjects[ name ].css( "top", y ).css( "left", x );
-            sensorObjects[ name ].html( Mustache.render( tmpl, reading ) );
+            sensorObjects[ name ].html( Mustache.render( t, reading ) );
 
         } else {
 
-            var obj = $( Mustache.render( tmpl, reading ) );
+            var obj = $( Mustache.render( t, reading ) );
             obj.css( "top", y ).css( "left", x );
             sensorObjects[ e.name ] = obj;
             $displayGrid.append( obj );

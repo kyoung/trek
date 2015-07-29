@@ -6,7 +6,7 @@
 
 {System, ChargedSystem} = require '../BaseSystem'
 {Station} = require '../Station'
-{CelestialObject, Star, GasCloud} = require '../CelestialObject'
+{CelestialObject, Star, GasCloud, Planet, Lagrange} = require '../CelestialObject'
 {ShieldSystem, PhaserSystem, TorpedoSystem} = require '../systems/WeaponSystems'
 {SpaceSector, StarSystem} = require '../Maps'
 
@@ -104,10 +104,13 @@ class TinkerTaylor extends Level
                 k.reroute_power_relay k.port_eps.name, k.e_power_relay.name
                 k.set_power_to_system k.communication_array.name, 1
 
+                # TODO activate the transponder
+
                 # have the klingon ship send out a distress call
                 game.hail k.prefix_code, "[Translated from Klingon] This is the
-                #{ k.name }. We have suffered damage to our warp core. [ STATIC ]
-                . A breach is immenent; we require assistance."
+                #{ k.name } hailing the ChoRe. We have suffered damage to our
+                warp core. [ STATIC ] breach [ STATIC ] immenent; the crew has
+                [ STATIC ] sabota[ END TRANSMISSION ]"
 
             setTimeout send_distress, 15000 * Math.random()
 
@@ -171,7 +174,7 @@ class TinkerTaylor extends Level
             \n
             We are hiding the Enterprise in the Klthos system. The Klthos star
             puts out an intense amount of Kreller radiation, which masks our
-            ship's power signature. Our intel indicates that the Chin`Tok will
+            ship's power signature. Our intel indicates that the ChinTok will
             be patrolling the system.\n
             \n
             Once in the system, our operative will sabotage the ChinTok,
@@ -182,7 +185,7 @@ class TinkerTaylor extends Level
             Starfleet intelligence warns that there may be a second battle
             cruiser in the area, and any distress call from the ChinTok might
             draw them near. We will have to act fast if we want to avoid an all
-            out war with Klingons.\n
+            out war with the Klingons.\n
             \n
             It goes without saying that we can't afford to have the Klingons
             reporting back to the High Council what we do here today.\n\n
@@ -238,11 +241,38 @@ class TinkerTaylor extends Level
     _init_space_objects: () ->
 
         system = @map.get_star_system 'Klthos'
-        s = new Star 'Klthos Prime', 'B', 0
+        s = new Star 'Klthos', 'B', 0
         s.charted = true
         system.add_star s
         @klthos = s
         @space_objects.push s
+
+        # Add 2 gas giants w/ moons and lagrange points
+        @gas_planet_1 = new Planet 'alpha', 'T', 10 * C.AU
+        @gas_planet_2 = new Planet 'beta', 'J', 22 * C.AU
+
+        # lagrange: +/- pi/3 radians of orbit
+        alpha_lagrange_3 = new Lagrange @gas_planet_1, 3
+        alpha_lagrange_4 = new Lagrange @gas_planet_1, 4
+        beta_lagrange_3 = new Lagrange @gas_planet_2, 3
+        beta_lagrange_4 = new Lagrange @gas_planet_2, 4
+
+        for o in [ @gas_planet_1, @gas_planet_2 ]
+            system.add_planet o
+            @space_objects.push o
+
+        for o in [ alpha_lagrange_3, alpha_lagrange_4, beta_lagrange_3,
+            beta_lagrange_4 ]
+            system.add_asteroids o
+            @space_objects.push o
+
+        # Add up to 5 smaller planets
+        init_orbit = 0.3 * C.AU
+        for i in [ 0..Math.floor( Math.random() * 6 ) ]
+            p = new Planet "k#{ i }", 'D', init_orbit
+            @space_objects.push p
+            system.add_planet p
+            init_orbit *= 2
 
 
     _init_environment: () ->

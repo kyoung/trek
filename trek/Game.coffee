@@ -184,6 +184,8 @@ class Game
         ## Don't pass gas clouds, as these get handled by the system scan
         ## TODO: Fix this^ gas clouds should be considered charted system objects
         r = ( @get_public_space o, you for o in star_system.stars when o.charted )
+        p = ( @get_public_space o, you for o in star_system.planets when o.charted )
+        a = ( @get_public_space o, you for o in star_system.asteroids when o.charted )
 
         # Overlay any subspace becons
         s = ( @get_public o, you for o in @game_objects when @get_public o, you )
@@ -191,7 +193,7 @@ class Game
         # Overlay points that you have scanned and are tracking
         # tracking = ( @get_tracking_data o, you for o in you.get_scanned_objects() )
 
-        resp = r.concat( s )
+        resp = r.concat( s ).concat( p ).concat( a )
 
 
     get_system_information: ( prefix, system_name ) ->
