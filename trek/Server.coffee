@@ -67,7 +67,7 @@ save_state = () ->
 ### Debug
 ___________________________________________________###
 
-debug = ( req, res ) -> res.json { state : do game.state }
+debug = ( req, res ) -> res.json { debug : do game.debug_neutrinos }
 
 
 debugMap = ( req, res ) ->
@@ -397,7 +397,15 @@ science_api = ( prefix, method, command, params ) ->
             game.get_lr_scan_results prefix, q.type
 
         when "LRScanConfiguration"
-            game.get_lr_scan_configuration prefix, q.type
+            switch method
+                when "get"
+                    game.get_lr_scan_configuration prefix, q.type
+                when "put"
+                    game.configure_long_range_scan(
+                        prefix,
+                        q.type,
+                        q.range,
+                        q.resolution )
 
         when "internal-scan"
             game.get_internal_scan prefix
@@ -782,7 +790,10 @@ for ship in game_stats.player_ships
 
 # Setup AI
 ai_prefixes = ( s.prefix for s in game_stats.ai_ships )
-ai.play game, ai_prefixes, [ new BattleState(), ]
+ai.play game, ai_prefixes, [ new BattleState(), new BattleState() ]
+console.log "AI Ships <<DEBUG>>"
+for s in game_stats.ai_ships
+    console.log "#{s.name} #{s.prefix}"
 
 PORT = 8080
 server.listen PORT, "0.0.0.0"

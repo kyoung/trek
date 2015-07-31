@@ -91,6 +91,8 @@ class BaseShip extends BaseObject
 
         @_scan_density[ SensorSystem.SCANS.HIGHRES ] = Math.random() * 4
         @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = Math.random() * 4
+        @_scan_density[ SensorSystem.SCANS.WIDE_EM ] = Math.random() * 10
+        @_scan_density[ SensorSystem.SCANS.POSITRON ] = Math.random() * 8
 
         # Socket messaging wonder
         @message = ( prefix, type, content ) ->
@@ -1285,7 +1287,29 @@ class BaseShip extends BaseObject
             time_estimate: lr_config.time_estimate
 
 
+    run_long_range_scan: ( world_scan, type, range_level, resolution ) ->
+
+        # Depreciated. Use configure scan instead
+        @configure_long_range_scan world_scan, type, range_level, resolution
+
+
+    configure_long_range_scan: ( world_scan, type, range_level, resolution ) ->
+
+        if not do @long_range_sensors.is_online
+            throw new Error "Long-Range Sensors are offline"
+
+        # NB scanners take absolute bearings as arguments
+        b = @bearing.bearing
+        @long_range_sensors.configure_scan type, b, range_level, resolution
+        @long_range_sensors.scan world_scan, @position, b, type
+
+
     run_scan: ( world_scan, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
+        # Depreciated. Use configure scan instead
+        @configure_scan world_scan, type, grid_start, grid_end, positive_sweep, range, resolution
+
+
+    configure_scan: ( world_scan, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
 
         if resolution < 4
             throw new Error "Short range sensors have a minimum resolution of 4."
@@ -1358,16 +1382,6 @@ class BaseShip extends BaseObject
             union.concat second_union
 
         return union
-
-
-    run_long_range_scan: ( world_scan, type, range_level, resolution ) ->
-
-        if not do @long_range_sensors.is_online
-            throw new Error "Long-Range Sensors are offline"
-
-        # NB scanners take absolute bearings as arguments
-        @long_range_sensors.configure_scan type, @bearing.bearing, range_level, resolution
-        @long_range_sensors.scan world_scan, @position, @bearing.bearing, type
 
 
     get_scan_results: ( type ) ->
@@ -1576,6 +1590,8 @@ class BaseShip extends BaseObject
 
     cloak: ->
 
+        console.log "Cloaking!"
+
         cloak = do @_get_cloak_system
         if not cloak?
             throw new Error "No cloaking system available"
@@ -1584,6 +1600,10 @@ class BaseShip extends BaseObject
         do p.deactivate for p in @phasers
         do t.deactivate for t in @torpedo_banks
         do s.deactivate for s in @shields
+        @set_online @transponder.name, false
+
+        if not cloak.active
+            do cloak.power_on
 
 
     decloak: ->
@@ -1592,7 +1612,8 @@ class BaseShip extends BaseObject
         if not cloak?
             throw new Error "No cloaking system available"
         # Deactivate cloak
-        # no actual steps required?
+        do cloak.power_down
+
         # maybe bring weapons systems back online?
 
 
@@ -1768,6 +1789,25 @@ class BaseShip extends BaseObject
 
         for reactor in @reactors
             do reactor.set_required_output_power
+
+
+    # called to determine what scans we show up on
+    scan_for: ( type ) ->
+
+        if do @is_cloaked
+            # the only way to find cloaked ships: STVI
+            if type == LongRangeSensorSystem.SCANS.NEUTRINO
+                return 3
+            return false
+
+        if @_scan_density[ type ]?
+            return @_scan_density[ type ]
+
+        warp_scans = [ LongRangeSensorSystem.SCANS.SUBSPACE, LongRangeSensorSystem.SCANS.EM_SCAN ]
+        if @warp_speed > 0 and type in warp_scans
+            return @warp_speed * 4
+
+        return false
 
 
     ### Time Progression

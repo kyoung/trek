@@ -183,9 +183,9 @@ class Game
         # Get charted objects,
         ## Don't pass gas clouds, as these get handled by the system scan
         ## TODO: Fix this^ gas clouds should be considered charted system objects
-        r = ( @get_public_space o, you for o in star_system.stars when o.charted )
-        p = ( @get_public_space o, you for o in star_system.planets when o.charted )
-        a = ( @get_public_space o, you for o in star_system.asteroids when o.charted )
+        r = ( @get_public_space o, you, "Star" for o in star_system.stars when o.charted )
+        p = ( @get_public_space o, you, "Planet" for o in star_system.planets when o.charted )
+        a = ( @get_public_space o, you, "Asteroids" for o in star_system.asteroids when o.charted )
 
         # Overlay any subspace becons
         s = ( @get_public o, you for o in @game_objects when @get_public o, you )
@@ -502,6 +502,11 @@ class Game
 
 
     run_scan: ( prefix, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
+        # depreciated... use configure instead
+        @configure_scan prefix, type, grid_start, grid_end, positive_sweep, range, resolution
+
+
+    configure_scan: ( prefix, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
 
         @ships[ prefix ].run_scan(
             @world_scan,
@@ -514,14 +519,18 @@ class Game
 
 
     run_long_range_scan: ( prefix, type, range_level, resolution ) ->
+        # depreciated... use configure instead
+        @configure_long_range_scan prefix, type, range_level, resolution
 
-        @ships[ prefix ].run_long_range_scan(
+
+    configure_long_range_scan: ( prefix, type, range_level, resolution ) ->
+
+        @ships[ prefix ].configure_long_range_scan(
             @world_scan,
             type,
             range_level,
             resolution
         )
-
 
     get_scan_results: ( prefix, type ) ->
 
@@ -642,7 +651,7 @@ class Game
         ###
 
         # Find all objects in range, that respond to type
-        game_hits = ( o for o in @game_objects when 0 < U.distance( position, o.position ) < range and !o.is_cloaked?() )
+        game_hits = ( o for o in @game_objects when 0 < U.distance( position, o.position ) < range )
         space_hits = ( o for o in @space_objects when 0 < U.distance( position, o.position ) < range or o.charted )
         hits = game_hits.concat space_hits
         hits = ( h for h in hits when h.scan_for type )
@@ -668,7 +677,7 @@ class Game
                     classification: h.classification,
                     coordinate: h.position,
                     tag: h.sensor_tag
-                } for h in final_hits )
+                } for h in final_hits when !( h.is_cloaked? and h.is_cloaked() ) )
         else
             classifications = []
 
@@ -678,7 +687,16 @@ class Game
             spectra: []
 
 
+    debug_neutrinos: ->
+
+        r =
+            neutrinos : [ ship.scan_for LongRangeSensorSystem.SCANS.NEUTRINO for prefix, ship of @ai_ships ]
+            is_cloaked : [ do ship.is_cloaked for prefix, ship of @ai_ships ]
+            cloaking_system : [ do ship._get_cloak_system for prefix, ship of @ai_ships ]
+
+
     set_main_view_target: ( prefix, target_name ) ->
+
         @ships[ prefix ].set_viewscreen_target target_name
 
 
@@ -767,6 +785,9 @@ class Game
         if object.transponder? and not object.transponder.is_online() and object isnt you
             return false
 
+        if do object.is_cloaked
+            return false
+
         if not object.alive
             return false
 
@@ -783,7 +804,7 @@ class Game
             position : object.position
 
 
-    get_public_space: ( object, you ) ->
+    get_public_space: ( object, you, descriptor ) ->
 
         # TODO: this obviously needs to be folded into the objects
         if not object.charted
@@ -796,6 +817,9 @@ class Game
         if not object?
             throw new Error "Undefined object; dark mater?"
 
+        if not descriptor?
+            descriptor = "unidentified"
+
         p =
             name : object.name
             bearing : U.bearing you, object
@@ -803,6 +827,7 @@ class Game
             position : object.position
             classification : object.classification
             radius : object.radius
+            descriptor : descriptor
 
 
     get_tracking_data: ( object, you ) ->

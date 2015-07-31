@@ -28,6 +28,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 
 # Current Sprint
+## AI
 - AI
   - [x] We need to be able to create hostile players to fight
   - We need to be able to create cooperative players to help, and to communicate with
@@ -35,6 +36,8 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   - [x] Create a new level where we have to fight a hostile
     - [x] Create the level such that there is a spy
     aboard the enemy ship, and we must beam them off
+    - [ ] Have the level require the use of sensors to solve
+        - [ ] Have things detected with passive hi-res scans show up for nav and tactical displays
   - [x] Write an AI client that can act and respond with the API
 - Sector maps and other systems
     - Setup LY-based coordinates for objects not in systems
@@ -43,15 +46,38 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - Enter and leave systems when your delta to a system closes within 80AU
 - Patch Long-Range Sensors and SR Sensors
     - Simplify the models
-    - Have LR sensors detect ships and allow configuration
+    - [x] Have LR sensors detect ships and allow configuration
 
+## Notes
+Proposed viewscreen JSON refactor:
+{
+    skyboxes : [
+        { url : "", alpha_url : "", rotation : 0 }, // allows for super imposed nebula, and the possibility of movement
+    ],
+    planets : [
+        {
+            size : [ radius],
+            distance : [distance],
+            surface_color : #3e8,
+            atmosphere_color : #3f9,
+            luminous : false,
+            rotation : r,
+            type : "gas|rock"  // can we make bands?
+        }
+    ],  // includes planets and moons
+    star : { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
+    target : { mesh_url: "" , rotation : r } | undefined,
+    direction : "forward|backward|left|right",
+    at_warp : true // gets over-ridden by socket calls
+}
 
 ## Hotfix
 - [ ] When transporting a target off of a ship onto yours, with your shields raised, the action
         of removing the crew seems to complete... meaning you're killing teams in the process
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
-- [ ] AI doesn't exit attack mode if it can't find it's target? (keeps warping away instead of halting)
+- [x] AI doesn't exit attack mode if it can't find it's target? (keeps warping away instead of halting)
 - [ ] Torpedoes don't seem to ever hit a target anymore
+    - If the target altered speed or course during the life of the torpedo, it would miss
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] Cutting warp power doesn't seem to affect the power output graph too much
 - [ ] No sound is played when hit with phasers / torpedoes

@@ -276,7 +276,7 @@ class BattleState extends AIState
 
         if not hostiles_in_area.length
             # nothing to target, exit battle state
-            do ai.state_stack.pop
+            # do ai.state_stack.pop
             return
 
         # find the closest target
@@ -299,6 +299,7 @@ class BattleState extends AIState
         targets = ( t for t in i when t.name is @target_name )
         if targets.length <= 0
             # identified target is not in area... retarget
+            game.set_impulse_speed ai.prefix, 0  # halt
             @substate = @substates.TARGETING
             return
         target = targets[ 0 ]

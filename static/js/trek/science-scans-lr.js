@@ -29,6 +29,8 @@ if ( type.indexOf( 'High-Resolution' ) > 0 ) {
 var maxRange = 17;
 var reading = [];
 
+var hasReadingChanged = true;
+
 var validResolutions = [ 4, 8, 16, 32, 64 ];
 
 var $resolutionSelectors = $( "#resolution_meter .scan-slider-selector-left" );
@@ -48,6 +50,27 @@ var bearing_end;
 
 $rangeSelector.click( selectRange );
 $resolutionSelectors.click( selectResolution );
+
+
+function setConfiguration () {
+
+    trek.api(
+        'science/LRScanConfiguration',
+        {
+            type: type,
+            resolution: resolution,
+            range: range,
+            grid_start: 0,
+            grid_end: 63
+        },
+        'PUT',
+        function ( c ) {
+
+            console.log( c );
+
+        } );
+
+}
 
 
 function loadConfiguration ( config_json ) {
@@ -83,8 +106,17 @@ function loadConfiguration ( config_json ) {
 
 function loadReading ( reading_json ) {
 
-    reading = reading_json.results;
-    drawReadings();
+    if ( reading_json.results == reading ) {
+
+        hasReadingChanged = false;
+
+    } else {
+
+        reading = reading_json.results;
+        drawReadings();
+
+    }
+
     var classifications = reading_json.classifications;
     $scanDetails.empty();
     var $ul = $( "<ul></ul>" );
@@ -111,6 +143,7 @@ function selectRange ( c ) {
     var height = $( this ).height();
     range = ( height - y ) / height;
     drawMeters();
+    setConfiguration();
 
 }
 
@@ -124,6 +157,7 @@ function selectResolution ( c ) {
     }
     resolution = parseInt( this.id );
     drawMeters();
+    setConfiguration();
 
 }
 
@@ -156,6 +190,7 @@ function drawMeters () {
 
 function drawReadings () {
 
+
     // Get the max value for normalization...
     var readingValues = _.map( reading, function ( r ) {
 
@@ -171,20 +206,25 @@ function drawReadings () {
 
     var maxValue = readingValues.pop();
 
-    // list of all the path strings we're about to build
     var pathText = "";
-    _.each( reading, function ( r ) {
 
-        var startCorner = mapArcPosition( r.start, r.reading / maxValue );
-        var endCorner = mapArcPosition( r.end, r.reading / maxValue );
-        var radius = resultsRadius * r.reading / maxValue;
-        var str = "<path d='M" + resultsCenterX + " " + resultsCenterY;
-        str += " L " + startCorner.x + " " + startCorner.y;
-        str += " A " + radius + " " + radius + " 0 0 0 " + endCorner.x + " " + endCorner.y;
-        str += " Z' class='scan-result-slice' />";
-        pathText += str;
+    if ( maxValue > 0 ) {
 
-        } );
+        // list of all the path strings we're about to build
+        _.each( reading, function ( r ) {
+
+            var startCorner = mapArcPosition( r.start, r.reading / maxValue );
+            var endCorner = mapArcPosition( r.end, r.reading / maxValue );
+            var radius = resultsRadius * r.reading / maxValue;
+            var str = "<path d='M" + resultsCenterX + " " + resultsCenterY;
+            str += " L " + startCorner.x + " " + startCorner.y;
+            str += " A " + radius + " " + radius + " 0 0 0 " + endCorner.x + " " + endCorner.y;
+            str += " Z' class='scan-result-slice' />";
+            pathText += str;
+
+            } );
+
+    }
 
     // Buckets portion
     // was a seperate function... for some reason, the path drawing stuff didn't like
@@ -272,14 +312,21 @@ trek.on_alert( function() {
 
     } );
 
-trek.api(
-    'science/LRScanConfiguration',
-    { type : type },
-    loadConfiguration );
+function scan () {
 
-trek.api(
-    'science/LRScanResults',
-    { type : type },
-    loadReading );
+    trek.api(
+        'science/LRScanConfiguration',
+        { type : type },
+        loadConfiguration );
+
+    trek.api(
+        'science/LRScanResults',
+        { type : type },
+        loadReading );
+
+}
 
 $scanResults.click( setBearing );
+
+scan();
+setInterval( scan, 1000 );

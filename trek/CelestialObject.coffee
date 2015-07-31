@@ -103,13 +103,21 @@ class Lagrange extends CelestialObject
 
 class Planet extends CelestialObject
 
+    # NB on names:
+    # Most planets in Star Trek get named in the convention system number,
+    # eg Ceti Alpha 6, so we pass in the system name here so that a complete
+    # name can be given, though the name argument only expects a number
+    #
+    # If a planet is named, for cultural or historical reasons, the name will
+    # be returned, rather than a system-number designation.
 
-    constructor: ( name, @classification, @orbit ) ->
+    constructor: ( name, @system_name, classification, @orbit ) ->
 
         super()
         @charted = true
         # Set name this way because super overrides it
         @name = name
+        @classification = classification
         @_scan_density = {}
         @_scan_density[ LongRangeSensorSystem.SCANS.GRAVIMETRIC ] = switch classification
             when 'D' then between 0.1, 1
@@ -148,9 +156,13 @@ class Planet extends CelestialObject
 
         misc = if @misc? then @misc else []
 
+        nomen = @name
+        if /^[1-9]\d*$/.test @name
+            nomen = "#{ @system_name } #{ @name }"
+
         r =
             classification : @classification
-            name : @name
+            name : nomen
             mesh : @model_url
             mesh_scale : @model_display_scale
             misc : misc

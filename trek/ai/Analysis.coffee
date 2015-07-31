@@ -8,6 +8,7 @@ identify_unexpected_readings = ( readings, charted_objects, reference_bearing ) 
 select_appropriate_speed = ( distance ) ->
     # Returns a recommended speed to close a distance
     # { scale : ['warp', 'impulse'], value : [0.2, 6 etc] }
+    # TODO: Abstract this into a formula
     AUs = distance / C.AU
 
     switch

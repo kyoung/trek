@@ -71,8 +71,11 @@ function paintScan ( data ) {
             e.position.y,
             e.position.z );
 
+
+
         var reading = {
             name : e.name,
+            dist_and_bearing : trek.prettyDistanceKM( e.distance ) + ", " + trek.prettyBearing( e.bearing.bearing ),
             dist : trek.prettyDistanceKM( e.distance ),
             bearing : trek.prettyBearing( e.bearing.bearing ),
             speed : e.impulse
@@ -82,6 +85,7 @@ function paintScan ( data ) {
 
             reading.bearing = "";
             reading.dist = "";
+            reading.dist_and_bearing = "";
 
         }
 

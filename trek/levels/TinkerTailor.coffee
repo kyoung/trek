@@ -44,9 +44,9 @@ class TinkerTaylor extends Level
         @stardate = do U.stardate
         do @_init_map
         do @_init_logs
+        do @_init_space_objects
         do @_init_ships
         do @_init_game_objects
-        do @_init_space_objects
         do @_init_environment
 
         @_initial_lives = do @_get_crew_count
@@ -73,11 +73,31 @@ class TinkerTaylor extends Level
         return false
 
 
+    _is_marco_said: =>
+
+        # debugging function to save some time in testing
+        message_sent = do @enterprise.get_comms
+        for m in message_sent
+            if m.type is 'sent'
+                if /marco/.test m.message
+                    console.log "[[LVL]] playing marco polo"
+                    return true
+        return false
+
+
     get_events: =>
 
         end_game = ( game ) ->
+
             console.log ">>> Game Over <<<"
             game.is_over = true
+
+
+        say_polo = ( game ) =>
+
+            game.hail @klingon.prefix_code, "#{ @klingon.name }: #{ @klingon.polo }"
+            game.hail @klingon2.prefix_code, "#{ @klingon2.name }: #{ @klingon2.polo }"
+
 
         commit_sabotage = ( game ) =>
             console.log ">>> Sabott <<<"
@@ -105,6 +125,7 @@ class TinkerTaylor extends Level
                 k.set_power_to_system k.communication_array.name, 1
 
                 # TODO activate the transponder
+                k.set_online k.transponder.name, true
 
                 # have the klingon ship send out a distress call
                 game.hail k.prefix_code, "[Translated from Klingon] This is the
@@ -121,6 +142,12 @@ class TinkerTaylor extends Level
             do : commit_sabotage
         }
 
+        marco_polo = new LevelEvent {
+            name : 'Marco Polo',
+            condition : @_is_marco_said,
+            do : say_polo
+        }
+
         loose = new LevelEvent {
             name : 'Defeat',
             condition : @_is_ship_destroyed,
@@ -135,7 +162,8 @@ class TinkerTaylor extends Level
         events = [
             loose,
             win,
-            sabotage
+            sabotage,
+            marco_polo
         ]
 
 
@@ -206,27 +234,44 @@ class TinkerTaylor extends Level
         e.set_alert 'red'
         e.enter_captains_log @enterprise_logs[ 0 ]
         @ships[ e.prefix_code ] = e
+        e.set_online e.transponder.name, false  # let's be sneaky
         @enterprise = e
 
-        kling_position = do @_random_start_position
+        if !(@space_objects.length > 0)
+            throw new Error "WTF space objects"
+
+        start_point = @space_objects[ Math.floor( Math.random() * @space_objects.length ) ]
+        kling_position = start_point.position
+        # let's call that and "orbit"
+        kling_position.x += 1e6
+        kling_position.y += 1e6
+        console.log "k1 start position: #{ kling_position.x } #{ kling_position.y } #{ kling_position.z }"
         k = new D7 'ChinTok'
         k.star_system = system
         k.set_coordinate kling_position
         k.set_alignment C.ALIGNMENT.KLINGON
+        k.polo = start_point.name  # for debugging
         @ai_ships[ k.prefix_code ] = k
+        do k.cloak
         @klingon = k
 
         @spy = new Spy k.DECKS['15'], k.SECTIONS.PORT, EngineeringTeam
         @spy.set_true_alignment C.ALIGNMENT.FEDERATION
         @klingon.internal_personnel.push @spy
 
-        # kling2_position = do @_random_start_position
-        # k2 = new D7 'ChoRe'
-        # k2.star_system = system
-        # k2.set_coordinate kling2_position
-        # k2.set_alignment C.ALIGNMENT.KLINGON
-        # @ai_ships[ k2.prefix_code ] = k2
-        # @klingon2 = k2
+        start_point = @space_objects[ Math.floor( Math.random() * @space_objects.length ) ]
+        kling2_position = start_point.position
+        kling2_position.x += 1e6
+        kling2_position.y += 1e6
+        console.log "k2 start position: #{ kling2_position.x } #{ kling2_position.y } #{ kling2_position.z }"
+        k2 = new D7 'ChoRe'
+        k2.star_system = system
+        k2.set_coordinate kling2_position
+        k2.set_alignment C.ALIGNMENT.KLINGON
+        k2.polo = start_point.name  # for debuggin
+        @ai_ships[ k2.prefix_code ] = k2
+        do k2.cloak
+        @klingon2 = k2
 
 
     _init_game_objects: () ->
@@ -247,9 +292,18 @@ class TinkerTaylor extends Level
         @klthos = s
         @space_objects.push s
 
+        # Add up to 5 smaller planets
+        init_orbit = 0.3 * C.AU
+        inner_orbit_count = 1 + Math.floor( Math.random() * 6 )
+        for i in [ 1..inner_orbit_count ]
+            p = new Planet "#{ i }", system.name, 'D', init_orbit
+            @space_objects.push p
+            system.add_planet p
+            init_orbit *= 2
+
         # Add 2 gas giants w/ moons and lagrange points
-        @gas_planet_1 = new Planet 'alpha', 'T', 10 * C.AU
-        @gas_planet_2 = new Planet 'beta', 'J', 22 * C.AU
+        @gas_planet_1 = new Planet "#{ inner_orbit_count + 1 }", system.name, 'T', 10 * C.AU
+        @gas_planet_2 = new Planet "#{ inner_orbit_count + 2 }", system.name, 'J', 22 * C.AU
 
         # lagrange: +/- pi/3 radians of orbit
         alpha_lagrange_3 = new Lagrange @gas_planet_1, 3
@@ -265,14 +319,6 @@ class TinkerTaylor extends Level
             beta_lagrange_4 ]
             system.add_asteroids o
             @space_objects.push o
-
-        # Add up to 5 smaller planets
-        init_orbit = 0.3 * C.AU
-        for i in [ 0..Math.floor( Math.random() * 6 ) ]
-            p = new Planet "k#{ i }", 'D', init_orbit
-            @space_objects.push p
-            system.add_planet p
-            init_orbit *= 2
 
 
     _init_environment: () ->

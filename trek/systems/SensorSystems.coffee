@@ -161,7 +161,8 @@ class SensorSystem extends System
 
         for key, type of SensorSystem.SCANS
             if not @_expected_result_sets[ type ]? or @_expected_result_sets[ type ]?.length == 0
-                @scan world_scan, position, bearing, type
+                range = @range_levels[ type ] * @max_range * do @performance
+                @scan world_scan, position, bearing, type, range
 
 
     scan: ( world_scan, position, bearing, type ) ->
@@ -420,7 +421,8 @@ class LongRangeSensorSystem extends SensorSystem
 
         for key, type of LongRangeSensorSystem.SCANS
             if not @_expected_result_sets[type]? or @_expected_result_sets[type]?.length == 0
-                @scan world_scan, position, bearing, type
+                range = @range_levels[ type ] * @max_range * do @performance
+                @scan world_scan, position, bearing, type, range
 
 
     configure_scan: ( type, bearing, range_level, resolution ) ->
@@ -438,6 +440,7 @@ class LongRangeSensorSystem extends SensorSystem
         @reference_bearing[ type ] = bearing
         @etc_for_scans[ type ] = 0
         @_check_buckets type
+        "#{ type } updated"
 
 
 exports.SensorSystem = SensorSystem

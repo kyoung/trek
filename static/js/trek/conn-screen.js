@@ -154,11 +154,15 @@ function paintScan ( data ) {
 
         };
 
+        if ( e.descriptor == "Planet" ) {
+            console.log( e.classification );
+        }
+
         var t = tmpl;
-        if ( /(alpha|beta|gamma|delta|epsilon)/i.test( name ) || /[a-z][0-9]/i.test( name ) ) {
+        if ( e.descriptor == "Planet" && /[MLKND]/.test( e.classification ) ) {
             t = tmplHollow;
         }
-        if ( /lagrange/i.test( name ) ) {
+        if ( e.descriptor == "Asteroids" ) {
             t = tmplPoint;
         }
 
