@@ -47,7 +47,7 @@ class Torpedo extends BaseObject
         console.log "[TORPEDO] Detonation!"
         clearInterval @fire_interval
         if not @armed
-            console.log "[TORPEDO] Not armed :-("
+            console.log "[TORPEDO] Not armed"
             return
         @alive = false
 

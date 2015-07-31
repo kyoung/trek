@@ -74,12 +74,12 @@ function parseObjectInTransportRange( data ) {
     var $originMenu = $( '<ul class="menu x1"></ul>' );
     var $destMenu = $( '<ul class="menu x1"></ul>' );
 
-    var originTemplate = "<li class='green trans_target' id='{{ name }}'>{{ cleanName }}</li>";
-    var destTemplate = "<li class='green trans_dest' id='{{ name }}'>{{ cleanName }}</li>";
+    var originTemplate = "<li class='green trans_target' id='{{ name }}'>{{ humanName }}</li>";
+    var destTemplate = "<li class='green trans_dest' id='{{ name }}'>{{ humanName }}</li>";
 
     _.each( data, function( e ) {
 
-        e.cleanName = e.name.replace( /_/g, " " );
+        e.humanName = e.name.replace( /_/g, " " );
 
         var $originTarget = $( Mustache.render( originTemplate, e ) );
 

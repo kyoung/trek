@@ -282,6 +282,12 @@ class ChargedSystem extends System
         do @power_on
 
 
+    deactivate: ->
+
+        do @power_down
+        @online = false
+
+
     power_down: ->
 
         @active = false
@@ -338,6 +344,10 @@ class ChargedSystem extends System
         charge_accumulated = charge_pct_per_ms * delta_t_ms
 
         @charge = Math.min @charge + charge_accumulated, 1
+
+        # DEBUG
+        if (@name is 'Port Phaser Cannon' or @name is 'Starboard Phaser Cannon') and @change < 1
+            console.log "    >>> DEBUG charging #{ @name } : #{ @charge }"
 
         # bah
         if 0.99 < @charge < 1

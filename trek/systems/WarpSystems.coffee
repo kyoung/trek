@@ -28,8 +28,9 @@ class WarpSystem extends ChargedSystem
     ]
 
     # If the nacels are completely charged down, it should take a while
-    # to recharge them. Charge isn't actively consumed in use, however
+    # to recharge them. Charge is actively consumed in use
     @CHARGE_TIME = 2 * 60 * 1000
+
     # Warp speed at which coils can be rechared at their Dyn rate
     @STABLE_WARP = 6
     @MAX_WARP = 8

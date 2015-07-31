@@ -23,7 +23,7 @@ class WeaponsTargetingSystem extends System
         super @name, @deck, @section, WeaponsTargetingSystem.POWER
 
 
-    set_target: ( @target, @target_deck, @target_section ) -> @target
+    set_target: ( @target, @target_deck, @target_section ) -> @target.name
 
 
     clear: ->
@@ -52,6 +52,35 @@ class PhaserSystem extends ChargedSystem
         @_repair_reqs[Cargo.EPS_CONDUIT] = up_to 15
         @_repair_reqs[Cargo.WEAPONS_SYSTEMS] = 5
         @charge_time = PhaserSystem.CHARGE_TIME
+
+
+    power_report: ->
+
+        r = super()
+        r.targetting = @section
+        return r
+
+
+    intensity: ->
+
+        PhaserSystem.DAMAGE * do @energy_level
+
+
+class DisruptorSystem extends PhaserSystem
+
+    @POWER = { min : 0.9, max : 1.2, dyn : 2e4 }
+    @DAMAGE = 2e4
+    @CHARGE_TIME = 8e3
+
+    constructor: ( @name, @deck, @section ) ->
+
+        super @name, @deck, @section, DisruptorSystem.POWER
+        @charge_time = DisruptorSystem.CHARGE_TIME
+
+
+    intensity: ->
+
+        DisruptorSystem.DAMAGE * do @energy_level
 
 
 class TorpedoSystem extends System
@@ -219,6 +248,7 @@ class ShieldSystem extends ChargedSystem
 
 
 exports.PhaserSystem = PhaserSystem
+exports.DisruptorSystem = DisruptorSystem
 exports.TorpedoSystem = TorpedoSystem
 exports.ShieldSystem = ShieldSystem
 exports.WeaponsTargetingSystem = WeaponsTargetingSystem

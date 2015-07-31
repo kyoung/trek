@@ -148,8 +148,8 @@ exports.GameTest =
         SensorSystem.DURATION /= 100
         g = new Game 'DGTauIncident', 2
         ships = do g.get_startup_stats
-        e = ( s for s in ships when s.name == "Enterprise" )[ 0 ]
-        d = ( s for s in ships when s.name != "Enterprise" )[ 0 ]
+        e = ( s for s in ships.player_ships when s.name == "Enterprise" )[ 0 ]
+        d = ( s for s in ships.player_ships when s.name != "Enterprise" )[ 0 ]
 
         e_pre = e.prefix
         d_pre = d.prefix

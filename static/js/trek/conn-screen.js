@@ -1,5 +1,7 @@
 
 var tmpl = $( "#scannerObjectTmpl" ).html();
+var tmplPoint = $( "#scannerObjectTmplPoint" ).html();
+var tmplHollow = $( "#scannerObjectTmplHollow" ).html();
 var sensorObjects = {};
 var map;
 var scanInterval;
@@ -152,14 +154,27 @@ function paintScan ( data ) {
 
         };
 
+        if ( e.descriptor == "Planet" ) {
+            console.log( e.classification );
+        }
+
+        var t = tmpl;
+        if ( e.descriptor == "Planet" && /[MLKND]/.test( e.classification ) ) {
+            t = tmplHollow;
+        }
+        if ( e.descriptor == "Asteroids" ) {
+            t = tmplPoint;
+        }
+
+
         if ( _.has( sensorObjects, e.name ) ) {
 
             sensorObjects[ name ].css( "top", y ).css( "left", x );
-            sensorObjects[ name ].html( Mustache.render( tmpl, reading ) );
+            sensorObjects[ name ].html( Mustache.render( t, reading ) );
 
         } else {
 
-            var obj = $( Mustache.render( tmpl, reading ) );
+            var obj = $( Mustache.render( t, reading ) );
             obj.css( "top", y ).css( "left", x );
             sensorObjects[ e.name ] = obj;
             $displayGrid.append( obj );
@@ -238,7 +253,7 @@ trek.onAlert( function( data ) {
 
 trek.api(
     'navigation/system',
-    { system: systemName },
+    { system : systemName },
     function( data ) {
 
         system = data;

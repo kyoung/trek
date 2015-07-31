@@ -37,15 +37,20 @@ function dummyLog ( data ) {
 
 }
 
+function setupSystemSelections () {
 
-$systemSelections.click( function ( e ) {
+    $systemSelections = $( ".system-select" );
 
-    $systemSelections.removeClass( "lightgreen" );
-    $(this).addClass( "lightgreen" );
+    $systemSelections.click( function ( e ) {
 
-    $viewScreen.attr( "src", "conn_screen?system=" + this.id );
+        $systemSelections.removeClass( "lightgreen" );
+        $(this).addClass( "lightgreen" );
 
-} );
+        $viewScreen.attr( "src", "conn_screen?system=" + this.id );
+
+    } );
+
+}
 
 
 $pickNav.click( function ( e ) {
@@ -536,11 +541,37 @@ function updateNavigationData() {
 
 }
 
+function buildSectorList () {
+
+    trek.api( 'navigation/sector-telemetry', function ( data ) {
+
+        var $sectorMenu = $( '#sectorMenu' );
+
+        // Add the sector
+        var $sectorli = $( '<li class="green sector-select" id="' + data.name + '">' + data.name + '</li>' );
+        $sectorMenu.append( $sectorli );
+
+        // Add the systems
+        for ( var i=0; i < data.systems.length; i++ ) {
+
+            var $sysli = $( '<li class="green system-select" id="' + data.systems[ i ] + '">' + data.systems[ i ] + '</li>' );
+            $sectorMenu.append( $sysli );
+
+        }
+
+        setupSystemSelections();
+
+        // Always select the local system by default
+        $systemSelections[ 0 ].click();
+
+    } );
+
+}
+
 // Setup animation to show orientation movement
 requestAnimationFrame( updateOrientation );
 
-// Always select the local system by default
-$systemSelections[ 1 ].click();
+buildSectorList();
 updateNavigationData();
 
 trek.registerDisplay( "Conn" );

@@ -14,12 +14,14 @@ program = require "commander"
 fs = require "fs"
 
 program
-    .version( "0.1" )
+    .version( "0.21" )
     .option( "-l, --level [level]", "Select a level.", "DGTauIncident" )
     .option( "-t, --teams [count]", "Enter the number of teams.", parseInt, 1 )
     .parse( process.argv )
 
 {Game} = require "./Game"
+{BattleState} = require './ai/State'
+ai = require "./AI"
 
 game = new Game program.level, program.teams
 
@@ -65,7 +67,7 @@ save_state = () ->
 ### Debug
 ___________________________________________________###
 
-debug = ( req, res ) -> res.json { state : do game.state }
+debug = ( req, res ) -> res.json { debug : do game.debug_neutrinos }
 
 
 debugMap = ( req, res ) ->
@@ -169,6 +171,7 @@ handle_API = ( req, res ) ->
         when "academy" then academy_api prefix, method, command, params
 
     if resp is undefined
+        console.log params
         throw new Error "Undefined response object for #{ category }/#{ command }"
 
     res.json resp
@@ -236,6 +239,8 @@ navigation_api = ( prefix, method, command, params ) ->
         when "stelar-telemetry"
             game.get_stelar_telemetry prefix, q.target
 
+        when "sector-telemetry"
+            game.get_sector_telemetry prefix
 
 tactical_api = ( prefix, method, command, params ) ->
 
@@ -392,7 +397,15 @@ science_api = ( prefix, method, command, params ) ->
             game.get_lr_scan_results prefix, q.type
 
         when "LRScanConfiguration"
-            game.get_lr_scan_configuration prefix, q.type
+            switch method
+                when "get"
+                    game.get_lr_scan_configuration prefix, q.type
+                when "put"
+                    game.configure_long_range_scan(
+                        prefix,
+                        q.type,
+                        q.range,
+                        q.resolution )
 
         when "internal-scan"
             game.get_internal_scan prefix
@@ -529,7 +542,7 @@ handle_view = ( req, res ) ->
         console.log "Ships: ", ships
         return
 
-    ship_name = req.query.ship
+    ship_name = req.cookies.ship
 
     view = req.params.view
 
@@ -572,7 +585,7 @@ get_postfix_code = ( req, res ) ->
     ship_name = req.query.ship
     console.log "Getting postfix code"
 
-    for ship in game.get_startup_stats()
+    for ship in game.get_startup_stats().player_ships
         if ship.name == ship_name and ship.prefix.toString() == prefix
             res.cookie "postfix", ship.postfix
             res.cookie "ship", ship.name
@@ -611,7 +624,7 @@ viewscreen = ( req, res, prefix, r ) ->
 
 viewscreen_screen = ( req, res, prefix, r ) ->
 
-    r.target = req.query.target
+    r.target = req.query.target or req.query.direction
     res.render "viewscreen_screen.html", r
 
 
@@ -629,9 +642,9 @@ ops_cargo_screen = ( req, res, prefix, r ) -> res.render "ops_cargo_screen.html"
 
 ops_trans_screen = ( req, res, prefix, r ) ->
 
-    r.origin = origin
-    r.destination = destination
-    r.trans_type = trans_type
+    r.origin = req.query.origin
+    r.destination = req.query.destination
+    r.trans_type = req.query.trans_type
     res.render "ops_trans_screen.html", r
 
 
@@ -769,10 +782,18 @@ console.log "Ships in game..."
 ships = {}
 ship_postfixes = []
 
-for ship in game.get_startup_stats()
+game_stats = do game.get_startup_stats
+for ship in game_stats.player_ships
     console.log "#{ship.name} #{ship.prefix}"
     ships[ship.postfix] = ship.prefix
     ship_postfixes.push ship.postfix
+
+# Setup AI
+ai_prefixes = ( s.prefix for s in game_stats.ai_ships )
+ai.play game, ai_prefixes, [ new BattleState(), new BattleState() ]
+console.log "AI Ships <<DEBUG>>"
+for s in game_stats.ai_ships
+    console.log "#{s.name} #{s.prefix}"
 
 PORT = 8080
 server.listen PORT, "0.0.0.0"

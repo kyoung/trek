@@ -2,7 +2,7 @@ U = require './Utility'
 
 class LogEntry
 
-    constructor: ( @entry ) ->
+    constructor: ( @entry, @data ) ->
 
         @stardate = do U.stardate
 
@@ -14,7 +14,8 @@ class LogEntry
 
     flat: ->
 
-        s = "#{ @stardate } - #{ @hour }:#{ @minute }:#{ @second }: #{ @entry }"
+        data_block = if @data? then " [[DATA]]" else ""
+        s = "#{ @stardate } - #{ @hour }:#{ @minute }:#{ @second }: #{ @entry }" + data_block
 
 
 class Log
@@ -25,9 +26,18 @@ class Log
         @_read_index = 0
 
 
-    log: ( text ) ->
+    log: ( text, data ) ->
 
-        @entries.push new LogEntry text
+        @entries.push new LogEntry text, data
+
+
+    retrieve: ( i ) ->
+
+        # Allow for negative indexing, as Guido intended
+        if i < 0
+            i = @entries.length + i
+            
+        @entries[ i ]
 
 
     pending_logs: ->

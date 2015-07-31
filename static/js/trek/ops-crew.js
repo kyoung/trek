@@ -226,6 +226,13 @@ function displayInternals ( scanData ) {
 
 }
 
+// Disable alert screen
+trek.onAlert( function() {
+
+    return;
+
+    } );
+
 // Load the ship's systems map
 trek.api( "operations/systems-layout", function ( d ) {
 

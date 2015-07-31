@@ -1,9 +1,10 @@
 {System, ChargedSystem} = require '../BaseSystem'
 {Transporters} = require '../systems/TransporterSystems'
-{ShieldSystem, PhaserSystem, TorpedoSystem} = require '../systems/WeaponSystems'
+{ShieldSystem, PhaserSystem, TorpedoSystem, DisruptorSystem} = require '../systems/WeaponSystems'
 {WarpSystem} = require '../systems/WarpSystems'
 {ReactorSystem, PowerSystem} = require '../systems/PowerSystems'
 {SensorSystem, LongRangeSensorSystem} = require '../systems/SensorSystems'
+{CloakingSystem} = require '../systems/CloakingSystem'
 {SIFSystem} = require '../systems/SIFSystems'
 {BridgeSystem} = require '../systems/BridgeSystems'
 {Torpedo} = require '../Torpedo'
@@ -40,7 +41,7 @@ class BaseShip extends BaseObject
         @state_stamp = do Date.now
         @alert = 'clear'
         @repairing = false
-        @prefix_code = 1e4 + Math.round( Math.random() * 9e4 )
+        @prefix_code = ( 1e4 + Math.round( Math.random() * 9e4 ) ).toString()
         @postfix_code =  do U.UID
         @bearing =
             bearing: 0
@@ -51,6 +52,7 @@ class BaseShip extends BaseObject
         @_navigation_lock = false
 
         @star_system = undefined
+        @enroute_to_system = undefined
 
         do @initialize_systems
         do @initialize_hull
@@ -72,7 +74,7 @@ class BaseShip extends BaseObject
         @_viewscreen_target = ""
 
         # Assume navigation is working
-        if @port_warp_coil? and @starboard_warp_coil
+        if @port_warp_coil? and @starboard_warp_coil?
             do @port_warp_coil.bring_online
             @port_warp_coil.charge = 1
             do @starboard_warp_coil.bring_online
@@ -89,6 +91,8 @@ class BaseShip extends BaseObject
 
         @_scan_density[ SensorSystem.SCANS.HIGHRES ] = Math.random() * 4
         @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = Math.random() * 4
+        @_scan_density[ SensorSystem.SCANS.WIDE_EM ] = Math.random() * 10
+        @_scan_density[ SensorSystem.SCANS.POSITRON ] = Math.random() * 8
 
         # Socket messaging wonder
         @message = ( prefix, type, content ) ->
@@ -104,6 +108,7 @@ class BaseShip extends BaseObject
         @navigation_log = new Log "Navigation"
         @weapons_log = new Log "Tactical"
         @captains_log = new Log "Captain's"
+        @sensor_log = new Log "Sensors"
 
 
     initialize_systems: ->
@@ -270,8 +275,9 @@ class BaseShip extends BaseObject
         ( { name : s.name, deck : s.deck, section: s.section } for s in @weapons_targeting.target.systems )
 
 
-    fire_phasers: ( target=@weapons_targeting.target ) ->
+    fire_phasers: ( threshold=0 ) ->
 
+        target = @weapons_targeting.target
         if target is null
             throw new Error 'No target selected'
 
@@ -285,20 +291,21 @@ class BaseShip extends BaseObject
 
         quad = @calculate_quadrant target.position
 
-        if quad == @SECTIONS.FORWARD
-            phaser = if @forward_phaser_bank_a.charge > @forward_phaser_bank_b.charge then @forward_phaser_bank_a else @forward_phaser_bank_b
-        else if quad == @SECTIONS.PORT
-            phaser = @port_phaser_bank
-        else if quad == @SECTIONS.STARBOARD
-            phaser = @starboard_phaser_bank
-        else if quad == @SECTIONS.AFT
-            phaser = @aft_phaser_bank
+        banks = ( p for p in @phasers when p.section is quad and p.charge > threshold and do p.is_online )
+        phaser = banks[ 0 ]
+        for b in banks
+            if b.charge > phaser.charge
+                phaser = b
+
+        if not phaser?
+            throw new Error "No phaser system covering that quadrent"
 
         if not do phaser.is_online
             throw new Error "Phaser system offline"
 
         #console.log "Firing #{ phaser.name } with #{ do phaser.energy_level } power"
         intensity = PhaserSystem.DAMAGE * do phaser.energy_level
+        intensity = do phaser.intensity
         phaser.charge_down phaser.energy_level(), true
 
         target.process_phaser_damage @position, intensity, @weapons_targeting.target_deck, @weapons_targeting.target_section
@@ -403,7 +410,7 @@ class BaseShip extends BaseObject
         if target_section? and target_section in quads
             quad = target_section
         else
-            quad = quads[ Math.floor( Math.random() * 2 ) ]
+            quad = quads[ Math.floor( Math.random() * quads.length ) ]
 
         if not target_deck?
             deck_list = ( k for k, v of @DECKS )
@@ -612,6 +619,7 @@ class BaseShip extends BaseObject
         @_rebuild_crew_checks()
 
 
+
     ### Navigation
     _________________________________________________###
 
@@ -632,6 +640,9 @@ class BaseShip extends BaseObject
         if @_navigation_lock
             throw new Error "Cannot engage thruster control while Navigational Computers are piloting."
 
+        if @warp_speed > 0
+            throw new Error "Cannot turn while at warp."
+
         @bearing_v.bearing = 1 / C.TIME_FOR_FULL_ROTATION
         @message @prefix_code, "Turning", do @navigation_report
         do @navigation_report
@@ -641,6 +652,9 @@ class BaseShip extends BaseObject
 
         if @_navigation_lock
             throw new Error "Cannot engage thruster control while Navigational Computers are piloting."
+
+        if @warp_speed > 0
+            throw new Error "Cannot turn while at warp."
 
         @bearing_v.bearing = -1 / C.TIME_FOR_FULL_ROTATION
         @message @prefix_code, "Turning", do @navigation_report
@@ -716,7 +730,7 @@ class BaseShip extends BaseObject
             throw new Error "Structural Integrity Fields are offlne.
                 Safety protocols prevent acceleration."
 
-        if not 0 <= bearing <= 1
+        if not ( 0 <= bearing <= 1 )
             throw new Error "Illegal bearing #{ bearing }"
 
         if not ( mark < 0.25 or mark > 0.75 )
@@ -960,7 +974,8 @@ class BaseShip extends BaseObject
         if not system
             throw new Error "Invalid system name #{system_name}"
 
-        teams = ( c for c in @repair_teams when not c.currently_repairing )
+        # teams = ( c for c in @repair_teams when not c.currently_repairing )
+        teams = ( c for c in @internal_personnel when c instanceof RepairTeam and not c.currently_repairing )
         if teams.length < team_count
             throw new Error "Insufficient free teams: asked for #{team_count}, only #{teams.length} available"
 
@@ -1000,7 +1015,7 @@ class BaseShip extends BaseObject
         bay = ( c for c in @cargobays when c.number is number )[0]
 
 
-    get_internal_lifesigns_scan: -> ( team for team in @internal_personnel )
+    get_internal_lifesigns_scan: -> ( team.internal_scan @alignment for team in @internal_personnel )
 
 
     get_systems_layout: -> ( s.layout() for s in @systems )
@@ -1050,7 +1065,7 @@ class BaseShip extends BaseObject
     beam_away_crew: ( crew_id, deck, section ) ->
 
         # Called when personnel are being beamed away.
-        if @_are_all_shields_up()
+        if do @_are_all_shields_up
             throw new Error 'Shields are up. No transport possible'
 
         teams = ( t for t in @internal_personnel when t.id is crew_id )
@@ -1108,13 +1123,23 @@ class BaseShip extends BaseObject
 
     _remove_crew: ( id ) ->
 
-        @repair_teams = ( t for t in @repair_teams when t.id isnt id )
-        @science_teams = ( t for t in @science_teams when t.id isnt id )
-        @engineering_teams = ( t for t in @engineering_teams when t.id isnt id )
-        @security_teams = ( t for t in @security_teams when t.id isnt id )
-        @prisoners = ( t for t in @prisoners when t.id isnt id )
-        @boarding_parties = ( b for b in @boarding_parties when b.id isnt id )
-        @guests = ( t for t in @guests when t.id isnt id )
+        #TODO: get rid of these specialized subteams
+        if @repair_teams?
+            @repair_teams = ( t for t in @repair_teams when t.id isnt id )
+        if @science_teams?
+            @science_teams = ( t for t in @science_teams when t.id isnt id )
+        if @engineering_teams?
+            @engineering_teams = ( t for t in @engineering_teams when t.id isnt id )
+        if @security_teams?
+            @security_teams = ( t for t in @security_teams when t.id isnt id )
+        if @prisoners?
+            @prisoners = ( t for t in @prisoners when t.id isnt id )
+        if @boarding_parties?
+            @boarding_parties = ( b for b in @boarding_parties when b.id isnt id )
+        if @guests?
+            @guests = ( t for t in @guests when t.id isnt id )
+
+        @internal_personnel = ( c for c in @internal_personnel when c.id isnt id )
 
         do @_rebuild_crew_checks
 
@@ -1132,7 +1157,7 @@ class BaseShip extends BaseObject
     _rebuild_crew_checks: ->
 
         # Override to rebuild the internal personnel
-        @internal_personnel = []
+        @internal_personnel = ( c for c in @internal_personnel when do c.is_alive )
 
 
     _consume_cargo_inventory: ( materials ) ->
@@ -1262,7 +1287,29 @@ class BaseShip extends BaseObject
             time_estimate: lr_config.time_estimate
 
 
+    run_long_range_scan: ( world_scan, type, range_level, resolution ) ->
+
+        # Depreciated. Use configure scan instead
+        @configure_long_range_scan world_scan, type, range_level, resolution
+
+
+    configure_long_range_scan: ( world_scan, type, range_level, resolution ) ->
+
+        if not do @long_range_sensors.is_online
+            throw new Error "Long-Range Sensors are offline"
+
+        # NB scanners take absolute bearings as arguments
+        b = @bearing.bearing
+        @long_range_sensors.configure_scan type, b, range_level, resolution
+        @long_range_sensors.scan world_scan, @position, b, type
+
+
     run_scan: ( world_scan, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
+        # Depreciated. Use configure scan instead
+        @configure_scan world_scan, type, grid_start, grid_end, positive_sweep, range, resolution
+
+
+    configure_scan: ( world_scan, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
 
         if resolution < 4
             throw new Error "Short range sensors have a minimum resolution of 4."
@@ -1337,18 +1384,6 @@ class BaseShip extends BaseObject
         return union
 
 
-    run_long_range_scan: ( world_scan, type, bearing_from, bearing_to, positive_sweep, range_level, resolution ) ->
-
-        if not do @long_range_sensors.is_online
-            throw new Error "Long-Range Sensors are offline"
-
-        # NB scanners take absolute bearings as arguments
-        abs_bearing_from = ( bearing_from + @bearing.bearing ) % 1
-        abs_bearing_to = ( bearing_to + @bearing.bearing ) % 1
-        @long_range_sensors.scan( world_scan, type, abs_bearing_from,
-            abs_bearing_to, positive_sweep, range_level, resolution )
-
-
     get_scan_results: ( type ) ->
 
         # recombine the readings from all sensor grids
@@ -1394,7 +1429,6 @@ class BaseShip extends BaseObject
                 atmosphere: []
             mesh: @model_url
             meshScale: @model_display_scale
-
 
 
     ### Engineering
@@ -1512,6 +1546,7 @@ class BaseShip extends BaseObject
 
 
     set_online: ( system_name, is_online ) ->
+        # bring a system online... this is turning on base systems
 
         system = ( s for s in @systems when s.name == system_name )[ 0]
         if not system?
@@ -1524,15 +1559,77 @@ class BaseShip extends BaseObject
 
 
     set_active: ( system_name, is_active ) ->
+        # begin charging an ChargedSystem
 
         system = ( s for s in @systems when s.name == system_name )[ 0 ]
         if not system?
             throw new Error "Invalid system name #{ system_name }"
 
+        # special case of the
+        if system instanceof CloakingSystem
+            if is_active
+                console.log "#{ @name } cloak engaged"
+                do @cloak
+            else
+                console.log "#{ @name } cloak disengaged"
+                do @decloak
+
+        # do not allow the activation of certain systems while cloak
+        # is engaged
+        cloak = do @_get_cloak_system
+        if cloak? and cloak.active
+            if system instanceof PhaserSystem or system instanceof DisruptorSystem or system instanceof TorpedoSystem or system instanceof ShieldSystem
+                throw new Error "Cannot activate #{ system_name } while cloak is operational"
+
+
         if is_active
             do system.power_on
         else
             do system.power_down
+
+
+    cloak: ->
+
+        console.log "Cloaking!"
+
+        cloak = do @_get_cloak_system
+        if not cloak?
+            throw new Error "No cloaking system available"
+        # Deactivate weapons systems to redirect power to the cloak
+        # TODO actually figure out how to shunt that much power to this system
+        do p.deactivate for p in @phasers
+        do t.deactivate for t in @torpedo_banks
+        do s.deactivate for s in @shields
+        @set_online @transponder.name, false
+
+        if not cloak.active
+            do cloak.power_on
+
+
+    decloak: ->
+
+        cloak = do @_get_cloak_system
+        if not cloak?
+            throw new Error "No cloaking system available"
+        # Deactivate cloak
+        do cloak.power_down
+
+        # maybe bring weapons systems back online?
+
+
+    _get_cloak_system: ->
+
+        system = ( s for s in @systems when s instanceof CloakingSystem )
+        if system.length == 0
+            return undefined
+
+        return system[ 0 ]
+
+
+    is_cloaked: ->
+
+        cloak = do @_get_cloak_system
+        cloak?.active
 
 
     ### Communications
@@ -1581,6 +1678,17 @@ class BaseShip extends BaseObject
     set_viewscreen_target: ( target_name ) -> @_viewscreen_target = target_name
 
 
+    pretty_print_speed: ->
+
+        if @warp_speed > 0
+            return "warp #{ @warp_speed }"
+
+        if @impulse > 0
+            return "#{ @impulse } impulse"
+
+        return "drift"
+
+
     _check_if_still_alive: -> @alive
 
 
@@ -1594,6 +1702,8 @@ class BaseShip extends BaseObject
     calculate_quadrant: ( from_point ) ->
 
         # Returns which quadrant of the ship is facing a given point
+        if not from_point?
+            throw new Error "Cannot calculate the quadrant from a null point"
 
         if from_point == @position
             from_point.x += 1
@@ -1613,6 +1723,9 @@ class BaseShip extends BaseObject
         # calculate quadrant, which just returns the immediate facing
         # section
 
+        if not from_point?
+            throw new Error "Invalid origin point"
+
         if from_point == @position
             from_point.x += 1
 
@@ -1622,7 +1735,10 @@ class BaseShip extends BaseObject
         if not b?
             throw new Error "Invalid origin point #{from_point}"
 
-        if 0 < b.bearing <= 0.25
+        if b.bearing < 0 or b.bearing > 1
+            throw new Error "Invalid bearing calculated: #{ b.bearing }"
+
+        if 0 <= b.bearing <= 0.25
             return [ @SECTIONS.FORWARD, @SECTIONS.PORT ]
         if 0.25 < b.bearing <= 0.5
             return [ @SECTIONS.PORT, @SECTIONS.AFT ]
@@ -1675,6 +1791,25 @@ class BaseShip extends BaseObject
             do reactor.set_required_output_power
 
 
+    # called to determine what scans we show up on
+    scan_for: ( type ) ->
+
+        if do @is_cloaked
+            # the only way to find cloaked ships: STVI
+            if type == LongRangeSensorSystem.SCANS.NEUTRINO
+                return 3
+            return false
+
+        if @_scan_density[ type ]?
+            return @_scan_density[ type ]
+
+        warp_scans = [ LongRangeSensorSystem.SCANS.SUBSPACE, LongRangeSensorSystem.SCANS.EM_SCAN ]
+        if @warp_speed > 0 and type in warp_scans
+            return @warp_speed * 4
+
+        return false
+
+
     ### Time Progression
     ________________________________________________________###
 
@@ -1691,6 +1826,13 @@ class BaseShip extends BaseObject
 
         engineering_locations = ( { deck : c.deck, section : c.section } for c in @internal_personnel when c.description is "Engineering Team" and not do c.is_enroute )
         @_update_system_state delta, engineering_locations
+
+        # drop out of warp... I hope your SI is on...
+        if not @warp_core.is_online() and @warp_speed > 0
+            @warp_speed = 0
+            @velocity.x = 0
+            @velocity.y = 0
+            @velocity.z = 0
 
         if @warp_speed > 0
             # You've lost warp plasma charge and can no longer maintain your speed
@@ -1771,7 +1913,7 @@ class BaseShip extends BaseObject
             else
                 health_locaitons[ crew.deck ] = [ crew.section ]
 
-        for c in @internal_personnel when c.alignment is @alignment
+        for c in @internal_personnel when c.alignment is @alignment or c.true_alignment? is @alignment
             if health_locaitons[ c.deck ]? and c.section in health_locaitons[ c.deck ]
                 c.receive_medical_treatment delta_t
 
@@ -1781,7 +1923,7 @@ class BaseShip extends BaseObject
 
         # Any security forces in the area of boarding parties will fight and win/lose
         intruders = ( crew for crew in @internal_personnel when (
-            crew.alignment != @alignment and
+            (crew.alignment != @alignment or crew.true_alignment? != @alignment) and
             not do crew.is_captured and
             crew.description == "Security Team" ) )
 

@@ -49,6 +49,11 @@ class Game
     load_level: ( level ) ->
 
         @ships = do level.get_ships
+
+        # two seperate lists for convenience
+        @ai_ships = do level.get_ai_ships
+        @player_ships = do level.get_player_ships
+
         @game_objects = do level.get_game_objects
         @space_objects = do level.get_space_objects
         @map = do level.get_map
@@ -105,18 +110,29 @@ class Game
 
     get_startup_stats: ->
 
-        r = (
-            for k, s of @ships
-                {
-                    name : s.name,
-                    prefix : s.prefix_code,
-                    postfix : s.postfix_code,
-                    position : s.position
-                }
-        )
+        player_ships = for k, s of @player_ships
+            {
+                name : s.name,
+                prefix : s.prefix_code,
+                postfix : s.postfix_code,
+                position : s.position
+            }
+
+        ai_ships = for k, s of @ai_ships
+            {
+                name : s.name,
+                prefix : s.prefix_code,
+                postfix : s.postfix_code,
+                position : s.position
+
+            }
+
+        r =
+            player_ships : player_ships
+            ai_ships : ai_ships
 
 
-    get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @ships )
+    get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @player_ships )
 
 
     ### Prefix Requisit Codes
@@ -166,7 +182,10 @@ class Game
 
         # Get charted objects,
         ## Don't pass gas clouds, as these get handled by the system scan
-        r = ( @get_public_space o, you for o in star_system.stars when o.charted )
+        ## TODO: Fix this^ gas clouds should be considered charted system objects
+        r = ( @get_public_space o, you, "Star" for o in star_system.stars when o.charted )
+        p = ( @get_public_space o, you, "Planet" for o in star_system.planets when o.charted )
+        a = ( @get_public_space o, you, "Asteroids" for o in star_system.asteroids when o.charted )
 
         # Overlay any subspace becons
         s = ( @get_public o, you for o in @game_objects when @get_public o, you )
@@ -174,10 +193,17 @@ class Game
         # Overlay points that you have scanned and are tracking
         # tracking = ( @get_tracking_data o, you for o in you.get_scanned_objects() )
 
-        resp = r.concat( s )
+        resp = r.concat( s ).concat( p ).concat( a )
 
 
-    get_system_information: ( prefix, system_name ) -> @map.get_star_system system_name
+    get_system_information: ( prefix, system_name ) ->
+        # Stellar system, not systems system
+        @map.get_star_system system_name
+
+
+    get_sector_telemetry: ( prefix ) ->
+        # Sector informaiton
+        do @map.index
 
 
     scan: ( prefix ) ->
@@ -274,13 +300,13 @@ class Game
 
     set_warp_speed: ( prefix, warp ) ->
 
-        @message prefix, "Navigation", { set_speed : "warp" }
+        @message prefix, "Navigation", { set_speed : "warp", value : warp }
         @ships[ prefix ].set_warp warp
 
 
     set_impulse_speed: ( prefix, impulse ) ->
 
-        @message prefix, "Navigation", { set_speed : "impulse" }
+        @message prefix, "Navigation", { set_speed : "impulse", value: impulse }
         @ships[ prefix ].set_impulse impulse
 
 
@@ -299,7 +325,7 @@ class Game
     get_target_subsystems: ( prefix ) -> do @ships[ prefix ].get_target_subsystems
 
 
-    fire_phasers: ( prefix ) -> do @ships[ prefix ].fire_phasers
+    fire_phasers: ( prefix, threshold ) -> @ships[ prefix ].fire_phasers threshold
 
 
     get_phaser_status: ( prefix ) -> do @ships[ prefix ].phaser_report
@@ -349,6 +375,7 @@ class Game
         # @message( prefix, "alert", color )
         return m
 
+
     get_alert: ( prefix ) -> @ships[ prefix ].alert
 
 
@@ -367,17 +394,21 @@ class Game
     get_stelar_telemetry: ( prefix, target_name ) ->
 
         ship = @ships[ prefix ]
-        if target_name == ""
-            return {}
-        target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
         stars = ( o for o in @space_objects when o.classification.indexOf( "Star" ) >= 0 )
 
         telemetry =
-            bearing_to_viewer: U.bearing( target, ship )
-            bearing_to_target: U.bearing( ship, target )
-            bearing_to_star: U.bearing( ship, stars[ 0 ] )
-            distance_from_star: U.distance( target.position, stars[ 0 ].position )
-            target_model: target.model_url
+            bearing_to_star : U.bearing( ship, stars[ 0 ] )
+
+            skybox : ship.star_system.skybox
+
+        target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
+        if target?
+            telemetry[ 'bearing_to_viewer' ] = U.bearing( target, ship )
+            telemetry[ 'bearing_to_target' ] = U.bearing( ship, target )
+            telemetry[ 'target_model' ] = target.model_url
+            telemetry[  'distance_from_star' ] = U.distance( target.position, stars[ 0 ].position )
+
+        return telemetry
 
 
     get_internal_lifesigns_scan: ( prefix ) -> do @ships[ prefix ].get_internal_lifesigns_scan
@@ -471,6 +502,11 @@ class Game
 
 
     run_scan: ( prefix, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
+        # depreciated... use configure instead
+        @configure_scan prefix, type, grid_start, grid_end, positive_sweep, range, resolution
+
+
+    configure_scan: ( prefix, type, grid_start, grid_end, positive_sweep, range, resolution ) ->
 
         @ships[ prefix ].run_scan(
             @world_scan,
@@ -481,6 +517,20 @@ class Game
             range,
             resolution )
 
+
+    run_long_range_scan: ( prefix, type, range_level, resolution ) ->
+        # depreciated... use configure instead
+        @configure_long_range_scan prefix, type, range_level, resolution
+
+
+    configure_long_range_scan: ( prefix, type, range_level, resolution ) ->
+
+        @ships[ prefix ].configure_long_range_scan(
+            @world_scan,
+            type,
+            range_level,
+            resolution
+        )
 
     get_scan_results: ( prefix, type ) ->
 
@@ -570,6 +620,9 @@ class Game
 
         target = matches[ 0 ]
 
+        if target.is_cloaked?()
+            throw new Error "Cannot detect target"
+
         # is relevant sensor array online?
         # NM. It has to be, or you wouldn't have gotten the passive scan
         # TODO: validate that assumption later
@@ -624,7 +677,7 @@ class Game
                     classification: h.classification,
                     coordinate: h.position,
                     tag: h.sensor_tag
-                } for h in final_hits )
+                } for h in final_hits when !( h.is_cloaked? and h.is_cloaked() ) )
         else
             classifications = []
 
@@ -634,7 +687,16 @@ class Game
             spectra: []
 
 
+    debug_neutrinos: ->
+
+        r =
+            neutrinos : [ ship.scan_for LongRangeSensorSystem.SCANS.NEUTRINO for prefix, ship of @ai_ships ]
+            is_cloaked : [ do ship.is_cloaked for prefix, ship of @ai_ships ]
+            cloaking_system : [ do ship._get_cloak_system for prefix, ship of @ai_ships ]
+
+
     set_main_view_target: ( prefix, target_name ) ->
+
         @ships[ prefix ].set_viewscreen_target target_name
 
 
@@ -722,8 +784,17 @@ class Game
         # TODO: Should we know the name? Transponders? Silent running?
         if object.transponder? and not object.transponder.is_online() and object isnt you
             return false
+
+        if do object.is_cloaked
+            return false
+
+        if not object.alive
+            return false
+
         p =
             name : object.name
+            classification : object.classification
+            alignment : object.alignment
             heading : object.bearing
             velocity : object.velocity
             impulse : object.impulse
@@ -733,7 +804,7 @@ class Game
             position : object.position
 
 
-    get_public_space: ( object, you ) ->
+    get_public_space: ( object, you, descriptor ) ->
 
         # TODO: this obviously needs to be folded into the objects
         if not object.charted
@@ -746,6 +817,9 @@ class Game
         if not object?
             throw new Error "Undefined object; dark mater?"
 
+        if not descriptor?
+            descriptor = "unidentified"
+
         p =
             name : object.name
             bearing : U.bearing you, object
@@ -753,6 +827,7 @@ class Game
             position : object.position
             classification : object.classification
             radius : object.radius
+            descriptor : descriptor
 
 
     get_tracking_data: ( object, you ) ->

@@ -52,7 +52,7 @@ function drawSystems ( scan ) {
 
                 e[ 'availability' ] = "red";
                 console.log( "unavailable:" + e.material );
-                
+
             }
 
         } );
@@ -66,6 +66,13 @@ function load_systems () {
     trek.api( 'engineering/status', loadScan );
 
 }
+
+// Disable alert screen
+trek.onAlert( function() {
+
+    return;
+
+    } );
 
 trek.api(
     'operations/cargo',

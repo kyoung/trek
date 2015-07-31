@@ -31,6 +31,7 @@ class BaseTeam
             @members.push 1
         @deck
         @section
+        @description = ''
         @status = STATUS.ONBOARD
         @alignment = undefined
         @assignment = undefined
@@ -90,6 +91,15 @@ class BaseTeam
             assignment: @assignment
             alignment: @alignment
             id: @id
+
+
+    internal_scan: ->
+        r = do @scan
+        r[ 'members' ] = @members
+        r[ 'status' ] = @status
+        r[ 'code' ] = @code
+        r[ 'description' ] = @description
+        return r
 
 
     count: -> @members.length
@@ -203,6 +213,17 @@ class RepairTeam extends BaseTeam
         @currently_repairing = system.name
 
 
+    internal_scan: ->
+        
+        r = do @scan
+        r[ 'members' ] = @members
+        r[ 'status' ] = @status
+        r[ 'code' ] = @code
+        r[ 'description' ] = @description
+        r[ 'currently_repairing' ] = @currently_repairing
+        return r
+
+
 class ScienceTeam extends BaseTeam
 
     constructor: ( @deck, @section ) ->
@@ -266,6 +287,35 @@ class MedicalTeam extends BaseTeam
         @code = "M"
 
 
+class Spy extends BaseTeam
+
+    constructor: ( @deck, @section, impersonating_team_class ) ->
+
+        super 1
+        @impersonating = new impersonating_team_class @deck, @section, 1
+        @description = @impersonating.description
+        @code = @impersonating.code
+
+        # assume properties of your identity
+        for key of @impersonating
+            if not ( key of @ )
+                @[ key ] = @impersonating[ key ]
+
+    # Who does the spy actually work for
+    set_true_alignment: ( @true_alignment ) ->
+
+
+    internal_scan: (ship_alignment) ->
+        r = do @scan
+        r['alignment'] = ship_alignment
+        if @true_alignment is ship_alignment
+            r['code'] = "I"
+        else
+            r['code'] = @code
+        r['members'] = @members
+        r['status'] = @status
+        return r
+
 
 exports.RepairTeam = RepairTeam
 exports.ScienceTeam = ScienceTeam
@@ -273,3 +323,4 @@ exports.EngineeringTeam = EngineeringTeam
 exports.SecurityTeam = SecurityTeam
 exports.DiplomaticTeam = DiplomaticTeam
 exports.MedicalTeam = MedicalTeam
+exports.Spy = Spy

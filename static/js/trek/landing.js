@@ -37,7 +37,7 @@ function submitPrefix () {
             } else {
 
                 $prefixInvite.html( "Invalid prefix for " + selected_ship );
-                setLoginColor( "red" );
+                turnRed();
 
             }
 
@@ -45,10 +45,12 @@ function submitPrefix () {
 
 }
 
-function setLoginColor ( color ) {
+function turnRed () {
+    
+    var color = 'red';
 
-    $( "#prefix" ).attr( "class", color );
-    $( "#prefixEntry" ).attr( "class", color );
-    $( "#prefixEntry li" ).attr( "class", color );
+    $( "#prefix" ).addClass( color );
+    $( "#prefixEntry" ).addClass( color );
+    $( "#prefixEntry li" ).addClass( color );
 
 }

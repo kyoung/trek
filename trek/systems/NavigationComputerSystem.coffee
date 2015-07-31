@@ -21,12 +21,12 @@ class NavigationComputerSystem extends System
         nominal_max_safe_warp = 8
 
         if not local_particle_density?
-            console.log "[NAVCOM] no particle density readings found; OK for max warp"
+            # console.log "[NAVCOM] no particle density readings found; OK for max warp"
             return nominal_max_safe_warp
 
         # local particle density of > 1 doesn't permit safe deflector operation
         if local_particle_density >= 1
-            console.log "[NAVCOM] particle density above allowed maximum; warp is unsafe"
+            # console.log "[NAVCOM] particle density above allowed maximum; warp is unsafe"
             return 0
 
         # warp velocity is coorelated to the local particle density

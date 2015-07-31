@@ -26,6 +26,14 @@ class SpaceSector extends BaseMap
     get_star_system: ( star_system_name ) -> @systems[ star_system_name ]
 
 
+    index: ->
+        # Returns the sector name, and it's system names
+
+        r =
+            name : @name
+            systems : ( k for k, v of @systems )
+
+
 class StarSystem extends BaseMap
 
     constructor: ( @name ) ->
@@ -35,6 +43,10 @@ class StarSystem extends BaseMap
         @stars = []
         @planets = []
         @clouds = []
+        @asteroids = []
+
+        # Default skybox
+        @skybox = 'static/images/Milky_way.jpg'
 
 
     add_star: ( star ) -> @stars.push star
@@ -44,6 +56,10 @@ class StarSystem extends BaseMap
 
 
     add_clouds: ( cloud ) -> @clouds.push cloud
+
+
+    # This works for lagrange points and asteroid belts
+    add_asteroids: ( asteroid_field ) -> @asteroids.push asteroid_field
 
 
     set_position: ( @position ) ->

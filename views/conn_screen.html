@@ -34,6 +34,33 @@
     </div>
 </script>
 
+<script type="text/template" id="scannerObjectTmplHollow">
+    <div id="{{ name }}" class='conn-scannerObject'>
+        <svg width="8px" height="8px" xmlns="http://www.w3.org/2000/svg">
+            <circle stroke="#0F8AA6" fill="none" cx="4" cy="4" r="4"/>
+        </svg>
+        <p class="name">{{ name }}</p>
+        <p class="speed">{{ speed }}</p>
+        <p class="distBearing">{{ distAndBearing }}</p>
+        {{ #is_z_axis }}
+        <p class="z">z {{ z_axis }}</p>
+        {{ /is_z_axis }}
+    </div>
+</script>
+
+<script type="text/template" id="scannerObjectTmplPoint">
+    <div id="{{ name }}" class='conn-scannerObject'>
+        <svg width="8px" height="8px" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 4 L 8 4 M 4 8 L 4 0" fill="none" stroke="#0F8AA6" stroke-width="1"/>
+        </svg>
+        <p class="name">{{ name }}</p>
+        <p class="speed">{{ speed }}</p>
+        <p class="distBearing">{{ distAndBearing }}</p>
+        {{ #is_z_axis }}
+        <p class="z">z {{ z_axis }}</p>
+        {{ /is_z_axis }}
+    </div>
+</script>
 
 
 <script type="text/javascript">

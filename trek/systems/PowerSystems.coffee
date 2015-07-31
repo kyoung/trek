@@ -87,6 +87,13 @@ class ReactorSystem extends System
         @push_power @output, on_blowout
 
 
+    deactivate: ->
+
+        @online = false
+        @output = 0
+        @push_power @output, undefined
+
+
     is_online: ->
 
         working_order = @state > ReactorSystem.OPERABILITY_CUTOFF

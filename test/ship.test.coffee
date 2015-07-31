@@ -7,6 +7,7 @@
 
 
 {Constitution} = require '../trek/ships/Constitution'
+{D7} = require '../trek/ships/D7'
 
 C = require '../trek/Constants'
 U = require '../trek/Utility'
@@ -36,6 +37,9 @@ exports.ShipTest =
         # console.log util.inspect pow_report, { depth : null, colors : true }
 
         do test.done
+
+        d = new D7
+        test.ok d, 'D7 failed to initialize'
 
 
     'test course setting': ( test ) ->
@@ -371,6 +375,43 @@ exports.ShipTest =
         do test.done
 
 
+    'test cant turn at warp': ( test ) ->
+
+        e = new Constitution
+        e.port_warp_coil.charge = 1
+        e.starboard_warp_coil.charge = 1
+        e.set_warp 1
+
+        test.throws -> do e.turn_port
+
+        do test.done
+
+
+    'test warp power balance': ( test ) ->
+
+        s = new Constitution
+        tic = 250
+        tok = 60 * 1000
+        s.port_warp_coil.charge = 1
+        s.starboard_warp_coil.charge = 1
+        s.set_power_to_system s.port_warp_coil.name, 0.01
+        s.set_power_to_system s.starboard_warp_coil.name, 0.01
+
+        s.calculate_state undefined, tic
+
+        # warp 5 should require a power alotment of 5/6 to maintain full charge
+        s.set_warp 6
+
+        s.calculate_state undefined, tic
+        test.ok s.port_warp_coil.charge < 1, "Failed to drain warp plasma: #{ s.port_warp_coil.charge }"
+
+        s.calculate_state undefined, tok
+        test.ok s.port_warp_coil.charge < 0.51, "Failed to drain warp plasma (extended): #{ s.port_warp_coil.charge }"
+
+
+        do test.done
+
+
     'test can reroute EPS relay': ( test ) ->
 
         e = new Constitution
@@ -600,3 +641,26 @@ exports.ShipTest =
 
         do test.done
 
+
+    'test cloaking behaviour': ( test ) ->
+
+        k = new D7
+        k.calculate_state undefined, 2000
+
+        # test that the cloak isn't enabled by default
+        test.ok !k.cloak_system.active, "Cloaking system was active on startup"
+        k.set_alert 'red'
+        for p in k.phasers
+            test.ok p.active, "Phasers failed to activate in uncloaked mode"
+
+        k.set_active "Cloaking System", true
+
+        k.calculate_state undefined, 2000
+
+        test.ok k.cloak_system.active, "Cloak failed to activate"
+        for p in k.phasers
+            test.ok !p.active, "Phasers failed to deactivate in cloak"
+        for s in k.shields
+            test.ok !s.active, "Shileds failed to deactivate in cloak"
+
+        do test.done
