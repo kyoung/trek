@@ -17,7 +17,6 @@ var cube;
 
 var rotationTicker = 16;
 
-
 function loadActiveScan( data ) {
 
     console.log( "Loading data..." );
@@ -590,4 +589,6 @@ trek.onAlert( function() {
 
     } );
 
+
+// setInterval( getActiveScan, 1000 );
 getActiveScan();

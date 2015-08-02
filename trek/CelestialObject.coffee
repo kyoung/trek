@@ -111,6 +111,17 @@ class Planet extends CelestialObject
     # If a planet is named, for cultural or historical reasons, the name will
     # be returned, rather than a system-number designation.
 
+    CLASS_SYSTEM =
+        D :	'Planetoid or moon; little to no atmosphere. Uninhabitable.'
+        H :	'Generally uninhabitable.'
+        J : 'Gas giant.'  # AKA Jupiter
+        K : 'Adaptable with pressure dome.'  # AKA Mars
+        L : 'Marginally habitable. No animal life. Only vegetation life.'
+        M : 'Terrestrial.'
+        N : 'Sulfuric.'  # AKA Venus
+        T : 'Gas giant.'  # Weird alternate gas giant
+        Y : 'Demon'
+
     constructor: ( name, @system_name, classification, @orbit ) ->
 
         super()
@@ -129,6 +140,12 @@ class Planet extends CelestialObject
         @_scan_density[ SensorSystem.SCANS.HIGHRES ] = up_to 2e8
         @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = up_to 1e8
         @_scan_density[ SensorSystem.SCANS.MAGNETON ] = up_to 20
+
+        if /[JT]/.test @classification
+            @_scan_density[ SensorSystem.SCANS.WIDE_EM ] = up_to 300
+
+        if /[MLN]/.test @classification
+            @_scan_density[ SensorSystem.SCANS.WIDE_EM ] = up_to 30
 
         @model_url = "planet.json"
         @model_display_scale = 0.5
@@ -183,6 +200,7 @@ class Star extends CelestialObject
         @_scan_density[ LongRangeSensorSystem.SCANS.GAMMA_SCAN ] = up_to 1000
         @_scan_density[ LongRangeSensorSystem.SCANS.EM_SCAN ] = up_to 400
         @_scan_density[ SensorSystem.SCANS.WIDE_EM ] = up_to 300
+        @_scan_density[ LongRangeSensorSystem.SCANS.NEUTRINO ] = up_to 30
 
         # Stars blind you
         @_scan_density[ SensorSystem.SCANS.HIGHRES ] = up_to 2e8

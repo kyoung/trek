@@ -1038,6 +1038,12 @@ class BaseShip extends BaseObject
 
     transport_cargo: ( origin, origin_bay_number, destination, destination_bay_number, cargo, quantity ) ->
 
+        if origin._are_all_shields_up?()
+            throw new Error "Shields are raised at transport origin; cannot secure a lock."
+
+        if destination._are_all_shields_up?()
+            throw new Error "Shields are raised at transport destination; cannot secure a lock."
+
         origin_bay = origin.get_cargo_bay origin_bay_number
         destination_bay = destination.get_cargo_bay destination_bay_number
 

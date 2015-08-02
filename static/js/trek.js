@@ -353,6 +353,7 @@ var trek = (function($, _, Mustache, io) {
 
     }
 
+    isGameOver = false;
     t.socket.on("gameover", function( score ) {
 
         if ( alertCallbacks.length > 0 ) {
@@ -361,8 +362,13 @@ var trek = (function($, _, Mustache, io) {
 
         }
 
-        // check score, and see if you won
-        displayGameOver( score );
+        if ( !isGameOver ) {
+
+            // check score, and see if you won
+            displayGameOver( score );
+            isGameOver = true;
+
+        }
 
     } );
 

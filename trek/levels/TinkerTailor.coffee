@@ -240,15 +240,12 @@ class TinkerTaylor extends Level
         if !(@space_objects.length > 0)
             throw new Error "WTF space objects"
 
-        start_point = @space_objects[ Math.floor( Math.random() * @space_objects.length ) ]
-        kling_position = start_point.position
-        # let's call that and "orbit"
-        kling_position.x += 1e6
-        kling_position.y += 1e6
-        console.log "k1 start position: #{ kling_position.x } #{ kling_position.y } #{ kling_position.z }"
+        start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
+        p = start_point.position
+        k_position = { x : p.x + 1e8, y : p.y + 1e8, z: 0 }
         k = new D7 'ChinTok'
         k.star_system = system
-        k.set_coordinate kling_position
+        k.set_coordinate k_position
         k.set_alignment C.ALIGNMENT.KLINGON
         k.polo = start_point.name  # for debugging
         @ai_ships[ k.prefix_code ] = k
@@ -259,14 +256,12 @@ class TinkerTaylor extends Level
         @spy.set_true_alignment C.ALIGNMENT.FEDERATION
         @klingon.internal_personnel.push @spy
 
-        start_point = @space_objects[ Math.floor( Math.random() * @space_objects.length ) ]
-        kling2_position = start_point.position
-        kling2_position.x += 1e6
-        kling2_position.y += 1e6
-        console.log "k2 start position: #{ kling2_position.x } #{ kling2_position.y } #{ kling2_position.z }"
+        start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
+        p = start_point.position
+        k2_position = { x : p.x + 1e8, y : p.y + 1e8, z: 0 }
         k2 = new D7 'ChoRe'
         k2.star_system = system
-        k2.set_coordinate kling2_position
+        k2.set_coordinate k2_position
         k2.set_alignment C.ALIGNMENT.KLINGON
         k2.polo = start_point.name  # for debuggin
         @ai_ships[ k2.prefix_code ] = k2

@@ -227,6 +227,7 @@ function buildCargoFromMenu ( transScan, cargo ) {
     originList.empty();
 
     console.log( transScan.cargo );
+    console.log( cargo );
 
     _.each( transScan.cargo, function ( v, k, l ) {
 

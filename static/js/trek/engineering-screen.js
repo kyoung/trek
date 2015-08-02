@@ -2,8 +2,16 @@
 var sectionTmpl = $("#sectionStatusTmpl").html();
 var systemTmpl = $("#systemStatusTmpl").html();
 
+var cachedStatus;
 
 function drawStatus( data ) {
+
+    if ( data == cachedStatus ) {
+
+        return;
+
+    }
+    cachedStatus = data;
 
     var $statusReport = $( "<div></div>" );
 
@@ -140,4 +148,4 @@ trek.onAlert( function( data ) {
 // Make it so
 loadScreen();
 
-setInterval( loadScreen, 250 );
+setInterval( loadScreen, 1000 );

@@ -67,7 +67,9 @@ save_state = () ->
 ### Debug
 ___________________________________________________###
 
-debug = ( req, res ) -> res.json { debug : do game.debug_neutrinos }
+debug = ( req, res ) ->
+    prefix = validate req, res
+    res.json { debug : 'debug' }
 
 
 debugMap = ( req, res ) ->

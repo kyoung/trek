@@ -192,8 +192,11 @@ class Game
 
         # Overlay points that you have scanned and are tracking
         # tracking = ( @get_tracking_data o, you for o in you.get_scanned_objects() )
+        scan_results = you.get_scan_results SensorSystem.SCANS.P_HIGHRES
+        tags = ( c.tag for c in scan_results.classifications )
+        t = ( @get_public_from_scan o, you for o in @game_objects when o.sensor_tag in tags and o not in s )
 
-        resp = r.concat( s ).concat( p ).concat( a )
+        resp = r.concat( s ).concat( p ).concat( a ).concat( t )
 
 
     get_system_information: ( prefix, system_name ) ->
@@ -215,7 +218,13 @@ class Game
         you = @ships[ prefix ]
         space_objects = ( @get_public_space o, you for o in @space_objects when @get_public_space( o, you ) )
         objects = ( @get_public o, you for o in @game_objects when @get_public( o, you ) )
+
+        # Include object that have shown up on Passive HighRes scans
+        scan_results = you.get_scan_results SensorSystem.SCANS.P_HIGHRES
+        sensor_tags = ( c.tag for c in scan_results.classifications )
+        scanned_objects = ( @get_public_from_scan o, you for o in @game_objects when o.sensor_tag in sensor_tags and o not in objects )
         results = objects.concat space_objects
+        results = results.concat scanned_objects
 
 
     get_system_scan: ( prefix, target_name ) ->
@@ -623,6 +632,9 @@ class Game
         if target.is_cloaked?()
             throw new Error "Cannot detect target"
 
+        if not target.alive
+            throw new Error "Target destroyed"
+
         # is relevant sensor array online?
         # NM. It has to be, or you wouldn't have gotten the passive scan
         # TODO: validate that assumption later
@@ -671,6 +683,7 @@ class Game
 
         final_hits = ( h for h in hits when not @_is_object_blocked( h, type, position ) )
 
+        classifications = []
         if type == SensorSystem.SCANS.P_HIGHRES
             classifications = (
                 {
@@ -678,8 +691,6 @@ class Game
                     coordinate: h.position,
                     tag: h.sensor_tag
                 } for h in final_hits when !( h.is_cloaked? and h.is_cloaked() ) )
-        else
-            classifications = []
 
         r =
             readings: ( { bearing : U.point_bearing( position, h.position ), reading : h.scan_for type } for h in final_hits )
@@ -785,7 +796,12 @@ class Game
         if object.transponder? and not object.transponder.is_online() and object isnt you
             return false
 
-        if do object.is_cloaked
+        @get_public_from_scan object, you
+
+
+    get_public_from_scan: ( object, you ) ->
+
+        if object.is_cloaked? and do object.is_cloaked
             return false
 
         if not object.alive

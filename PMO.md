@@ -72,6 +72,8 @@ Proposed viewscreen JSON refactor:
 }
 
 ## Hotfix
+- [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
+- [ ] Transporter allowed for transport through shields when cargo was selected
 - [ ] When transporting a target off of a ship onto yours, with your shields raised, the action
         of removing the crew seems to complete... meaning you're killing teams in the process
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
