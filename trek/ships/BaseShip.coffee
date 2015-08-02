@@ -1114,7 +1114,7 @@ class BaseShip extends BaseObject
 
         t =
             name: @name
-            crew: ( c.scan() for c in @internal_personnel when c.is_onboard() )
+            crew: ( c.scan() for c in @internal_personnel when c.is_onboard() and c.size > 0 )
             cargo: do @get_cargo_status
             decks: @DECKS
             sections: @SECTIONS
