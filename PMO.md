@@ -36,9 +36,10 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   - [x] Create a new level where we have to fight a hostile
     - [x] Create the level such that there is a spy
     aboard the enemy ship, and we must beam them off
-    - [ ] Have the level require the use of sensors to solve
-        - [ ] Have things detected with passive hi-res scans show up for nav and tactical displays
+    - [x] Have the level require the use of sensors to solve
+        - [x] Have things detected with passive hi-res scans show up for nav and tactical displays
   - [x] Write an AI client that can act and respond with the API
+  - [ ] Wire up the AI to respond to either level events or with it's messaging
 - Sector maps and other systems
     - Setup LY-based coordinates for objects not in systems
     - Compound coordinates? LY coordinates, offset by metrics is you"re in a system
@@ -73,14 +74,13 @@ Proposed viewscreen JSON refactor:
 
 ## Hotfix
 - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
-- [ ] Transporter allowed for transport through shields when cargo was selected
-- [ ] When transporting a target off of a ship onto yours, with your shields raised, the action
-        of removing the crew seems to complete... meaning you're killing teams in the process
+    - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
+- [ ] beaming aboard a spy seems to cause the spy to fight with the security forces in the transporter
+- [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
 - [x] AI doesn't exit attack mode if it can't find it's target? (keeps warping away instead of halting)
 - [ ] Torpedoes don't seem to ever hit a target anymore
     - If the target altered speed or course during the life of the torpedo, it would miss
-- [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] Cutting warp power doesn't seem to affect the power output graph too much
 - [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted

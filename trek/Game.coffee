@@ -31,6 +31,11 @@ class Game
         @uid = do U.UID
 
 
+    set_AIs: ( AIs ) ->
+
+        @level.set_AIs AIs
+
+
     message: ( prefix, type, content ) ->
 
         to = @ships[ prefix ].name
@@ -722,6 +727,7 @@ class Game
             for pfix, ship of @ships when pfix isnt prefix
                 if ship.hear_hail prefix, message
                     @message pfix, "hail", msg
+
 
         response_function = ( msg ) =>
             for pfix, ship of @ships

@@ -792,10 +792,13 @@ for ship in game_stats.player_ships
 
 # Setup AI
 ai_prefixes = ( s.prefix for s in game_stats.ai_ships )
-ai.play game, ai_prefixes, [ new BattleState(), new BattleState() ]
+AIs = ai.play game, ai_prefixes, [ new BattleState(), new BattleState() ]
 console.log "AI Ships <<DEBUG>>"
 for s in game_stats.ai_ships
     console.log "#{s.name} #{s.prefix}"
+
+game.set_AIs AIs
+
 
 PORT = 8080
 server.listen PORT, "0.0.0.0"

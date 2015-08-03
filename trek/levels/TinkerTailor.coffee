@@ -85,6 +85,19 @@ class TinkerTaylor extends Level
         return false
 
 
+    handle_hail: ( prefix, message, response_function ) ->
+
+        console.log "[LEVEL] message: #{ message }"
+
+
+    get_final_score: ->
+
+        if do @_is_mission_accomplished
+            return 100
+
+        return 0
+
+
     get_events: =>
 
         end_game = ( game ) ->
@@ -103,6 +116,7 @@ class TinkerTaylor extends Level
             console.log ">>> Sabott <<<"
 
             k = @klingon
+            k2 = @klingon2
 
             # damage the klingon ship
             # # destroy primary power systems (warp core breach?)
@@ -118,6 +132,8 @@ class TinkerTaylor extends Level
             k.cloak_system = undefined
             k.cargobays[0].add_cargo "Cloaking Device", 1
 
+            k2_ai = ( ai for ai in @AIs when ai.prefix == k2.prefix_code )[ 0 ]
+
             send_distress = ->
                 # route emergency power to the communications systems
                 # route port eps to emergency power
@@ -132,6 +148,13 @@ class TinkerTaylor extends Level
                 #{ k.name } hailing the ChoRe. We have suffered damage to our
                 warp core. [ STATIC ] breach [ STATIC ] immenent; the crew has
                 [ STATIC ] sabota[ END TRANSMISSION ]"
+
+                # initiate a 5 - 7 minute countdown to BOOM
+
+                # have the other klingon ship come and help
+                k2_ai.move_to k.position
+
+
 
             setTimeout send_distress, 15000 * Math.random()
 

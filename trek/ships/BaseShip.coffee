@@ -1114,7 +1114,7 @@ class BaseShip extends BaseObject
 
         t =
             name: @name
-            crew: ( c.scan() for c in @internal_personnel when c.is_onboard() and c.size > 0 )
+            crew: ( c.scan() for c in @internal_personnel when c.is_onboard() and c.members.length > 0 )
             cargo: do @get_cargo_status
             decks: @DECKS
             sections: @SECTIONS
@@ -1667,6 +1667,8 @@ class BaseShip extends BaseObject
         if @communication_array?
             @communication_array.log_hail message
 
+        return true
+
 
     ### Misc.
     _________________________________________________###
@@ -1929,9 +1931,12 @@ class BaseShip extends BaseObject
 
         # Any security forces in the area of boarding parties will fight and win/lose
         intruders = ( crew for crew in @internal_personnel when (
-            (crew.alignment != @alignment or crew.true_alignment? != @alignment) and
+            crew.alignment != @alignment and
             not do crew.is_captured and
             crew.description == "Security Team" ) )
+
+        # filter out spies
+        intruders = ( i for i in intruders when i.true_alignment? != @alignment)
 
         for crew in @internal_personnel when crew.assignment is @name
 

@@ -1,4 +1,4 @@
-{AIState, HoldingState, PatrollingState, HuntingState} = require './ai/State'
+{ AIState, HoldingState, PatrollingState, HuntingState, BattleState, MovingToPointState } = require './ai/State'
 
 
 class AI
@@ -17,7 +17,20 @@ class AI
 
     set_agro: ( @is_agro ) ->
 
+    # Typical NPC behaviours
 
+    move_to: ( position ) ->
+
+        @state_stack.push new MovingToPointState position
+
+
+    attack_move_to: ( position ) ->
+
+        @state_stack.push new BattleState()
+        @state_stack.push new MovingToPointState position
+
+    # ? I'm not sure what I was thinking this would be used for
+    # Don't use this
     receive_order: ( order ) ->
 
         ai = @
@@ -39,6 +52,9 @@ class AI
             console.log error
 
 
+    current_state_complete: () -> @state_stack.pop
+
+
     play: () ->
 
         setInterval @update, AI.RESPONSE_TIME
@@ -51,12 +67,15 @@ class AI
 
 play = ( game, prefixes, init_states ) ->
 
+    AIs = []
     for prefix, i in prefixes
         m5 = new AI game, prefix
         # Allow the passing of initial states
         if init_states?
             m5.state_stack.push init_states[ i ]
         do m5.play
+        AIs.push m5
+    return AIs
 
 
 exports.play = play

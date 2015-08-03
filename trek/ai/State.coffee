@@ -1,6 +1,7 @@
 Analysis = require './Analysis'
 
 C = require '../Constants'
+U = require '../Utility'
 
 ###
 TODO:
@@ -87,6 +88,70 @@ class HoldingState extends AIState
 
         to_completion = most_damaged_system.operability is "Operable"
         game.assign_repair_crews ai.prefix, most_damaged_system.name, 1, to_completion
+
+
+class MovingToPointState extends AIState
+
+    # Moving to Point expects a coordinate { x : , y : , z : }
+    constructor: ( @move_to_point ) ->
+
+        @state_name = 'Moving'
+
+        @substates =
+            TURNING : 'Turning'
+            CLOSING : 'Closing'
+            ARRIVED : 'Arrived'
+
+        @substate = @substates.TURNING
+        @overshot_speed = ""
+
+
+    update: ( ai, game ) ->
+
+        switch @substate
+            when @substates.TURNING then @turn ai, game
+            when @substates.CLOSING then @close ai, game
+            when @substates.ARRIVED then do ai.curret_state_complete
+
+
+    turn: ( ai, game ) ->
+
+        ship = game.ai_ships[ ai.prefix ]
+        abs_bearing = U.point_bearing ship.position, @move_to_point
+        rel_bearing = U.abs2rel_bearing ship, abs_bearing, 3
+
+        if rel_bearing.bearing > 0.99 or rel_bearing.bearing < 0.01
+            @substate = @substates.CLOSING
+        else
+            game.set_course ai.prefix, rel_bearing.bearing, rel_bearing.mark
+
+
+    close: ( ai, game ) ->
+
+        ship = game.ai_ships[ ai.prefix ]
+        distance = U.distance ship.position, @move_to_point
+
+        tactical_report = do ship.tactical_report
+        if distance < tactical_report.phaser_range
+            console.log "    >>> AI: As close as needed"
+            # we're there; begin attack
+            @substate = @substates.ARRIVED
+            game.set_impulse_speed ai.prefix, 0
+            return
+
+        recommended_speed = Analysis.select_appropriate_speed distance
+        current_speed = game.get_position ai.prefix
+        console.log "    >>> AI: target ahead, setting speed #{ recommended_speed.scale } #{ recommended_speed.value }"
+        if ship.pretty_print_speed() == @overshot_speed
+            recommended_speed.value /= 2
+            console.log "    >>> AI: trimming speed from overshot"
+        switch recommended_speed.scale
+            when 'warp'
+                if current_speed.warp != recommended_speed.value
+                    game.set_warp_speed ai.prefix, recommended_speed.value
+            when 'impulse'
+                if current_speed.impulse != recommended_speed.value
+                    game.set_impulse_speed ai.prefix, recommended_speed.value
 
 
 class PatrollingState extends AIState
@@ -436,3 +501,4 @@ exports.HuntingState = HuntingState
 exports.PatrollingState = PatrollingState
 exports.HoldingState = HoldingState
 exports.BattleState = BattleState
+exports.MovingToPointState = MovingToPointState

@@ -27,6 +27,9 @@ class Level
     get_ai_ships: -> @ai_ships
 
 
+    set_AIs: ( @AIs ) ->
+
+
     get_space_objects: -> @space_objects
 
 
