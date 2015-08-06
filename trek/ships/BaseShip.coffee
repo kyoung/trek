@@ -823,12 +823,12 @@ class BaseShip extends BaseObject
             throw new Error "Unable to set impulse while navigational computer
             is manuvering"
 
-        if @impulse == impulse_speed
+        if @impulse == impulse_speed and @warp_speed == 0
             # we're already at this speed
             if callback?
                 do callback
             return @impulse
-            
+
         else
             @_log_navigation_action "Setting impulse: #{ impulse_speed }"
             @_set_impulse impulse_speed, callback

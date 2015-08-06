@@ -49,59 +49,48 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - Simplify the models
     - [x] Have LR sensors detect ships and allow configuration
 
-## Notes
-Proposed viewscreen JSON refactor:
-{
-    skyboxes : [
-        { url : "", alpha_url : "", rotation : 0 }, // allows for super imposed nebula, and the possibility of movement
-    ],
-    planets : [
-        {
-            size : [ radius],
-            distance : [distance],
-            surface_color : #3e8,
-            atmosphere_color : #3f9,
-            luminous : false,
-            rotation : r,
-            type : "gas|rock"  // can we make bands?,
-            rings : [
-                { radius : NNN, color : #3e8 },
-            ]
-        }
-    ],  // includes planets and moons
-    star : { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
-    target : { mesh_url: "" , rotation : r } | undefined,
-    direction : "forward|backward|left|right",
-    at_warp : true // gets over-ridden by socket calls
-}
-
 ## Hotfix
 - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
     - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
-- [ ] beaming aboard a spy seems to cause the spy to fight with the security forces in the transporter
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
-- [ ] Torpedoes don't seem to ever hit a target anymore
-    - If the target altered speed or course during the life of the torpedo, it would miss
 - [ ] Cutting warp power doesn't seem to affect the power output graph too much
-- [ ] Different warp speeds don't auto-shift power to the nacels
-    - Notes: if you deactivate the nacel, and reactivate it, it drains as expected
-    - Notes: and already charged nacel doesn't drain at all (?!)
 - [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
-- [ ] Charge refresh doesn't happen off of the main plasma relay in eng
 - [ ] Pushing power to the bridge seems to blow it... causing massive disruption to all consoles
 - [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
 - [ ] use data-crew_id attributes for crew movement... there have been a few instances where prisoners seem to be becoming intruders somehow. Suspect this is due to improper crew selection.
-- [ ] Engineering primary relay charge readout fails to auto-update
 - [ ] The internal alert indicator never sets back to blue when there is no longer an internal alert
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
 - [ ] Science Scanner circles don't show up on FF
   - http://roadtolarissa.com/blog/2015/02/22/svg-path-strings/
 - [ ] We need to calibrate the rotation of the sky box to the position of the star of the local system
-
+  - Proposed viewscreen JSON refactor:
+      {
+          skyboxes : [
+              { url : "", alpha_url : "", rotation : 0 }, // allows for super imposed nebula, and the possibility of movement
+          ],
+          planets : [
+              {
+                  size : [ radius],
+                  distance : [distance],
+                  surface_color : #3e8,
+                  atmosphere_color : #3f9,
+                  luminous : false,
+                  rotation : r,
+                  type : "gas|rock"  // can we make bands?,
+                  rings : [
+                      { radius : NNN, color : #3e8 },
+                  ]
+              }
+          ],  // includes planets and moons
+          star : { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
+          target : { mesh_url: "" , rotation : r } | undefined,
+          direction : "forward|backward|left|right",
+          at_warp : true // gets over-ridden by socket calls
+      }
 
 # Backlog
 ## Next Sprint

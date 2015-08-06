@@ -56,22 +56,26 @@ class Torpedo extends BaseObject
             @detonation_callback @target.position, @yield * Torpedo.MAX_DAMAGE
             return
 
+        # If they haven't issued new navigational orders, let's assume we hit
         last_target_nav = @target.navigation_log.retrieve(-1).date
         if last_target_nav == @_last_target_navigation
-            # Assume we'll hit, 100m from position
+            console.log "[TORPEDO] Target has not moved since lock. Boom"
+
+            # Assume we'll hit, 500m from position, along the same vector
             d_y = @target.position.y - @position.y
             d_x = @target.position.x - @position.x
             d_hyp = Math.sqrt( Math.pow( d_y, 2 ) + Math.pow( d_x, 2 ) )
             hyp_ratio = d_hyp / 500
-            d_y /= hyp_ratio
-            d_x /= hyp_ratio
+            new_d_y = d_y / hyp_ratio
+            new_d_x = d_x / hyp_ratio
             det_position =
-                x: @target.position.z - d_x
-                y: @target.position.y - d_y
-                z: @target.position.z
+                x : @target.position.x - new_d_x
+                y : @target.position.y - new_d_y
+                z : @target.position.z
             @detonation_callback det_position, @yield * Torpedo.MAX_DAMAGE
             return
 
+        console.log "[TORPEDO] Target has evaded!: #{ last_target_nav } vs #{ @_last_target_navigation }"
         @detonation_callback @_detonation_position, @yield * Torpedo.MAX_DAMAGE
 
 

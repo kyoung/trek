@@ -24,6 +24,8 @@ class Log
 
         @entries = []
         @_read_index = 0
+        # Make sure the log is never empty, for indexing etc
+        @log "Initializing #{ @name } Log"
 
 
     log: ( text, data ) ->
@@ -36,7 +38,7 @@ class Log
         # Allow for negative indexing, as Guido intended
         if i < 0
             i = @entries.length + i
-            
+
         @entries[ i ]
 
 
