@@ -393,10 +393,10 @@ class Game
     get_alert: ( prefix ) -> @ships[ prefix ].alert
 
 
-    get_damage_report: ( prefix ) -> @ships[ prefix ].damage_report()
+    get_damage_report: ( prefix ) -> do @ships[ prefix ].damage_report
 
 
-    get_tactical_status: ( prefix ) -> @ships[ prefix ].tactical_report()
+    get_tactical_status: ( prefix ) -> do @ships[ prefix ].tactical_report
 
 
     get_targets_in_visual_range: ( prefix ) ->

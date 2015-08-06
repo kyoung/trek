@@ -115,7 +115,7 @@ function loadPowerReport( powerJSON ) {
             }
 
         } );
-        
+
     }
 
     else {
@@ -136,7 +136,7 @@ function loadPowerReport( powerJSON ) {
 
             e[ 'charge_percent' ] = e.charge * 100;
 
-            e[ 'id' ] = e.name.replace( " ", "-" ) + '-charge';
+            e[ 'id' ] = e.name.replace( / /g, "-" ) + '-charge';
 
         } );
 
@@ -280,7 +280,7 @@ function updatePowerReport ( powerJSON ) {
 
         var width = e.charge * 100;
         width = width + '%';
-        var id = e.name.replace( " ", "-" ) + '-charge';
+        var id = e.name.replace( / /g, "-" ) + '-charge';
 
         $( '#' + id ).css( 'width', width );
 

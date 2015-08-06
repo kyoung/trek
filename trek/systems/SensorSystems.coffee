@@ -130,7 +130,10 @@ class SensorSystem extends System
         # TODO validate against @visible_grids
         scan_grids ?= @visible_grids
 
-        range_level ?= 0.1
+        if not range_level? and type == SensorSystem.SCANS.P_HIGHRES
+            range_level = 0.05
+        else
+            range_level ?= 0.1
 
         @resolution[ type ] = resolution
         @scan_grids[ type ] = scan_grids

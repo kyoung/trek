@@ -428,6 +428,14 @@ class BattleState extends AIState
         ship = game.ai_ships[ ai.prefix ]
         tactical_report = do ship.tactical_report
 
+        if do ship.is_cloaked
+            do ship.decloak
+
+            # magic handy wavy compensation
+            do ship._power_shields
+            do ship._power_phasers
+            do ship._auto_load_torpedoes
+
         if target.distance > tactical_report.phaser_range
             @substate = @substates.CLOSING
             return

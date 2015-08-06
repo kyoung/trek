@@ -77,9 +77,11 @@ class WarpSystem extends ChargedSystem
     update_system: ( delta_t_ms, engineering_locations ) ->
 
         super delta_t_ms, engineering_locations
+
+        # charge loss owing to warp speed
         w = @warp_field_level / WarpSystem.STABLE_WARP
-        power_drain = w * @power_thresholds.dyn
-        charge_drain_per_ms = 1 / @charge_time * power_drain
+        power_drain = w * @power_thresholds.dyn  # required power to sustain warp
+        charge_drain_per_ms = power_drain / @charge_time
         accumulated_drain = charge_drain_per_ms * delta_t_ms
 
         @charge_down accumulated_drain

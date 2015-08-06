@@ -56,7 +56,7 @@ class Torpedo extends BaseObject
             @detonation_callback @target.position, @yield * Torpedo.MAX_DAMAGE
             return
 
-        [..., last_target_nav] = @target.navigation_log
+        last_target_nav = @target.navigation_log.retrieve(-1).date
         if last_target_nav == @_last_target_navigation
             # Assume we'll hit, 100m from position
             d_y = @target.position.y - @position.y
@@ -100,7 +100,7 @@ class Torpedo extends BaseObject
         do @set_velocity
         @_detonation_position = final_position
         if @target.navigation_log?
-            [..., @_last_target_navigation] = @target.navigation_log
+            @_last_target_navigation = @target.navigation_log.retrieve(-1).date
         setTimeout @_two_second_warning, time - 2000
         @_timeout = setTimeout @detonate, time
 

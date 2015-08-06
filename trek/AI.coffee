@@ -41,6 +41,11 @@ class AI
 
     update: () =>
 
+        # Am I dead?
+        ship = @game.ai_ships[ @prefix ]
+        if not ship.alive
+            return
+
         # Wrap all of this in a try statement, to prevent it
         # from crashing the main event loop
         try

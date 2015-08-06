@@ -2,7 +2,9 @@
 <div class="eng">
     <p class="top"><%= ship.name %> Status</p>
 </div>
-<div id="statusReport" class="eng">
+<div id="statusReport" class="eng eng-status-report">
+</div>
+<div id="hullReport" class="eng eng-hull-report">
 </div>
 
 <script type="text/template" id="sectionStatusTmpl">
@@ -24,6 +26,21 @@
             <span class="active">{{active}}</span>
         {{/active}}
 	</li>
+</script>
+
+<script type="text/template" id="hullStatusTmpl">
+    <p>Hull Status</p>
+    <ul>
+        {{#hull}}
+            <li class="system-status">
+                <span class="eng-hull-deck">Deck {{deck}}</span>
+                <span class="eng-hull-section {{forwardColorClass}}">Forward</span>
+                <span class="eng-hull-section {{portColorClass}}">Port</span>
+                <span class="eng-hull-section {{aftColorClass}}">Aft</span>
+                <span class="eng-hull-section {{starboardColorClass}}">Starboard</span>
+            </li>
+        {{/hull}}
+    </ul>
 </script>
 
 <script type="text/javascript" src="static/js/trek/engineering-screen.js"></script>

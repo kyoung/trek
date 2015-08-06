@@ -11,7 +11,7 @@ var consolidated_cargo = {};
 
 function loadScan ( data ) {
 
-    engineeringStatus = data;
+    engineeringStatus = data.systems;
     trek.api( 'operations/internalScan', drawSystems );
 
 }

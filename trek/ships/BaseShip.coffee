@@ -76,13 +76,13 @@ class BaseShip extends BaseObject
         # Assume navigation is working
         if @port_warp_coil? and @starboard_warp_coil?
             do @port_warp_coil.bring_online
-            @port_warp_coil.charge = 1
+            @port_warp_coil.charge = 0.8
             do @starboard_warp_coil.bring_online
-            @starboard_warp_coil.charge = 1
+            @starboard_warp_coil.charge = 0.8
 
         if @navigational_deflectors?
             do @navigational_deflectors.bring_online
-            @navigational_deflectors.charge = 1
+            @navigational_deflectors.charge = 0.8
 
         # Override these in your subclass to change your ship type
         @model_url = "constitution.js"
@@ -357,12 +357,15 @@ class BaseShip extends BaseObject
 
     damage_report: ( filter ) ->
 
-        r = ( s.damage_report() for s in @systems )
+        systems = ( s.damage_report() for s in @systems )
 
         if filter
-            r = ( s for s in r when s.integrity < 1 )
+            systems = ( s for s in systems when s.integrity < 1 )
 
-        return r
+        return {
+            systems : systems,
+            hull : @hull
+        }
 
 
     shield_report: -> ( do s.shield_report for s in @shields )
@@ -461,17 +464,17 @@ class BaseShip extends BaseObject
         # Inverse square damage law
         damage = power / Math.pow( distance, 2 )
 
-        #console.log "#{@name} detects blast of #{power} power #{distance} m away. #{ damage } damage."
+        console.log "#{@name} detects blast of #{power} power #{distance} m away. #{ damage } damage."
 
         shield = ( s for s in @shields when s.section is quad )[ 0 ]
         if not shield?
             throw new Error "No shield found at quad #{quad}"
 
         if shield.is_online() and shield.is_active()
-            #console.log "#{shield.name} hit ( #{shield.energy_level()} )"
+            console.log "#{shield.name} hit ( #{shield.energy_level()} )"
             damage = shield.hit damage
 
-        #console.log "Passthrough damage: #{ damage }."
+        console.log "Passthrough damage: #{ damage }."
 
         system_passthrough = @_damage_hull target_decks, quad, damage
 
@@ -491,7 +494,7 @@ class BaseShip extends BaseObject
             sys.damage ( 0.2 + ( Math.random() * 0.8 ) ) * system_passthrough
 
         if damage > 1
-            #console.log "#{@name} hit! Blast. #{damage} damage"
+            console.log "#{@name} hit! Blast. #{damage} damage"
             message_interface @prefix_code, "Display", "Blast damage!"
 
         do @_check_if_still_alive
@@ -530,10 +533,10 @@ class BaseShip extends BaseObject
         do @_rebuild_crew_checks
 
 
-    _power_shields: -> do s.power_on for s in @shields
+    _power_shields: -> do s.bring_online for s in @shields
 
 
-    _power_phasers: -> do p.power_on for p in @phasers
+    _power_phasers: -> do p.bring_online for p in @phasers
 
 
     _auto_load_torpedoes: -> t.autoload( true ) for t in @torpedo_banks
@@ -820,8 +823,15 @@ class BaseShip extends BaseObject
             throw new Error "Unable to set impulse while navigational computer
             is manuvering"
 
-        @_log_navigation_action "Setting impulse: #{ impulse_speed }"
-        @_set_impulse impulse_speed, callback
+        if @impulse == impulse_speed
+            # we're already at this speed
+            if callback?
+                do callback
+            return @impulse
+            
+        else
+            @_log_navigation_action "Setting impulse: #{ impulse_speed }"
+            @_set_impulse impulse_speed, callback
 
 
     computer_set_impulse: ( impulse_speed ) =>
@@ -880,8 +890,13 @@ class BaseShip extends BaseObject
             throw new Error "Unable to set warp while navigational computer is
             manuvering"
 
-        @_log_navigation_action "Setting warp speed: #{ warp_speed }"
-        @_set_warp warp_speed, callback
+        if @warp_speed == warp_speed
+            # Already at this warp
+            if callback?
+                do callback
+        else
+            @_log_navigation_action "Setting warp speed: #{ warp_speed }"
+            @_set_warp warp_speed, callback
 
 
     computer_set_warp: ( warp_speed ) =>
@@ -1621,6 +1636,9 @@ class BaseShip extends BaseObject
         do cloak.power_down
 
         # maybe bring weapons systems back online?
+        do p.bring_online for p in @phasers
+        do t.bring_online for t in @torpedo_banks
+        do s.bring_online for s in @shields
 
 
     _get_cloak_system: ->
@@ -1843,10 +1861,16 @@ class BaseShip extends BaseObject
             @velocity.z = 0
 
         if @warp_speed > 0
+
+            # Your warp coils have gone offline!
+            if !@port_warp_coil.active or !@starboard_warp_coil.active
+                @computer_set_impulse 0
+                @message @prefix_code, 'Nav-Override', "Warp nacelles have gone offline."
+
             # You've lost warp plasma charge and can no longer maintain your speed
             coils_charged = @port_warp_coil.charge > 0 and @starboard_warp_coil.charge > 0
             if not coils_charged
-                @computer_set_warp 0
+                @computer_set_impulse 0
                 @message @prefix_code, 'Nav-Override', "Warp plasma charge is depleted."
 
             # You've entered a denser region of space, and need to slow down

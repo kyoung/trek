@@ -1075,6 +1075,25 @@ path.scan-result-grid-void {
     font-size: 0.6em;
 }
 
+.eng-status-report {
+    width: 400px;
+    float: left;
+}
+
+.eng-hull-report {
+    float: left;
+}
+
+.eng-hull-deck {
+    display: inline-block;
+    width: 70px;
+}
+
+.eng-hull-section {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .eng .online, .eng .active {
     visibility: hidden;
     cursor: pointer;

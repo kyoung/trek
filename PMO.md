@@ -63,7 +63,10 @@ Proposed viewscreen JSON refactor:
             atmosphere_color : #3f9,
             luminous : false,
             rotation : r,
-            type : "gas|rock"  // can we make bands?
+            type : "gas|rock"  // can we make bands?,
+            rings : [
+                { radius : NNN, color : #3e8 },
+            ]
         }
     ],  // includes planets and moons
     star : { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
@@ -78,14 +81,14 @@ Proposed viewscreen JSON refactor:
 - [ ] beaming aboard a spy seems to cause the spy to fight with the security forces in the transporter
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
-- [x] AI doesn't exit attack mode if it can't find it's target? (keeps warping away instead of halting)
 - [ ] Torpedoes don't seem to ever hit a target anymore
     - If the target altered speed or course during the life of the torpedo, it would miss
 - [ ] Cutting warp power doesn't seem to affect the power output graph too much
+- [ ] Different warp speeds don't auto-shift power to the nacels
+    - Notes: if you deactivate the nacel, and reactivate it, it drains as expected
+    - Notes: and already charged nacel doesn't drain at all (?!)
 - [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted
-- [ ] Engineering system actions blink on refresh - (only draw if there's a change?)
-- [ ] Hull damage isn't displayed anywhere
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
 - [ ] Charge refresh doesn't happen off of the main plasma relay in eng

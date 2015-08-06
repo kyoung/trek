@@ -195,8 +195,8 @@ class ShieldSystem extends ChargedSystem
         pct_drain = energy_level / @power_thresholds.dyn
         pct_missed = 1 - @charge
 
-        #console.log "#{ @name } hit, #{ pct_drain * 100 }% drain.
-        #Hit with #{ energy_level }, with power at #{ @power_thresholds.dyn }"
+        console.log "#{ @name } hit, #{ pct_drain * 100 }% drain.
+        Hit with #{ energy_level }, with power at #{ @power_thresholds.dyn }"
 
         @charge_down pct_drain, as_pct=true
 

@@ -144,8 +144,9 @@ $( '#repair' ).click( function () {
 
     trek.api(
         'engineering/status',
-        function ( data ) {
+        function ( status ) {
 
+            data = status.systems
             var ul = $( '<ul class="menu x1"></ul>' );
 
             _.each( data, function ( d ) {
@@ -159,6 +160,7 @@ $( '#repair' ).click( function () {
                     selected_system = this.id;
 
                     } );
+
                 if ( d.integrity < 1 ) {
 
                     ul.append( li );

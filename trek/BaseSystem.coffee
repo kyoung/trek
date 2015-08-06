@@ -30,7 +30,7 @@ class System
 
     @IMPULSE_POWER = { min : 0.01, max : 1.1, dyn : 1e3 }
 
-    @REPAIR_TIME = 60 * 60 * 1000
+    @REPAIR_TIME = 5 * 60 * 1000
     @OPERABILITY_CUTOFF = 0.2
     @STRENGTH = 150
 
@@ -337,20 +337,18 @@ class ChargedSystem extends System
             return
         if not @active
             return
+        if @charge == 1
+            return
 
         power_level = @power / @power_thresholds.dyn
 
-        charge_pct_per_ms = 1 / @charge_time * power_level
+        charge_pct_per_ms = power_level / @charge_time
         charge_accumulated = charge_pct_per_ms * delta_t_ms
 
         @charge = Math.min @charge + charge_accumulated, 1
 
-        # DEBUG
-        if (@name is 'Port Phaser Cannon' or @name is 'Starboard Phaser Cannon') and @change < 1
-            console.log "    >>> DEBUG charging #{ @name } : #{ @charge }"
-
         # bah
-        if 0.99 < @charge < 1
+        if 0.9999 < @charge < 1
             @charge = 1
 
         return @charge

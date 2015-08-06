@@ -1,18 +1,22 @@
 
-var sectionTmpl = $("#sectionStatusTmpl").html();
-var systemTmpl = $("#systemStatusTmpl").html();
+var sectionTmpl = $( "#sectionStatusTmpl" ).html();
+var systemTmpl = $( "#systemStatusTmpl" ).html();
+var hullTmpl = $( "#hullStatusTmpl" ).html();
+
+var $hullReport = $( "#hullReport" );
 
 var cachedStatus;
 
-function drawStatus( data ) {
+function drawStatus( scanResults ) {
 
-    if ( data == cachedStatus ) {
+    if ( scanResults == cachedStatus ) {
 
         return;
 
     }
-    cachedStatus = data;
 
+    cachedStatus = scanResults;
+    data = scanResults.systems;
     var $statusReport = $( "<div></div>" );
 
     var systemsBySection = _.groupBy( data, function ( d ) {
@@ -95,8 +99,8 @@ function drawStatus( data ) {
         }
 
         var data = {
-            system: this.parentElement.id,
-            online: online,
+            system : this.parentElement.id,
+            online : online,
         }
 
         trek.api(
@@ -118,8 +122,8 @@ function drawStatus( data ) {
         }
 
         var data = {
-            system: this.parentElement.id,
-            active: active,
+            system : this.parentElement.id,
+            active : active,
         }
 
         trek.api(
@@ -130,8 +134,68 @@ function drawStatus( data ) {
 
         } );
 
+    drawHull( scanResults.hull );
+
 }
 
+var cachedHullData = {};
+
+function drawHull( hullData ) {
+
+    if ( hullData == cachedHullData ) {
+
+        return;
+
+    }
+
+    cachedHullData = hullData;
+
+    // hullData
+    //  {
+    //     A: {
+    //         Port: 1,
+    //         Starboard: 1,
+    //         Forward: 1,
+    //         Aft: 1
+    //     },
+    //     ...
+
+    var deckList = [];
+    var color = function ( deckHealth ) {
+
+        switch (true) {
+            case ( deckHealth == 1 ):
+                return 'blue';
+            case ( 0.7 <= deckHealth < 1 ):
+                return 'lightblue'
+            case ( 0.4 <= deckHealth < 0.7 ):
+                return 'green';
+            case ( deckHealth < 0.4 ):
+                return 'red';
+        }
+
+    }
+
+    // convert to
+    // [ { Deck : 'A', portColorClass : 'blue', starboardColorClass : 'blue', forwardColorClass : 'blue', aftColorClass : 'blue' } ]
+
+    _.each( hullData, function( v, k ) {
+
+        var entry = { deck : k };
+        entry.portColorClass = color( v.Port );
+        entry.starboardColorClass = color( v.Starboard );
+        entry.forwardColorClass = color( v.Forward );
+        entry.aftColorClass = color( v.Aft );
+        deckList.push( entry );
+
+    } )
+
+    deckList = _.sortBy( deckList, function ( i ) { return i.deck; } );
+
+    deckHtml = Mustache.render( hullTmpl, { hull : deckList } );
+    $hullReport.html( deckHtml );
+
+}
 
 function loadScreen() {
 

@@ -51,7 +51,9 @@ class TinkerTaylor extends Level
 
         @_initial_lives = do @_get_crew_count
 
-        @code_word = /tinker tailor/i
+        @code_word = /tinker tailor soldier spy/i
+        @code_word_said = false
+        @marco_said = false
 
 
     _is_ship_destroyed: => !@enterprise.alive
@@ -62,32 +64,20 @@ class TinkerTaylor extends Level
         @spy in @enterprise.internal_personnel and !@klingon.alive
 
 
-    _is_message_sent: =>
-
-        message_sent = do @enterprise.get_comms
-        for m in message_sent
-            if m.type is 'sent'
-                if @code_word.test m.message
-                    console.log "[[LVL]] trigger word detected!"
-                    return true
-        return false
+    _is_message_sent: => @code_word_said
 
 
-    _is_marco_said: =>
-
-        # debugging function to save some time in testing
-        message_sent = do @enterprise.get_comms
-        for m in message_sent
-            if m.type is 'sent'
-                if /marco/.test m.message
-                    console.log "[[LVL]] playing marco polo"
-                    return true
-        return false
+    _is_marco_said: => @marco_said
 
 
     handle_hail: ( prefix, message, response_function ) ->
 
         console.log "[LEVEL] message: #{ message }"
+        if @code_word.test message
+            @code_word_said = true
+
+        if /marco/i.test message
+            @marco_said = true
 
 
     get_final_score: ->
@@ -265,7 +255,9 @@ class TinkerTaylor extends Level
 
         start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
         p = start_point.position
-        k_position = { x : p.x + 1e8, y : p.y + 1e8, z: 0 }
+        x_rand = Math.floor( Math.random() * 1e8 )
+        y_rand = Math.floor( Math.random() * 1e8 )
+        k_position = { x : p.x + x_rand, y : p.y + y_rand, z: 0 }
         k = new D7 'ChinTok'
         k.star_system = system
         k.set_coordinate k_position
@@ -281,7 +273,9 @@ class TinkerTaylor extends Level
 
         start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
         p = start_point.position
-        k2_position = { x : p.x + 1e8, y : p.y + 1e8, z: 0 }
+        x_rand = Math.floor( Math.random() * 1e8 )
+        y_rand = Math.floor( Math.random() * 1e8 )
+        k2_position = { x : p.x + x_rand, y : p.y + y_rand, z: 0 }
         k2 = new D7 'ChoRe'
         k2.star_system = system
         k2.set_coordinate k2_position
