@@ -4,6 +4,18 @@ ai = require '../trek/AI'
 
 # Mock game object
 game = {
+
+    ai_ships :
+        "0000" : {
+                prefix : "0000",
+                name : "C'Tag",
+                star_system : 'Chin\'ta System',
+                weapons_targeting : { target : 'Enterprise' },
+                alignment : 'Klingon',
+                alive : true
+            }
+
+
     get_startup_stats : () ->
         {
             ai_ships : [
@@ -12,7 +24,8 @@ game = {
                     name : "C'Tag",
                     star_system : 'Chin\'ta System',
                     weapons_targeting : { target : 'Enterprise' },
-                    alignment : 'Klingon'
+                    alignment : 'Klingon',
+                    alive : true
                 }
             ]
         }

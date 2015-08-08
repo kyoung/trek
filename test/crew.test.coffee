@@ -55,12 +55,12 @@ exports.CrewTest =
 
 			test.ok( s.state > System.OPERABILITY_CUTOFF,
 				"Failed to get system operational: #{ s.state }" )
-			test.ok( not r.currently_repairing,
+			test.ok( not r.currently_repairing?,
 				"Failed to free up repair team: #{ r.currently_repairing }" )
 			System.REPAIR_TIME = original_repair_time
 			do test.done
 
-		time_out = 0.05 * System.REPAIR_TIME
+		time_out = 0.5 * System.REPAIR_TIME
 		setTimeout check_operational_repair, time_out
 
 
@@ -99,7 +99,7 @@ exports.CrewTest =
 				"Failed to report complete: #{ r.currently_repairing } when state is #{ s.state }")
 			do test.done
 
-		time_out = 0.002 * System.REPAIR_TIME + Constants.CREW_TIME_PER_DECK
+		time_out = 0.02 * System.REPAIR_TIME + Constants.CREW_TIME_PER_DECK
 		setTimeout check_complete_repair, time_out
 
 

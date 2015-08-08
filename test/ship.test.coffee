@@ -323,8 +323,8 @@ exports.ShipTest =
         total_damage = 0
 
         # Calculate total damage
-        for dr in do e.damage_report
-            total_damage += 1-dr.integrity
+        for dr in e.damage_report().systems
+            total_damage += 1 - dr.integrity
 
         test.ok total_damage > 0, 'No damage incurred'
         do test.done
