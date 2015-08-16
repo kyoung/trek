@@ -101,7 +101,7 @@ function loadHighresReading ( results ) {
     _.each( results.classifications, function ( e ) {
 
         // TODO: this is a hack... really, these should all be collapsed or grouped
-        if ( e.classification == "Plasma Cloud" ) {
+        if ( e.classification == "Plasma Cloud" || e.scan_type == "celestial" ) {
 
             return;
 

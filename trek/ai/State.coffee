@@ -130,6 +130,12 @@ class MovingToPointState extends AIState
 
         ship = game.ai_ships[ ai.prefix ]
         distance = U.distance ship.position, @move_to_point
+        abs_bearing = U.point_bearing ship.position, @move_to_point
+        rel_bearing = U.abs2rel_bearing ship, abs_bearing, 3
+
+        # misaligned
+        if ( 0.9 <  rel_bearing.bearing ) or ( rel_bearing.bearing < 0.1 )
+            @substate = @substates.TURNING
 
         tactical_report = do ship.tactical_report
         if distance < tactical_report.phaser_range

@@ -39,7 +39,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] Have the level require the use of sensors to solve
         - [x] Have things detected with passive hi-res scans show up for nav and tactical displays
   - [x] Write an AI client that can act and respond with the API
-  - [ ] Wire up the AI to respond to either level events or with it's messaging
+  - [x] Wire up the AI to respond to either level events or with it's messaging
 - Sector maps and other systems
     - Setup LY-based coordinates for objects not in systems
     - Compound coordinates? LY coordinates, offset by metrics is you"re in a system
@@ -50,12 +50,12 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] Have LR sensors detect ships and allow configuration
 
 ## Hotfix
-- [ ] Celestial objects in detailed scans have increadibly useless classifications and descriptions
+- [ ] Torpedoes don't leave the tactical or comm display w/out refresh
+- [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
 - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
     - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
-- [ ] Cutting warp power doesn't seem to affect the power output graph too much
 - [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted
 - [ ] Use input sliders for engineering:

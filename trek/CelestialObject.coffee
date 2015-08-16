@@ -65,7 +65,8 @@ class Lagrange extends CelestialObject
 
         super()
         @charted = true
-        @name = "#{ @planet.name } Lagrange Point #{ @lagrange_position }"
+        @name = "#{ @planet.name } L #{ @lagrange_position }"
+        @classification = "Lagrange Point"
         @_scan_density = {}
         @_scan_density[ SensorSystem.SCANS.HIGHRES ] = up_to 2e2
         @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = up_to 1e2
@@ -127,8 +128,12 @@ class Planet extends CelestialObject
         super()
         @charted = true
         # Set name this way because super overrides it
-        @name = name
-        @classification = classification
+        if /[0-9]/.test name
+            @name = "#{ @system_name } #{ name }"
+        else
+            @name = name
+
+        @classification = "#{ classification } class planet"
         @_scan_density = {}
         @_scan_density[ LongRangeSensorSystem.SCANS.GRAVIMETRIC ] = switch classification
             when 'D' then between 0.1, 1

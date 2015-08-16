@@ -4,6 +4,8 @@ fs = require 'fs'
 {Torpedo} = require './Torpedo'
 {Transporters} = require './systems/TransporterSystems'
 
+{CelestialObject} = require './CelestialObject'
+
 C = require './Constants'
 U = require './Utility'
 
@@ -693,6 +695,7 @@ class Game
             classifications = (
                 {
                     classification: h.classification,
+                    celestial: h instanceof CelestialObject
                     coordinate: h.position,
                     tag: h.sensor_tag
                 } for h in final_hits when !( h.is_cloaked? and h.is_cloaked() ) )
@@ -824,6 +827,7 @@ class Game
             bearing : U.bearing you, object
             distance : U.distance object.position, you.position
             position : object.position
+            scan_type : "tactical"
 
 
     get_public_space: ( object, you, descriptor ) ->
@@ -850,6 +854,7 @@ class Game
             classification : object.classification
             radius : object.radius
             descriptor : descriptor
+            scan_type : "celestial"
 
 
     get_tracking_data: ( object, you ) ->

@@ -917,6 +917,11 @@ ul.science-environmental-data li {
     color: #60DDF7;
 }
 
+.scan-informational-overlay li.scan-celestial {
+    font-size: 0.8em;
+    color: #0F8AA6;
+}
+
 .scan-detail-render {
     width: 100%;
     height: 100%;

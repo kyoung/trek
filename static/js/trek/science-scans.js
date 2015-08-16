@@ -102,12 +102,20 @@ function loadReading ( reading_json ) {
     $scanDetails.empty();
 
     var $ul = $( "<ul></ul>" );
-    var li_template = "<li>{{classification}} bearing {{bearing.bearing}} mark {{bearing.mark}} distance {{distance}}</li>";
+    var li_template = "<li class='{{ class }}'>{{classification}} bearing {{bearing.bearing}} mark {{bearing.mark}} distance {{distance}}</li>";
 
     _.each( classifications, function ( e ) {
 
         e.bearing.bearing = Math.round( e.bearing.bearing * 1000 )
         e.distance = trek.prettyDistanceKM( e.distance );
+        e.class = "";
+
+        if ( e.celestial ) {
+
+            e.class = "scan-celestial";
+
+        }
+
         var $li = $( Mustache.render( li_template, e ) );
         $ul.append( $li );
 
@@ -252,7 +260,7 @@ function drawReadings () {
 function setBearing ( c ) {
 
     if ( bearing_start ) {
-        
+
         // is bearing end
 
         // ...
