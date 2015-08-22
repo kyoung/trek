@@ -9,6 +9,7 @@ class Level
         @space_objects = []
         @game_objects = []
         @map = {}
+        @theme = 'static/sound/theme.mp3'
 
 
     get_ships: ->

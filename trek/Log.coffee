@@ -23,7 +23,7 @@ class Log
     constructor: ( @name ) ->
 
         @entries = []
-        @_read_index = 0
+        @_read_index = 1
         # Make sure the log is never empty, for indexing etc
         @log "Initializing #{ @name } Log"
 

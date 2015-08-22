@@ -492,6 +492,9 @@ command_api = ( prefix, method, command, params, res ) ->
         when "game"
             game.uid
 
+        when "theme"
+            game.theme_music
+
 
 set_course = ( prefix, bearing, mark ) ->
 

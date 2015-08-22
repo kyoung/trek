@@ -71,6 +71,8 @@ class Game
 
         @environment_functions = do level.get_environment
 
+        @theme_music = level.theme
+
 
     state: ->
         # return a station

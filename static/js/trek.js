@@ -259,7 +259,11 @@ var trek = (function($, _, Mustache, io) {
 
             document.cookie = gameUID + '_theme_played=0;';
 
-            playAudio( 'static/sound/theme.mp3', false );
+            t.api( 'command/theme', function ( theme ) {
+
+                playAudio( theme, false );
+
+            } );
 
         }
 

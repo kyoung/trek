@@ -49,6 +49,8 @@ class TinkerTaylor extends Level
         do @_init_game_objects
         do @_init_environment
 
+        @theme = 'static/sound/klingonTheme.mp3'
+
         @_initial_lives = do @_get_crew_count
 
         @code_word = /tinker tailor soldier spy/i
@@ -189,7 +191,7 @@ class TinkerTaylor extends Level
                 count += do c.count
 
 
-    _init_map: () ->
+    _init_map: ->
 
         sector = new SpaceSector "2531"
         klthos = new StarSystem "Klthos"
@@ -203,7 +205,7 @@ class TinkerTaylor extends Level
         @map = sector
 
 
-    _init_logs: () ->
+    _init_logs: ->
 
         @enterprise_logs = [
             "Captains Log, stardate #{ @stardate }\n
@@ -213,20 +215,17 @@ class TinkerTaylor extends Level
             devices. The operative has signaled that he requires extraction and
             has a plan to take the cloaking device with him.\n
             \n
-            We are hiding the Enterprise in the Klthos system. The Klthos star
-            puts out an intense amount of Kreller radiation, which masks our
-            ship's power signature. Our intel indicates that the ChinTok will
-            be patrolling the system.\n
+            We are hiding the Enterprise in the Klthos system to hide our ship's
+            power signature. Our intel indicates that the ChinTok will be
+            patrolling the system.\n
             \n
-            Once in the system, our operative will sabotage the ChinTok,
-            causing the crew to flee in escape pods. In it's disabled state, we
-            will be able to approach and recover both the operative and cloaking
-            device.\n
+            Once signaled, our operative will sabotage the ChinTok, allowing us
+            to approach and recover both the operative and cloaking device.\n
             \n
             Starfleet intelligence warns that there may be a second battle
             cruiser in the area, and any distress call from the ChinTok might
-            draw them near. We will have to act fast if we want to avoid an all
-            out war with the Klingons.\n
+            draw them near. We will have to act fast if we want to avoid
+            discovery.\n
             \n
             It goes without saying that we can't afford to have the Klingons
             reporting back to the High Council what we do here today.\n\n
@@ -250,7 +249,7 @@ class TinkerTaylor extends Level
         e.set_online e.transponder.name, false  # let's be sneaky
         @enterprise = e
 
-        if !(@space_objects.length > 0)
+        if !( @space_objects.length > 0 )
             throw new Error "WTF space objects"
 
         start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
