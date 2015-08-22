@@ -56,22 +56,22 @@ function relativeCoordinates ( x, y, z ) {
 
 function paintScan ( data ) {
 
-    self = _.find(
-        data,
-        function ( e ) {
+    self = _.find( data, function ( e ) {
 
             return e.name == shipName
 
-        } );
+    } );
+
+    var scannedNames = [];
 
     _.each( data, function ( e ) {
+
+        scannedNames.push( e.name );
 
         var coordinates = relativeCoordinates(
             e.position.x,
             e.position.y,
             e.position.z );
-
-
 
         var reading = {
             name : e.name,
@@ -109,7 +109,18 @@ function paintScan ( data ) {
 
         }
 
-        } );
+    } );
+
+    // remove objects no longer in the data scan
+    _.each( sensorObjects, function( v, k ) {
+
+        if ( _.indexOf( scannedNames, k ) == -1 ) {
+
+            v.remove();
+
+        }
+
+    } );
 
     var r = $displayGrid.height() / ( zoom * 2 );
     var x_offset = $displayGrid.width() / 2;

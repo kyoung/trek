@@ -104,7 +104,11 @@ function paintMap ( data ) {
 
 function paintScan ( data ) {
 
+    var scannedNames = [];
+
     _.each( data, function ( e ) {
+
+        scannedNames.push( e.name );
 
         var coordinates = relativeCoordinates(
             e.position.x,
@@ -155,15 +159,22 @@ function paintScan ( data ) {
         };
 
         if ( e.descriptor == "Planet" ) {
+
             console.log( e.classification );
+
         }
 
         var t = tmpl;
         if ( e.descriptor == "Planet" && /[MLKND]/.test( e.classification ) ) {
+
             t = tmplHollow;
+
         }
+
         if ( e.descriptor == "Asteroids" ) {
+
             t = tmplPoint;
+
         }
 
 
@@ -178,6 +189,17 @@ function paintScan ( data ) {
             obj.css( "top", y ).css( "left", x );
             sensorObjects[ e.name ] = obj;
             $displayGrid.append( obj );
+
+        }
+
+    } );
+
+    // remove objects no longer in the data scan
+    _.each( sensorObjects, function( v, k ) {
+
+        if ( _.indexOf( scannedNames, k ) == -1 ) {
+
+            v.remove();
 
         }
 

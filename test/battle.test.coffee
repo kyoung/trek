@@ -13,6 +13,12 @@ exports.BattleTest =
         s = new Constitution "Icarus", "NX-992"
         s.set_coordinate { x: 0, y: 0, z: 0 }
 
+        low_yield = Math.pow( 2, 1 ) / Math.pow( 2, 16 )
+        mid_yield = Math.pow( 2, 8 ) / Math.pow( 2, 16 )
+        # Lets start with a lower tactical yield
+        torpedo_low_yield = Torpedo.MAX_DAMAGE * low_yield
+        torpedo_mid_yield = Torpedo.MAX_DAMAGE * mid_yield
+
         # Raise sheilds, set to full power
         s.set_shields true
 
@@ -30,25 +36,25 @@ exports.BattleTest =
             y: 0
             z: 0
 
-        s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
+        s.process_blast_damage blast_point, torpedo_low_yield, ->
         test.ok s.alive, "Ship failed to survive single blast"
 
         #console.log s.shield_report()
 
-        s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
+        s.process_blast_damage blast_point, torpedo_low_yield, ->
         # console.log s.damage_report true
         test.ok s.alive, "Ship failed to survive second blast"
 
         #console.log s.shield_report()
 
-        s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
+        s.process_blast_damage blast_point, torpedo_low_yield, ->
         # console.log s.damage_report true
         test.ok s.alive, "Ship failed to survive third blast"
 
         #console.log s.shield_report()
 
         for i in [0...15]
-            s.process_blast_damage blast_point, Torpedo.MAX_DAMAGE, ->
+            s.process_blast_damage blast_point, torpedo_mid_yield, ->
 
         # console.log s.damage_report true
         test.ok not s.alive, "Ship failed to be destroyed by torpedo barage"
@@ -151,5 +157,3 @@ exports.BattleTest =
         to lower shield charge: #{ initial_shield_charge } vs #{ post_shield_charge }"
 
         do test.done
-
-

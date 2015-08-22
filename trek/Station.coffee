@@ -341,7 +341,7 @@ class Station extends BaseObject
 
         distance = Utility.distance @position, position
 
-        damage = power / Math.pow( distance, 2 )
+        damage = power / Math.pow( distance/1000, 2 )
 
         damage_as_pct = damage / C.STATION_HULL_STRENGTH
 

@@ -5,7 +5,7 @@ Utility = require './Utility'
 
 class Torpedo extends BaseObject
 
-    @MAX_DAMAGE = 1.5e9
+    @MAX_DAMAGE = 3e7
 
     constructor: ( @target, yield_level ) ->
 

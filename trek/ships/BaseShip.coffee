@@ -447,7 +447,7 @@ class BaseShip extends BaseObject
 
         quad = @calculate_quadrant position
         if not quad in ( s for s, v of @SECTIONS )
-            throw new Error "Invalid position: #{position}"
+            throw new Error "Invalid position: #{ position }"
 
         deck_list = ( k for k, v of @DECKS )
 
@@ -462,16 +462,17 @@ class BaseShip extends BaseObject
         distance = Math.max U.distance( @position, position ), 1
 
         # Inverse square damage law
-        damage = power / Math.pow( distance, 2 )
+        # A ship is on the scale of a km, not a m, so we scale units accordingly
+        damage = power / Math.pow( distance/1000, 2 )
 
-        console.log "#{@name} detects blast of #{power} power #{distance} m away. #{ damage } damage."
+        console.log "#{ @name } detects blast of #{ power } power #{ distance }m away. #{ damage } damage."
 
         shield = ( s for s in @shields when s.section is quad )[ 0 ]
         if not shield?
-            throw new Error "No shield found at quad #{quad}"
+            throw new Error "No shield found at quad #{ quad }"
 
         if shield.is_online() and shield.is_active()
-            console.log "#{shield.name} hit ( #{shield.energy_level()} )"
+            console.log "#{ shield.name}  hit ( #{ shield.energy_level() } )"
             damage = shield.hit damage
 
         console.log "Passthrough damage: #{ damage }."
@@ -494,7 +495,7 @@ class BaseShip extends BaseObject
             sys.damage ( 0.2 + ( Math.random() * 0.8 ) ) * system_passthrough
 
         if damage > 1
-            console.log "#{@name} hit! Blast. #{damage} damage"
+            console.log "#{ @name } hit! Blast. #{ damage } damage"
             message_interface @prefix_code, "Display", "Blast damage!"
 
         do @_check_if_still_alive
