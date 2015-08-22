@@ -51,6 +51,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 ## Hotfix
 - [ ] Repairing the bridge doesn't seem to fix blast damage to consoles
+- [ ] Levels can't pick their theme music?
 - [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
 - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
     - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!

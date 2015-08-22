@@ -167,7 +167,8 @@ var trek = (function($, _, Mustache, io) {
                 break;
 
             case "Repair":
-                if ( args[ 1 ] == "All" || args[ 1 ] == screenName ) {
+
+                if ( args[ 1 ] == "All" || args[ 1 ] == t.screenName ) {
 
                     clearBlastDamage();
                     document.cookie = "cracked=false";
