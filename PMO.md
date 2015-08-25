@@ -10,9 +10,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
   - [ ] Also, refactor to use stylus
 - [ ] Class-selector CSS
   - [ ] find and kill all id-based css rules
-- [x] Coding-style cleaned JS
-  - [x] implement the Mr. Doob JS standard everywhere
-  - [x] get JS out of the html so that we can lint it
 - [ ] All HTML must use base templating
 - [ ] Fix the API
   - [x] Get the API turned into a RESTful API

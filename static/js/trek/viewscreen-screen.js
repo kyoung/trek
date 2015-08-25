@@ -27,6 +27,7 @@ var station;
 var ship;
 var target;
 var systemStar;
+var systemStarMesh;
 var globalLight;
 
 var cameraTurnRate, cameraTurning;
@@ -45,7 +46,7 @@ trek.api(
     "navigation/stelar-telemetry",
     { target : targetName },
     parseTelemetry );
-    
+
 
 function parseTelemetry ( data ) {
 
@@ -251,8 +252,10 @@ function calculateNewWarpLinePosition ( line ) {
 
 function showSun () {
 
-    // TODO fix this hack, and orient the backgroud sphere (which
-    // contains a drawing of the star) to the light source
+    // systemStarMesh;
+    
+
+    // TODO fix this hack
 
     systemStar = new THREE.PointLight( 0xffddff, 1, 0 );
     // position hack until we come up with the real trig:
@@ -306,7 +309,6 @@ function showSun () {
 function makeParticles () {
 
     drawWarpTunnel();
-    // drawStars(); // disabled while we test the new skybox background
 
 }
 
@@ -370,63 +372,6 @@ function drawWarpTunnel () {
 }
 
 
-function drawStars () {
-
-    // TODO: generate the stars in the server on game startup, and show them here via a JSON call
-
-    var particle, material;
-    var starcount = 10000;
-
-    // we're gonna move from z position -1000 (far away)
-    // to 1000 (where the camera is) and add a random particle at every pos.
-    var particle_geo = new THREE.Geometry();
-    // we make a particle material and pass through the
-    // colour and custom particle render function we defined.
-    material = new THREE.ParticleSystemMaterial( { vertexColors : true } );
-
-    for ( var i = 0; i < starcount; i ++ ) {
-
-        // make the particle
-        particle = new THREE.Vector3();
-
-        var phi = Math.random() * 2 * Math.PI;
-        var z = Math.random() * visibleRadius * 2 - visibleRadius;
-        var theta = Math.asin( z / visibleRadius );
-        particle.x = visibleRadius * Math.cos( theta ) * Math.cos( phi );
-        particle.y = visibleRadius * Math.cos( theta ) * Math.sin( phi );
-        particle.z = z;
-
-        // scale it up a bit
-        // particle.scale.x = particle.scale.y = Math.random() * 3;
-
-        // add it to the scene
-        //scene.add( particle );
-
-        // and to the array of particles.
-        particle_geo.vertices.push( particle );
-
-    }
-
-    var colours = []
-    for ( var i = 0; i < particle_geo.vertices.length; i ++ ) {
-
-        colours[ i ] = new THREE.Color();
-        colours[ i ].setHSL(
-            Math.random(),
-            Math.random(),
-            Math.random() );
-
-    }
-    particle_geo.colors = colours;
-
-    particle_system = new THREE.ParticleSystem( particle_geo, material );
-    particle_system.scale.x = particle_system.scale.y = particle_system.scale.z = 0.1;
-
-    scene.add( particle_system );
-
-}
-
-
 function showTarget () {
 
     loader.load( "/static/mesh/" + targetURL, function( geo, mat ) {
@@ -469,8 +414,6 @@ function showTorpedoHit () {
 
     torpedo.customUpdateCallback = torpedoUpdateCallback;
     torpedo.position.set( x, y, z );
-
-    console.log( torpedo );
     scene.add( torpedo );
     torpedos.push ( torpedo );
 

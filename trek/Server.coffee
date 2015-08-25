@@ -244,6 +244,7 @@ navigation_api = ( prefix, method, command, params ) ->
         when "sector-telemetry"
             game.get_sector_telemetry prefix
 
+
 tactical_api = ( prefix, method, command, params ) ->
 
     q = params
