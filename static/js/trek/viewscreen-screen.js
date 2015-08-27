@@ -4,10 +4,6 @@ var lightAngle = 0.75;
 
 var torpedos = [];
 
-
-// default skybox
-var skyboxImage = 'static/images/Milky_way.jpg';
-
 // the main three.js components
 var camera, scene, renderer;
 
@@ -35,44 +31,17 @@ var cameraEasing, cameraElapsed;
 
 var navigationData;
 
-
 var starViews = [
     "undefined",
     "forward",
     "aft"
 ];
 
+
 trek.api(
     "navigation/stelar-telemetry",
     { target : targetName },
-    parseTelemetry );
-
-
-function parseTelemetry ( data ) {
-
-    if ( amLookingAtTarget() ) {
-
-        var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
-
-        shipRotation = data.bearing_to_viewer.bearing;
-        lightAngle = netBearingToLight;
-
-        if ( lightAngle > 1 ) {
-
-            lightAngle -= 1;
-
-        }
-
-        targetURL = data.target_model;
-
-    }
-
-    skyboxImage = data.skybox;
-
-    init();
-
-}
-
+    init );
 
 window.requestAnimFrame = ( function () {
 
@@ -88,7 +57,34 @@ window.requestAnimFrame = ( function () {
     } )();
 
 
-function init () {
+function init ( data ) {
+
+    // # Proposed refactor:
+    // #
+    // #   {
+    // #       skyboxes : [
+    // #           { url : "", alpha_url : "", rotation : 0 }, // allows for super imposed nebula, and the possibility of movement
+    // #       ],
+    // #       planets : [
+    // #           {
+    // #               size : [ radius],
+    // #               distance : [distance],
+    // #               surface_color : #3e8,
+    // #               atmosphere_color : #3f9,
+    // #               type : "gas|rock"  // can we make bands?,
+    // #               bearing : [bearing],
+    // #               rings : [
+    // #                   { radius : NNN, color : #3e8 },
+    // #               ]
+    // #           }
+    // #       ],  // includes planets and moons
+    // #       stars : [
+    // #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
+    // #       ],   // 50% of systems are binary
+    // #       target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined,
+    // #       # direction : "forward|backward|left|right",
+    // #       # at_warp : true // gets over-ridden by socket calls
+    // #   }
 
     // Camera params :
     // field of view, aspect ratio for render output, near and far clipping plane.
@@ -113,25 +109,37 @@ function init () {
     document.body.appendChild( renderer.domElement );
 
     makeParticles();
-    showSun();
-    loadGalaxy();
+    showSuns( data.stars );
+    loadGalaxy( data.skyboxes );
 
-    if ( targetURL != "" ) {
+    if ( data.target !== undefined ) {
 
+        shipRotation = data.target.rotation;
+        targetURL = data.target_model;
         showTarget();
-
+        // var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
+        // lightAngle = netBearingToLight;
+        //
+        // if ( lightAngle > 1 ) {
+        //
+        //     lightAngle -= 1;
+        //
+        // }
+        
     }
 
     globalLight = new THREE.AmbientLight( 0x333333 );
 
     scene.add( globalLight );
-
     requestAnimationFrame( update );
 
 }
 
 
-function loadGalaxy () {
+function loadGalaxy ( skyboxes ) {
+
+    // TODO just use the first one for now
+    var skyboxImage = skyboxes[ 0 ].url;
 
     var uniforms;
     var material;
@@ -163,6 +171,51 @@ function loadGalaxy () {
 }
 
 
+function showSuns ( stars ) {
+
+    // negative because of the wonkiness of display coordinates
+    var displayRadius = -1000;
+
+    _.each( stars, function( s ) {
+
+        console.log( s );
+
+        var newStarLight = new THREE.PointLight( s.primary_color, 1, 0 );
+        var radianRotation = s.bearing.bearing * 2 * Math.PI;
+        var x = Math.sin( radianRotation ) * displayRadius;
+        var z = Math.cos( radianRotation ) * displayRadius;
+        newStarLight.position.set( x, 0, z );
+
+        var apparentRadius = s.size / s.distance * displayRadius * -1;
+        var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+        var material = new THREE.MeshBasicMaterial( { color : s.primary_color } );
+        var sphere = new THREE.Mesh( geometry, material );
+        sphere.position.set( x, 0, z );
+
+        // lens flare
+        var textureFlare0 = THREE.ImageUtils.loadTexture( "static/textures/lensflare0.png" );
+        var textureFlare2 = THREE.ImageUtils.loadTexture( "static/textures/lensflare1.png" );
+        var textureFlare3 = THREE.ImageUtils.loadTexture( "static/textures/lensflare2.png" );
+        var flareColor = new THREE.Color( s.primary_color );
+        var flare = new THREE.LensFlare( textureFlare0, 300, 0.0, THREE.AdditiveBlending, flareColor );
+        flare.add( textureFlare2, 251, 0.0, THREE.AdditiveBlending, flareColor );
+        flare.add( textureFlare2, 251, 0.0, THREE.AdditiveBlending, flareColor );
+        flare.add( textureFlare2, 251, 0.0, THREE.AdditiveBlending, flareColor );
+        flare.add( textureFlare3, 30, 0.6, THREE.AdditiveBlending, flareColor );
+        flare.add( textureFlare3, 35, 0.7, THREE.AdditiveBlending, flareColor );
+        flare.add( textureFlare3, 60, 0.9, THREE.AdditiveBlending, flareColor );
+        flare.add( textureFlare3, 35, 1.0, THREE.AdditiveBlending, flareColor );
+        flare.position.set( x, 0, z );
+
+        scene.add( flare );
+        scene.add( sphere );
+        scene.add( newStarLight );
+
+    } );
+
+};
+
+
 function update ( stamp ) {
 
     _.each( torpedos, function ( e ) {
@@ -184,22 +237,14 @@ function update ( stamp ) {
 
             f.size /= 1.1;
 
-            } );
+        } );
 
     } );
 
 
     if ( cameraTurning ) {
 
-        // Rotate the stars, not the camera
-        // rotations are in Radians
-        // particle_system.rotation.y -= cameraTurnRate;
-
-        if ( skyBox != undefined ) {
-
-            skyBox.rotation.y -= cameraTurnRate;
-
-        }
+        camera.rotation.y += cameraTurnRate;
 
     }
 
@@ -248,62 +293,6 @@ function calculateNewWarpLinePosition ( line ) {
     }
 
 }
-
-
-function showSun () {
-
-    // systemStarMesh;
-    
-
-    // TODO fix this hack
-
-    systemStar = new THREE.PointLight( 0xffddff, 1, 0 );
-    // position hack until we come up with the real trig:
-    var best_eighth = Math.round( lightAngle * 8 ) / 8;
-
-    switch ( best_eighth ) {
-
-        case 0:
-            systemStar.position.set( 0, 0, -3000 );
-            break;
-
-        case 0.125:
-            systemStar.position.set( -2121, 0, -2121 );
-            break;
-
-        case 0.25:
-            systemStar.position.set( -3000, 0, 0 );
-            break;
-
-        case 0.375:
-            systemStar.position.set( -2121, 0, 2121 );
-            break;
-
-        case 0.5:
-            systemStar.position.set( 0, 0, 3000 );
-            break;
-
-        case 0.625:
-            systemStar.position.set( 2121, 0, 2121 );
-            break;
-
-        case 0.75:
-            systemStar.position.set( 3000, 0, 0 );
-            break;
-
-        case 0.875:
-            systemStar.position.set( 2121, 0, -2121 );
-            break;
-
-        case 1:
-            systemStar.position.set( 0, 0, -3000 );
-            break;
-
-    }
-
-    scene.add( systemStar );
-
-};
 
 
 function makeParticles () {

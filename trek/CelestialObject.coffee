@@ -193,11 +193,33 @@ class Planet extends CelestialObject
 
 class Star extends CelestialObject
 
-    constructor: ( name, star_class, @radiation_output ) ->
+    # http://www.enchantedlearning.com/subjects/astronomy/stars/startypes.shtml
+    @CLASSIFICATION =
+        O : { type : 'O', size : 15, color : '#3355ff', luminosity : 1.4e6 }
+        B : { type : 'B', size : 7.0, color : '#3355ff', luminosity : 2e4 }
+        A : { type : 'A', size : 2.5, color : '#3355ff', luminosity : 80 }
+        F : { type : 'F', size : 1.3, color : '#FF00FF', luminosity : 6 }
+        G : { type : 'G', size : 1.1, color : '#FF99FF', luminosity : 1.2 }
+        K : { type : 'K', size : 0.9, color : '#FF5555', luminosity : 0.4 }
+        M : { type : 'M', size : 0.4, color : '#FF0000', luminosity : 0.04 }
+        # RED_GIANT :
+        # RED_SUPERGIANT :
+        # WHITE_DWARF :
+        # BLUE_DWARF :
+        # BROWN_DWARF :
+
+
+    constructor: ( name, @star_class, @radiation_output ) ->
 
         super()
         @charted = true
-        @classification = "#{star_class} Class Star"
+        @classification = "#{ star_class.type } Class Star"
+
+        # TODO: Deviate from the norm
+        @radius = @star_class.size * C.SOLAR_RADIUS
+        @color = @star_class.color
+        @luminosity = @star_class.luminosity
+
         # Set name this way because super overrides it
         @name = name
         @_scan_density = {}

@@ -297,7 +297,7 @@ class TinkerTaylor extends Level
     _init_space_objects: () ->
 
         system = @map.get_star_system 'Klthos'
-        s = new Star 'Klthos', 'B', 0
+        s = new Star 'Klthos', Star.CLASSIFICATION.B, 0
         s.charted = true
         system.add_star s
         @klthos = s
