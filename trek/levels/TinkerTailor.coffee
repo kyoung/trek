@@ -307,14 +307,14 @@ class TinkerTaylor extends Level
         init_orbit = 0.3 * C.AU
         inner_orbit_count = 1 + Math.floor( Math.random() * 6 )
         for i in [ 1..inner_orbit_count ]
-            p = new Planet "#{ i }", system.name, 'D', init_orbit
+            p = new Planet "#{ i }", system.name, Planet.CLASSIFICATION.D, init_orbit
             @space_objects.push p
             system.add_planet p
             init_orbit *= 2
 
         # Add 2 gas giants w/ moons and lagrange points
-        @gas_planet_1 = new Planet "#{ inner_orbit_count + 1 }", system.name, 'T', 10 * C.AU
-        @gas_planet_2 = new Planet "#{ inner_orbit_count + 2 }", system.name, 'J', 22 * C.AU
+        @gas_planet_1 = new Planet "#{ inner_orbit_count + 1 }", system.name, Planet.CLASSIFICATION.J, 10 * C.AU
+        @gas_planet_2 = new Planet "#{ inner_orbit_count + 2 }", system.name, Planet.CLASSIFICATION.T, 22 * C.AU
 
         # lagrange: +/- pi/3 radians of orbit
         alpha_lagrange_3 = new Lagrange @gas_planet_1, 3

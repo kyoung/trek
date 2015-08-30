@@ -4,7 +4,7 @@ fs = require 'fs'
 {Torpedo} = require './Torpedo'
 {Transporters} = require './systems/TransporterSystems'
 
-{CelestialObject, Star} = require './CelestialObject'
+{CelestialObject, Star, Planet} = require './CelestialObject'
 
 C = require './Constants'
 U = require './Utility'
@@ -445,7 +445,16 @@ class Game
             skyboxes : [
                 { url : ship.star_system.skybox, alpha_url : undefined, rotation : 0 }
             ]
-            planets : []
+            planets : ( for p in @space_objects when p instanceof Planet
+                name : p.name
+                size : p.radius
+                distance : U.distance ship.position, p.position
+                surface_color : p.surface_color
+                atmosphere_color : p.atmosphere_color
+                type : p.type
+                bearing : U.bearing ship, p
+                rings : []
+                )
             stars : ( for o in @space_objects when o instanceof Star
                 size : o.radius
                 distance : U.distance ship.position, o.position

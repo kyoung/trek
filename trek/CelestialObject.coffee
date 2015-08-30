@@ -112,18 +112,98 @@ class Planet extends CelestialObject
     # If a planet is named, for cultural or historical reasons, the name will
     # be returned, rather than a system-number designation.
 
-    CLASS_SYSTEM =
-        D :	'Planetoid or moon; little to no atmosphere. Uninhabitable.'
-        H :	'Generally uninhabitable.'
-        J : 'Gas giant.'  # AKA Jupiter
-        K : 'Adaptable with pressure dome.'  # AKA Mars
-        L : 'Marginally habitable. No animal life. Only vegetation life.'
-        M : 'Terrestrial.'
-        N : 'Sulfuric.'  # AKA Venus
-        T : 'Gas giant.'  # Weird alternate gas giant
-        Y : 'Demon'
+    # http://en.memory-alpha.wikia.com/wiki/Star_Trek:_Star_Charts
+    @CLASSIFICATION =
+        B : {
+            code : 'B',
+            min_radius : 5e2,
+            max_radius : 5e3,
+            surface_color : '#73655F',
+            atmosphere : undefined,
+            description : 'Geothermal'  # AKA Mercury
+            }
+        D :	{
+            code : 'D',
+            min_radius : 1e3,
+            max_radius : 1.5e6,
+            surface_color : '#666666',
+            atmosphere : undefined,
+            description : 'Planetoid or moon; little to no atmosphere. Uninhabitable.'
+            }
+        H :	{
+            code : 'H',
+            min_radius : 4e6,
+            max_radius : 7.5e6,
+            surface_color : '#FFD5C7',  # desert
+            atmosphere : '#FFBBB1',  # pink?
+            description : 'Generally uninhabitable.'
+            }
+        J : {
+            code : 'J',
+            min_radius : 2.5e7,
+            max_radius : 7e7,
+            surface_color : '#FFB968',  # jupiter
+            atmosphere : '#FF5625',  # reddish?
+            description : 'Gas giant.'  # AKA Jupiter
+            }
+        K : {
+            code : 'K',
+            min_radius : 2.5e6,
+            max_radius : 5e6,
+            surface_color : '#FF9C48',
+            atmosphere : '#FFDB8E',
+            description : 'Adaptable with pressure dome.'  # AKA Mars
+            }
+        L : {
+            code : 'L',
+            min_radius : 5e6,
+            max_radius : 7.5e6,
+            surface_color : '#A0FF87',
+            atmosphere : '#BDFFF6',
+            description : 'Marginally habitable. No animal life. Only vegetation life.'
+            }
+        M : {
+            code : 'M',
+            min_radius : 5e6,
+            max_radius : 7.5e6,
+            surface_color : '#378C11',
+            atmosphere : '#BDFFF6',
+            description : 'Terrestrial.'
+            }
+        N : {
+            code : 'N',
+            min_radius : 5e6,
+            max_radius : 7.5e6,
+            surface_color : '#C79D5A',
+            atmosphere : '#B6F7EF',
+            description : 'Sulfuric.'  # AKA Venus
+            }
+        P : {
+            code : 'P',
+            min_radius : 5e6,
+            max_radius : 7.5e6,
+            surface_color : '#EBFFF7',
+            atmosphere : '#BDFFE0',
+            description : 'Glaciated.'  # AKA Venus
+            }
+        T : {
+            code : 'T',
+            min_radius : 2.5e10,
+            max_radius : 6e10,
+            surface_color : '#B6F7EF',
+            atmosphere : '#B5C2F7',
+            description : 'Gas giant.'  # Weird alternate gas giant
+            }
+        Y : {
+            code : 'Y',
+            min_radius : 5e6,
+            max_radius : 7.5e6,
+            surface_color : '#B21B17',
+            atmosphere : '#B2540B',
+            description : 'Demon'
+            }
 
-    constructor: ( name, @system_name, classification, @orbit ) ->
+    constructor: ( name, @system_name, @planet_class, @orbit ) ->
 
         super()
         @charted = true
@@ -133,23 +213,25 @@ class Planet extends CelestialObject
         else
             @name = name
 
-        @classification = "#{ classification } class planet"
+        @classification = "#{ @planet_class.code } class planet"
         @_scan_density = {}
-        @_scan_density[ LongRangeSensorSystem.SCANS.GRAVIMETRIC ] = switch classification
+        @_scan_density[ LongRangeSensorSystem.SCANS.GRAVIMETRIC ] = switch @planet_class.code
             when 'D' then between 0.1, 1
             when 'M', 'L', 'K', 'N' then between 1, 1e2
             when 'J' then between 3e4, 3e6
             when 'T' then between 3e6, 3e8
             when 'Y' then between 3, 3e3
+            else
+                between 2e3, 3e4
 
         @_scan_density[ SensorSystem.SCANS.HIGHRES ] = up_to 2e8
         @_scan_density[ SensorSystem.SCANS.P_HIGHRES ] = up_to 1e8
         @_scan_density[ SensorSystem.SCANS.MAGNETON ] = up_to 20
 
-        if /[JT]/.test @classification
+        if /^[JT]/.test @classification
             @_scan_density[ SensorSystem.SCANS.WIDE_EM ] = up_to 300
 
-        if /[MLN]/.test @classification
+        if /^[MLN]/.test @classification
             @_scan_density[ SensorSystem.SCANS.WIDE_EM ] = up_to 30
 
         @model_url = "planet.json"
@@ -161,6 +243,13 @@ class Planet extends CelestialObject
         y = @orbit * Math.sin @rotation
 
         @position = { x : x, y : y, z : 0 }
+
+        # TODO have these vary a bit
+        @radius = @planet_class.min_radius + ( Math.random() * ( @planet_class.max_radius - @planet_class.min_radius ) )
+        @surface_color = @planet_class.surface_color
+        @atmosphere_color = @planet_class.atmosphere_color
+        @type = /gas/i.test @planet_class.description ? 'gas' : 'rock'
+        @rings = []
 
 
     block_for: ( type ) ->

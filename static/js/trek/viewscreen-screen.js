@@ -114,6 +114,7 @@ function init ( data ) {
 
     makeParticles();
     showSuns( data.stars );
+    showPlanets( data.planets );
     loadGalaxy( data.skyboxes );
 
     if ( data.target !== undefined ) {
@@ -133,7 +134,7 @@ function init ( data ) {
 
     }
 
-    globalLight = new THREE.AmbientLight( 0x333333 );
+    globalLight = new THREE.AmbientLight( 0x111111 );
 
     scene.add( globalLight );
     requestAnimationFrame( update );
@@ -176,25 +177,72 @@ function loadGalaxy ( skyboxes ) {
 }
 
 
+function showPlanets ( planets ) {
+
+    // #     planets = [
+    // #           {
+    // #               size : [ radius],
+    // #               distance : [distance],
+    // #               surface_color : #3e8,
+    // #               atmosphere_color : #3f9,
+    // #               type : "gas|rock"  // can we make bands?,
+    // #               bearing : [bearing],
+    // #               rings : [
+    // #                   { radius : NNN, color : #3e8 },
+    // #               ]
+    // #           } ]
+
+    var displayRadius = -800;
+
+    _.each( planets, function ( p ) {
+
+        var apparentRadius = p.size / p.distance * displayRadius * -1;
+
+        if ( apparentRadius < 1 ) {
+
+            return;
+
+        }
+
+        console.log( "name: " + p.name );
+        console.log( "distance: " + p.distance );
+        console.log( "apparent Radius: " + apparentRadius );
+
+        var radianRotation = p.bearing.bearing * 2 * Math.PI;
+        var x = Math.sin( radianRotation ) * displayRadius;
+        var z = Math.cos( radianRotation ) * displayRadius;
+        var geometry = new THREE.SphereGeometry( apparentRadius, 32, 32 );
+        var material = new THREE.MeshLambertMaterial( { color : p.surface_color } );
+        var sphere = new THREE.Mesh( geometry, material );
+        sphere.position.set( x, 0, z );
+
+        scene.add( sphere );
+
+    } );
+
+
+}
+
 function showSuns ( stars ) {
 
     // negative because of the wonkiness of display coordinates
-    var displayRadius = -1000;
+    var displayRadius = -900;
 
-    _.each( stars, function( s ) {
-
-        console.log( s );
+    _.each( stars, function ( s ) {
 
         var newStarLight = new THREE.PointLight( s.primary_color, 1, 0 );
         var whiteStarLight = new THREE.PointLight( "#ffffff", 1, 0 );
+
         var radianRotation = s.bearing.bearing * 2 * Math.PI;
         var x = Math.sin( radianRotation ) * displayRadius;
         var z = Math.cos( radianRotation ) * displayRadius;
+
         newStarLight.position.set( x, 0, z );
+        whiteStarLight.position.set(x, 0, z);
 
         var apparentRadius = s.size / s.distance * displayRadius * -1;
-        var geometry = new THREE.SphereGeometry( 5, 32, 32 );
-        var material = new THREE.MeshBasicMaterial( { color : s.primary_color } );
+        var geometry = new THREE.SphereGeometry( apparentRadius, 32, 32 );
+        var material = new THREE.MeshBasicMaterial( { color : '#ffffff' });//s.primary_color } );
         var sphere = new THREE.Mesh( geometry, material );
         sphere.position.set( x, 0, z );
 
@@ -203,7 +251,8 @@ function showSuns ( stars ) {
         var textureFlare2 = THREE.ImageUtils.loadTexture( "static/textures/lensflare1.png" );
         var textureFlare3 = THREE.ImageUtils.loadTexture( "static/textures/lensflare2.png" );
         var flareColor = new THREE.Color( s.primary_color );
-        var flare = new THREE.LensFlare( textureFlare0, 300, 0.0, THREE.AdditiveBlending, flareColor );
+        console.log("stellar apparent Radius: " + apparentRadius);
+        var flare = new THREE.LensFlare( textureFlare0, apparentRadius * 75, 0.0, THREE.AdditiveBlending, flareColor );
         flare.add( textureFlare2, 251, 0.0, THREE.AdditiveBlending, flareColor );
         flare.add( textureFlare2, 251, 0.0, THREE.AdditiveBlending, flareColor );
         flare.add( textureFlare2, 251, 0.0, THREE.AdditiveBlending, flareColor );
@@ -211,10 +260,11 @@ function showSuns ( stars ) {
         flare.add( textureFlare3, 35, 0.7, THREE.AdditiveBlending, flareColor );
         flare.add( textureFlare3, 60, 0.9, THREE.AdditiveBlending, flareColor );
         flare.add( textureFlare3, 35, 1.0, THREE.AdditiveBlending, flareColor );
-        flare.position.set( x, 0, z );
+        var shortRatio = 10;
+        flare.position.set( x/shortRatio, 0, z/shortRatio );
 
         scene.add( flare );
-        scene.add( sphere );
+        //scene.add( sphere );
         scene.add( newStarLight );
         scene.add( whiteStarLight );
 
