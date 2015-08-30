@@ -61,6 +61,8 @@ window.requestAnimFrame = ( function () {
 
 function init ( data ) {
 
+    console.log( data );
+
     // # Proposed refactor:
     // #
     // #   {
@@ -116,8 +118,9 @@ function init ( data ) {
 
     if ( data.target !== undefined ) {
 
+        console.log( 'Target data found' );
         shipRotation = data.target.rotation;
-        targetURL = data.target_model;
+        targetURL = data.target.mesh_url;
         showTarget( data.target );
         // var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
         // lightAngle = netBearingToLight;
@@ -183,6 +186,7 @@ function showSuns ( stars ) {
         console.log( s );
 
         var newStarLight = new THREE.PointLight( s.primary_color, 1, 0 );
+        var whiteStarLight = new THREE.PointLight( "#ffffff", 1, 0 );
         var radianRotation = s.bearing.bearing * 2 * Math.PI;
         var x = Math.sin( radianRotation ) * displayRadius;
         var z = Math.cos( radianRotation ) * displayRadius;
@@ -212,6 +216,7 @@ function showSuns ( stars ) {
         scene.add( flare );
         scene.add( sphere );
         scene.add( newStarLight );
+        scene.add( whiteStarLight );
 
     } );
 
@@ -319,7 +324,7 @@ function goToWarp () {
         scene.add( warpGroup );
 
     }
-    
+
     warpGroup.rotation.y = camera.rotation.y;
     atWarp = true;
 
@@ -372,13 +377,24 @@ function showTarget ( targetData ) {
     loader.load( "/static/mesh/" + targetData.mesh_url, function( geo, mat ) {
 
         target = new THREE.Mesh( geo, new THREE.MeshFaceMaterial( mat ) );
-        target.rotation.y = targetData.rotation * 2 * Math.PI;
+        // we have to subtract the bearing to make up for the rotation added by
+        // turning our camera towards the target
+        target.rotation.y = ( targetData.rotation.bearing - targetData.bearing.bearing ) * 2 * Math.PI;
 
         // calculate these, and then tell the camera to "look at" the target
-        var x = 0;
-        var z = 0;
-        target.position.set( 0, 0, -7 );
+        var theta = targetData.bearing.bearing * Math.PI * 2;
+        var distanceFromCamera = 10;
+        var x = distanceFromCamera * Math.sin( theta );
+        var z = -distanceFromCamera * Math.cos( theta );
+        target.position.set( x, 0, z );
         scene.add( target );
+
+        camera.rotation.y = targetData.bearing.bearing * Math.PI * 2;
+
+        console.log("Expected position: ");
+        console.log( target.position );
+        console.log("Turning to look by: " + camera.rotation.y );
+        console.log( targetData );
 
     } );
 
