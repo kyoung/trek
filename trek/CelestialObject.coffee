@@ -188,11 +188,11 @@ class Planet extends CelestialObject
             }
         T : {
             code : 'T',
-            min_radius : 2.5e10,
-            max_radius : 6e10,
+            min_radius : 2.5e7,  # deviating from cannon, 'cause that seems impossible'
+            max_radius : 6e7,
             surface_color : '#B6F7EF',
             atmosphere : '#B5C2F7',
-            description : 'Gas giant.'  # Weird alternate gas giant
+            description : 'Gas giant.'  # Super large
             }
         Y : {
             code : 'Y',

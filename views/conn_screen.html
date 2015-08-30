@@ -36,8 +36,8 @@
 
 <script type="text/template" id="scannerObjectTmplHollow">
     <div id="{{ name }}" class='conn-scannerObject'>
-        <svg width="8px" height="8px" xmlns="http://www.w3.org/2000/svg">
-            <circle stroke="#0F8AA6" fill="none" cx="4" cy="4" r="4"/>
+        <svg width="9px" height="9px" xmlns="http://www.w3.org/2000/svg">
+            <circle stroke="#0F8AA6" fill="none" cx="4.5" cy="4.5" r="4"/>
         </svg>
         <p class="name">{{ name }}</p>
         <p class="speed">{{ speed }}</p>
@@ -62,6 +62,22 @@
     </div>
 </script>
 
+<script type="text/template" id="scannerObjectTmplRadius">
+    <div id="{{ name }}" class='conn-scannerObject'>
+        <svg width="{{ diameter }}px" height="{{ diameter }}px" xmlns="http://www.w3.org/2000/svg">
+            <circle style="fill:#0F8AA6; opacity:0.5;" cx="{{ start_radius }}"
+                cy="{{ start_radius }}" r="{{ radius }}"/>
+            <circle stroke="#0F8AA6" stroke-width="1" fill="none"
+                cx="{{ start_radius }}" cy="{{ start_radius }}" r="{{ radius }}"/>
+        </svg>
+        <p class="name">{{ name }}</p>
+        <p class="speed">{{ speed }}</p>
+        <p class="distBearing">{{ distAndBearing }}</p>
+        {{ #is_z_axis }}
+        <p class="z">z {{ z_axis }}</p>
+        {{ /is_z_axis }}
+    </div>
+</script>
 
 <script type="text/javascript">
 

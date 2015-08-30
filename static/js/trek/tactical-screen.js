@@ -1,4 +1,5 @@
 var scannerTmpl = $( "#scannerObjectTmpl" ).html();
+var radiusTmpl = $( "#scannerRadiusTmpl" ).html();
 var $displayGrid = $( "#displayScreen" );
 var scan_i;
 var self;
@@ -18,6 +19,26 @@ var $range = $( "#circle_container" );
 var PHASER_RANGE_M = 1000 * 1000;
 var TORPEDO_RANGE_M = 300000 * 1000;
 var sensorObjects = {};
+
+
+function relativeRadius ( r ) {
+
+    var weaponRange;
+    if ( weaponZoom === "phasers" ) {
+
+        weaponRange = PHASER_RANGE_M;
+
+    } else {
+
+        weaponRange = TORPEDO_RANGE_M;
+
+    }
+
+    // global ratio
+    var ratio = $displayGrid.height() / ( zoom * weaponRange * 2 );
+    return r * ratio;
+
+}
 
 
 function relativeCoordinates ( x, y, z ) {
@@ -89,6 +110,19 @@ function paintScan ( data ) {
 
         }
 
+        tmpl = scannerTmpl;
+
+        if ( e.radius !== undefined ) {
+
+            reading.radius = relativeRadius( e.radius );
+            reading.diameter = reading.radius * 2 + 2;
+            reading.start_radius = reading.radius + 1;
+            coordinates.y -= reading.radius;
+            coordinates.x -= reading.radius;
+            tmpl = radiusTmpl;
+
+        }
+
         reading.name_clean = e.name.replace( /_/g, " " );
 
         if ( _.has( sensorObjects, e.name ) ) {
@@ -96,12 +130,12 @@ function paintScan ( data ) {
             sensorObjects[ e.name ].css( "top", coordinates.y )
             sensorObjects[ e.name ].css( "left", coordinates.x );
             sensorObjects[ e.name ].html(
-                Mustache.render( scannerTmpl, reading )
+                Mustache.render( tmpl, reading )
             );
 
         } else {
 
-            var obj = $( Mustache.render( scannerTmpl, reading ) );
+            var obj = $( Mustache.render( tmpl, reading ) );
             obj.css( "top", coordinates.y )
             obj.css( "left", coordinates.x );
             sensorObjects[ e.name ] = obj;

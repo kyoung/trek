@@ -253,9 +253,11 @@ class TinkerTaylor extends Level
             throw new Error "WTF space objects"
 
         start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
-        p = start_point.position
-        x_rand = Math.floor( Math.random() * 1e8 )
-        y_rand = Math.floor( Math.random() * 1e8 )
+        p = start_point.position  # this is a planet... at least be in orbit
+        start_distance = start_point.radius + Math.random() * 10 * start_point.radius
+        start_rotation = Math.random() * Math.PI * 2
+        x_rand = Math.cos( start_rotation ) * start_distance
+        y_rand = Math.sin( start_rotation ) * start_distance
         k_position = { x : p.x + x_rand, y : p.y + y_rand, z: 0 }
         k = new D7 'ChinTok'
         k.star_system = system
@@ -272,8 +274,10 @@ class TinkerTaylor extends Level
 
         start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
         p = start_point.position
-        x_rand = Math.floor( Math.random() * 1e8 )
-        y_rand = Math.floor( Math.random() * 1e8 )
+        start_distance = start_point.radius + Math.random() * 10 * start_point.radius
+        start_rotation = Math.random() * Math.PI * 2
+        x_rand = Math.cos( start_rotation ) * start_distance
+        y_rand = Math.sin( start_rotation ) * start_distance
         k2_position = { x : p.x + x_rand, y : p.y + y_rand, z: 0 }
         k2 = new D7 'ChoRe'
         k2.star_system = system
