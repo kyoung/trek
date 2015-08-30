@@ -14,6 +14,8 @@ var loader = new THREE.JSONLoader( true );
 // stars!
 var particle_system;
 var warpSystem = [];
+var warpGroup = new THREE.Object3D();
+var isWarpGroupAdded = false;
 var atWarp = false;
 
 var skyGeometry = new THREE.SphereGeometry( 3000, 400, 400 );
@@ -116,7 +118,7 @@ function init ( data ) {
 
         shipRotation = data.target.rotation;
         targetURL = data.target_model;
-        showTarget();
+        showTarget( data.target );
         // var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
         // lightAngle = netBearingToLight;
         //
@@ -125,7 +127,7 @@ function init ( data ) {
         //     lightAngle -= 1;
         //
         // }
-        
+
     }
 
     globalLight = new THREE.AmbientLight( 0x333333 );
@@ -284,10 +286,6 @@ function calculateNewWarpLinePosition ( line ) {
             // animate off the screen
             line.position.z += 100;
 
-        } else {
-
-            scene.remove( line );
-
         }
 
     }
@@ -313,10 +311,16 @@ function goToWarp () {
     _.each( warpSystem, function( line ) {
 
         line.position.z = visibleRadius * -3 * Math.random() - visibleRadius;
-        scene.add( line );
 
     } );
 
+    if ( !isWarpGroupAdded ) {
+
+        scene.add( warpGroup );
+
+    }
+    
+    warpGroup.rotation.y = camera.rotation.y;
     atWarp = true;
 
 }
@@ -354,6 +358,7 @@ function drawWarpTunnel () {
         line.position.y = y;
         line.position.z = z;
 
+        warpGroup.add( line );
         warpSystem.push( line );
 
     }
@@ -361,12 +366,17 @@ function drawWarpTunnel () {
 }
 
 
-function showTarget () {
+function showTarget ( targetData ) {
 
-    loader.load( "/static/mesh/" + targetURL, function( geo, mat ) {
+    // target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined
+    loader.load( "/static/mesh/" + targetData.mesh_url, function( geo, mat ) {
 
         target = new THREE.Mesh( geo, new THREE.MeshFaceMaterial( mat ) );
-        target.rotation.y = shipRotation * 2 * Math.PI;
+        target.rotation.y = targetData.rotation * 2 * Math.PI;
+
+        // calculate these, and then tell the camera to "look at" the target
+        var x = 0;
+        var z = 0;
         target.position.set( 0, 0, -7 );
         scene.add( target );
 
