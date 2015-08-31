@@ -248,7 +248,7 @@ class Planet extends CelestialObject
         @radius = @planet_class.min_radius + ( Math.random() * ( @planet_class.max_radius - @planet_class.min_radius ) )
         @surface_color = @planet_class.surface_color
         @atmosphere_color = @planet_class.atmosphere_color
-        @type = /gas/i.test @planet_class.description ? 'gas' : 'rock'
+        @type = if /gas/i.test @planet_class.description then 'gas' else 'rock'
         @rings = []
 
 

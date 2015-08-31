@@ -2,6 +2,8 @@ var targetURL = "";
 var shipRotation = 0;
 var lightAngle = 0.75;
 
+var renderLock = false;  // attempt at a perf improvement
+
 var torpedos = [];
 
 // the main three.js components
@@ -20,6 +22,8 @@ var atWarp = false;
 
 var skyGeometry = new THREE.SphereGeometry( 3000, 400, 400 );
 var skyBox;
+
+var skySpheres = {};  // suns and planets... etc
 
 var station;
 var ship;
@@ -139,6 +143,15 @@ function init ( data ) {
     scene.add( globalLight );
     requestAnimationFrame( update );
 
+    setInterval( function () {
+
+        trek.api(
+            "navigation/stelar-telemetry",
+            { target : targetName },
+            updateSpheres );
+
+    }, 250 );
+
 }
 
 
@@ -211,12 +224,14 @@ function showPlanets ( planets ) {
         var radianRotation = p.bearing.bearing * 2 * Math.PI;
         var x = Math.sin( radianRotation ) * displayRadius;
         var z = Math.cos( radianRotation ) * displayRadius;
-        var geometry = new THREE.SphereGeometry( apparentRadius, 32, 32 );
-        var material = new THREE.MeshLambertMaterial( { color : p.surface_color } );
-        var sphere = new THREE.Mesh( geometry, material );
-        sphere.position.set( x, 0, z );
 
-        scene.add( sphere );
+        newPlanet( apparentRadius, p.type, p.surface_color, p.atmosphere_color, function( planet ) {
+
+            planet.position.set( x, 0, z );
+            scene.add( planet );
+            skySpheres[ p.name ] = planet;
+
+        } );
 
     } );
 
@@ -307,9 +322,93 @@ function update ( stamp ) {
 
     updateWarpSystem();
 
-    // and render the scene from the perspective of the camera
-    renderer.render( scene, camera );
+    if ( !renderLock ) {
+
+        // and render the scene from the perspective of the camera
+        renderer.render( scene, camera );
+
+    }
+
     requestAnimationFrame( update );
+
+}
+
+function updateSpheres ( data ) {
+
+    // # Proposed refactor:
+    // #
+    // #   {
+    // #       ...
+    // #       planets : [
+    // #           {
+    // #               name : ,
+    // #               size : [ radius],
+    // #               distance : [distance],
+    // #               surface_color : #3e8,
+    // #               atmosphere_color : #3f9,
+    // #               type : "gas|rock"  // can we make bands?,
+    // #               bearing : [bearing],
+    // #               rings : [
+    // #                   { radius : NNN, color : #3e8 },
+    // #               ]
+    // #           }
+    // #       ],  // includes planets and moons
+    // #       stars : [
+    // #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
+    // #       ],   // 50% of systems are binary
+    // #      ...
+    // #   }
+
+    var displayRadius = -800;
+
+    _.each( data.planets, function ( p ) {
+
+        var apparentRadius = p.size / p.distance * displayRadius * -1;
+
+        if ( apparentRadius < 1 ) {
+
+            if ( _.has( skySpheres, p.name ) ) {
+
+                scene.remove( skySpheres[ p.name ] );
+
+            }
+
+            return;
+
+        }
+
+        var radianRotation = p.bearing.bearing * 2 * Math.PI;
+        var x = Math.sin( radianRotation ) * displayRadius;
+        var z = Math.cos( radianRotation ) * displayRadius;
+
+        if ( _.has( skySpheres, p.name ) ) {
+
+            var s = skySpheres[ p.name ]
+            var scale = apparentRadius / s.geometry.boundingSphere.radius;
+
+            if ( scale != 1 ) {
+
+                s.scale = new THREE.Vector3( scale, scale, scale );
+
+            }
+
+            s.position.set( x, 0, z );
+            scene.add( s );
+
+        } else {
+
+            var geometry = new THREE.SphereGeometry( apparentRadius, 32, 32 );
+            var material = newPlanetMaterial( p.surface_color, p.atmosphere_color );
+            var sphere = new THREE.Mesh( geometry, material );
+            sphere.position.set( x, 0, z );
+
+            scene.add( sphere );
+
+            skySpheres[ p.name ] = sphere;
+
+        }
+
+    } );
 
 }
 
@@ -356,6 +455,8 @@ function makeParticles () {
 
 
 function goToWarp () {
+
+    renderLock = false;
 
     if ( atWarp ) {
 
