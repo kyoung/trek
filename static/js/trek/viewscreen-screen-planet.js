@@ -15,55 +15,34 @@ function newPlanet ( radius, type, surfaceColor, atmosphereColor, callback ) {
 
     if ( type === 'gas' ) {
 
-        var loader = new THREE.TextureLoader();
-        loader.load(
-            'static/textures/gas1.jpg',  // todo pick a random texture map
-            function ( texture ) {
+        // http://stackoverflow.com/questions/17486614/three-js-png-texture-alpha-renders-as-white-instead-as-transparent
 
-                var atmosphereGeometery = new THREE.SphereGeometry( radius *= 1.01, 32, 32 );
-                var atmosphereMaterial = new THREE.MeshPhongMaterial( {
-                    map : texture,
-                    side : THREE.DoubleSide,
-                    optacity : 0.8,
-                    transparent : true,
-                    depthWrite : false
-                } );
+        var atmosGeometry = new THREE.SphereGeometry( radius, 32, 32 );
+        atmosGeometry.computeTangents();
+        var atmosphereMaterial = new THREE.MeshPhongMaterial( {
+            alphaMap : THREE.ImageUtils.loadTexture('/static/textures/gas1.jpg'),
+            side : THREE.DoubleSide,
+            optacity : 1,
+            transparent : true,
+            shininess : 1,
+            depthWrite : false,
+            color : "#A45625"//atmosphereColor
+        } );
 
-                var atmosMesh = new THREE.Mesh( atmosphereGeometery, atmosphereMaterial );
-                planet.add( atmosMesh );
+        var atmosMesh = new THREE.Mesh( atmosGeometry, atmosphereMaterial );
+        atmosMesh.scale.set(1.001, 1.001, 1.001);
+        planet.add( atmosMesh );
 
-                callback( planet );
-
-            }
-        )
-
-    } else {
-
-        callback( planet );
 
     }
 
+    callback( planet );
+
 }
+
 
 function newPlanetMaterial ( surfaceColor ) {
 
     return new THREE.MeshLambertMaterial( { color : surfaceColor } );
-
-}
-
-function newCloudMaterial ( atmosphereColor ) {
-
-    var map = THREE.ImageUtils.generateDataTexture(
-        64, 64*3, new THREE.Color( 0x000000 ) );
-    addScalarField( map, planetScalarField );
-    map.needsUpdate = true;
-
-    return new THREE.MeshPhongMaterial(
-        { map : map,
-          side : THREE.DoubleSide,
-          opacity : 0.8,
-          transparent : true,
-          depthWrite : false
-      } );
 
 }

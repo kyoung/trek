@@ -143,7 +143,7 @@ class Planet extends CelestialObject
             min_radius : 2.5e7,
             max_radius : 7e7,
             surface_color : '#FFB968',  # jupiter
-            atmosphere : '#FF5625',  # reddish?
+            atmosphere : "#A45625",  # reddish?
             description : 'Gas giant.'  # AKA Jupiter
             }
         K : {
@@ -247,7 +247,7 @@ class Planet extends CelestialObject
         # TODO have these vary a bit
         @radius = @planet_class.min_radius + ( Math.random() * ( @planet_class.max_radius - @planet_class.min_radius ) )
         @surface_color = @planet_class.surface_color
-        @atmosphere_color = @planet_class.atmosphere_color
+        @atmosphere_color = @planet_class.atmosphere
         @type = if /gas/i.test @planet_class.description then 'gas' else 'rock'
         @rings = []
 

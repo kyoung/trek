@@ -384,7 +384,7 @@ function updateSpheres ( data ) {
         if ( _.has( skySpheres, p.name ) ) {
 
             var s = skySpheres[ p.name ]
-            var scale = apparentRadius / s.geometry.boundingSphere.radius;
+            var scale = apparentRadius / s.children[0].geometry.boundingSphere.radius;
 
             if ( scale != 1 ) {
 
@@ -397,14 +397,13 @@ function updateSpheres ( data ) {
 
         } else {
 
-            var geometry = new THREE.SphereGeometry( apparentRadius, 32, 32 );
-            var material = newPlanetMaterial( p.surface_color, p.atmosphere_color );
-            var sphere = new THREE.Mesh( geometry, material );
-            sphere.position.set( x, 0, z );
+            newPlanet( apparentRadius, p.type, p.surface_color, p.atmosphere_color, function( planet ) {
 
-            scene.add( sphere );
+                planet.position.set( x, 0, z );
+                scene.add( planet );
+                skySpheres[ p.name ] = planet;
 
-            skySpheres[ p.name ] = sphere;
+            } );
 
         }
 
