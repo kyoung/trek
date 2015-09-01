@@ -135,7 +135,7 @@ class Planet extends CelestialObject
             min_radius : 4e6,
             max_radius : 7.5e6,
             surface_color : '#FFD5C7',  # desert
-            atmosphere : '#FFBBB1',  # pink?
+            atmosphere : [ '#FFBBB1' ],  # pink?
             description : 'Generally uninhabitable.'
             }
         J : {
@@ -143,7 +143,7 @@ class Planet extends CelestialObject
             min_radius : 2.5e7,
             max_radius : 7e7,
             surface_color : '#FFB968',  # jupiter
-            atmosphere : "#A45625",  # reddish?
+            atmosphere : [ "#A45625", "#73210E"],  # reddish?
             description : 'Gas giant.'  # AKA Jupiter
             }
         K : {
@@ -151,7 +151,7 @@ class Planet extends CelestialObject
             min_radius : 2.5e6,
             max_radius : 5e6,
             surface_color : '#FF9C48',
-            atmosphere : '#FFDB8E',
+            atmosphere : [ '#FFDB8E' ],
             description : 'Adaptable with pressure dome.'  # AKA Mars
             }
         L : {
@@ -159,7 +159,7 @@ class Planet extends CelestialObject
             min_radius : 5e6,
             max_radius : 7.5e6,
             surface_color : '#A0FF87',
-            atmosphere : '#BDFFF6',
+            atmosphere : [ '#BDFFF6' ],
             description : 'Marginally habitable. No animal life. Only vegetation life.'
             }
         M : {
@@ -167,7 +167,7 @@ class Planet extends CelestialObject
             min_radius : 5e6,
             max_radius : 7.5e6,
             surface_color : '#378C11',
-            atmosphere : '#BDFFF6',
+            atmosphere : [ '#BDFFF6' ],
             description : 'Terrestrial.'
             }
         N : {
@@ -175,7 +175,7 @@ class Planet extends CelestialObject
             min_radius : 5e6,
             max_radius : 7.5e6,
             surface_color : '#C79D5A',
-            atmosphere : '#B6F7EF',
+            atmosphere : [ '#B6F7EF' ],
             description : 'Sulfuric.'  # AKA Venus
             }
         P : {
@@ -183,7 +183,7 @@ class Planet extends CelestialObject
             min_radius : 5e6,
             max_radius : 7.5e6,
             surface_color : '#EBFFF7',
-            atmosphere : '#BDFFE0',
+            atmosphere : [ '#BDFFE0' ],
             description : 'Glaciated.'  # AKA Venus
             }
         T : {
@@ -191,7 +191,7 @@ class Planet extends CelestialObject
             min_radius : 2.5e7,  # deviating from cannon, 'cause that seems impossible'
             max_radius : 6e7,
             surface_color : '#B6F7EF',
-            atmosphere : '#B5C2F7',
+            atmosphere : [ '#B5C2F7', "#000000" ],
             description : 'Gas giant.'  # Super large
             }
         Y : {
@@ -199,7 +199,7 @@ class Planet extends CelestialObject
             min_radius : 5e6,
             max_radius : 7.5e6,
             surface_color : '#B21B17',
-            atmosphere : '#B2540B',
+            atmosphere : [ '#B2540B' ],
             description : 'Demon'
             }
 
