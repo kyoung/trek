@@ -118,7 +118,7 @@ class Planet extends CelestialObject
             code : 'B',
             min_radius : 5e2,
             max_radius : 5e3,
-            surface_color : '#73655F',
+            surface_color : [ '#73655F' ],
             atmosphere : undefined,
             description : 'Geothermal'  # AKA Mercury
             }
@@ -126,7 +126,7 @@ class Planet extends CelestialObject
             code : 'D',
             min_radius : 1e3,
             max_radius : 1.5e6,
-            surface_color : '#666666',
+            surface_color : [ '#666666', '#333333' ],
             atmosphere : undefined,
             description : 'Planetoid or moon; little to no atmosphere. Uninhabitable.'
             }
@@ -134,7 +134,7 @@ class Planet extends CelestialObject
             code : 'H',
             min_radius : 4e6,
             max_radius : 7.5e6,
-            surface_color : '#FFD5C7',  # desert
+            surface_color : [ '#FFD5C7' ],  # desert
             atmosphere : [ '#FFBBB1' ],  # pink?
             description : 'Generally uninhabitable.'
             }
@@ -142,7 +142,7 @@ class Planet extends CelestialObject
             code : 'J',
             min_radius : 2.5e7,
             max_radius : 7e7,
-            surface_color : '#FFB968',  # jupiter
+            surface_color : [ '#FFB968' ],  # jupiter
             atmosphere : [ "#A45625", "#73210E"],  # reddish?
             description : 'Gas giant.'  # AKA Jupiter
             }
@@ -158,7 +158,7 @@ class Planet extends CelestialObject
             code : 'L',
             min_radius : 5e6,
             max_radius : 7.5e6,
-            surface_color : '#A0FF87',
+            surface_color : [ '#A0FF87' ],
             atmosphere : [ '#BDFFF6' ],
             description : 'Marginally habitable. No animal life. Only vegetation life.'
             }
@@ -166,7 +166,7 @@ class Planet extends CelestialObject
             code : 'M',
             min_radius : 5e6,
             max_radius : 7.5e6,
-            surface_color : '#378C11',
+            surface_color : [ '#378C11' ],
             atmosphere : [ '#BDFFF6' ],
             description : 'Terrestrial.'
             }
@@ -174,7 +174,7 @@ class Planet extends CelestialObject
             code : 'N',
             min_radius : 5e6,
             max_radius : 7.5e6,
-            surface_color : '#C79D5A',
+            surface_color : [ '#C79D5A' ],
             atmosphere : [ '#B6F7EF' ],
             description : 'Sulfuric.'  # AKA Venus
             }
@@ -182,7 +182,7 @@ class Planet extends CelestialObject
             code : 'P',
             min_radius : 5e6,
             max_radius : 7.5e6,
-            surface_color : '#EBFFF7',
+            surface_color : [ '#EBFFF7' ],
             atmosphere : [ '#BDFFE0' ],
             description : 'Glaciated.'  # AKA Venus
             }
@@ -190,7 +190,7 @@ class Planet extends CelestialObject
             code : 'T',
             min_radius : 2.5e7,  # deviating from cannon, 'cause that seems impossible'
             max_radius : 6e7,
-            surface_color : '#B6F7EF',
+            surface_color : [ '#B6F7EF' ],
             atmosphere : [ '#B5C2F7', "#000000" ],
             description : 'Gas giant.'  # Super large
             }
@@ -198,7 +198,7 @@ class Planet extends CelestialObject
             code : 'Y',
             min_radius : 5e6,
             max_radius : 7.5e6,
-            surface_color : '#B21B17',
+            surface_color : [ '#B21B17' ],
             atmosphere : [ '#B2540B' ],
             description : 'Demon'
             }
