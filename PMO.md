@@ -62,33 +62,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
 - [ ] Science Scanner circles don't show up on FF
   - http://roadtolarissa.com/blog/2015/02/22/svg-path-strings/
-- [ ] We need to calibrate the rotation of the sky box to the position of the star of the local system
-  - Proposed viewscreen JSON refactor:
-      {
-          skyboxes : [
-              { url : "", alpha_url : "", rotation : 0 }, // allows for super imposed nebula, and the possibility of movement
-          ],
-          planets : [
-              {
-                  size : [ radius],
-                  distance : [distance],
-                  surface_color : #3e8,
-                  atmosphere_color : #3f9,
-                  luminous : false,
-                  rotation : r,
-                  type : "gas|rock"  // can we make bands?,
-                  rings : [
-                      { radius : NNN, color : #3e8 },
-                  ]
-              }
-          ],  // includes planets and moons
-          stars : [
-              { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
-          ],   // 50% of systems are binary
-          target : { mesh_url: "" , rotation : r } | undefined,
-          direction : "forward|backward|left|right",
-          at_warp : true // gets over-ridden by socket calls
-      }
+
 
 # Backlog
 ## Next Sprint
