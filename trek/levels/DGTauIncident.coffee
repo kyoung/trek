@@ -408,7 +408,7 @@ class DGTauIncident extends Level
 
         system = @map.get_star_system 'DG Tau'
         # Central star
-        s = new Star "DG Tau", "D", ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME * 1e12
+        s = new Star "DG Tau", Star.CLASSIFICATION.F , ShieldSystem.POWER.dyn / ShieldSystem.CHARGE_TIME * 1e12
         s.charted = true
         s.misc = [ { name : 'Accretion Disk', value : "#{ Math.round( C.AU / 8 / 1000 ) } km" } ]
         system.add_star s

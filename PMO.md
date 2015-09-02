@@ -82,7 +82,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
                   ]
               }
           ],  // includes planets and moons
-          star : { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
+          stars : [
+              { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
+          ],   // 50% of systems are binary
           target : { mesh_url: "" , rotation : r } | undefined,
           direction : "forward|backward|left|right",
           at_warp : true // gets over-ridden by socket calls

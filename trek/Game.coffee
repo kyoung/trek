@@ -4,7 +4,7 @@ fs = require 'fs'
 {Torpedo} = require './Torpedo'
 {Transporters} = require './systems/TransporterSystems'
 
-{CelestialObject} = require './CelestialObject'
+{CelestialObject, Star, Planet} = require './CelestialObject'
 
 C = require './Constants'
 U = require './Utility'
@@ -411,20 +411,68 @@ class Game
 
     get_stelar_telemetry: ( prefix, target_name ) ->
 
+        # Proposed refactor:
+        #
+        #   {
+        #       skyboxes : [
+        #           { url : "", alpha_url : "", rotation : 0 }, // allows for super imposed nebula, and the possibility of movement
+        #       ],
+        #       planets : [
+        #           {
+        #               size : [ radius],
+        #               distance : [distance],
+        #               surface_color : #3e8,
+        #               atmosphere_color : #3f9,
+        #               type : "gas|rock"  // can we make bands?,
+        #               bearing : [bearing],
+        #               rings : [
+        #                   { radius : NNN, color : #3e8 },
+        #               ]
+        #           }
+        #       ],  // includes planets and moons
+        #       stars : [
+        #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
+        #       ],   // 50% of systems are binary
+        #       target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined,
+        #       # direction : "forward|backward|left|right",
+        #       # at_warp : true // gets over-ridden by socket calls
+        #   }
+
         ship = @ships[ prefix ]
         stars = ( o for o in @space_objects when o.classification.indexOf( "Star" ) >= 0 )
 
         telemetry =
-            bearing_to_star : U.bearing( ship, stars[ 0 ] )
+            skyboxes : [
+                { url : ship.star_system.skybox, alpha_url : undefined, rotation : 0 }
+            ]
+            planets : ( for p in @space_objects when p instanceof Planet
+                name : p.name
+                size : p.radius
+                distance : U.distance ship.position, p.position
+                surface_color : p.surface_color
+                atmosphere_color : p.atmosphere_color
+                type : p.type
+                bearing : U.bearing ship, p
+                rings : []
+                )
+            stars : ( for o in @space_objects when o instanceof Star
+                size : o.radius
+                distance : U.distance ship.position, o.position
+                primary_color : o.color
+                bearing : U.bearing ship, o
+                )
+            target : undefined
 
-            skybox : ship.star_system.skybox
+        # telemetry =
+        #     bearing_to_star : U.bearing( ship, stars[ 0 ] )
+        #     skybox : ship.star_system.skybox
 
         target = ( o for o in @game_objects when o.name == target_name )[ 0 ]
         if target?
-            telemetry[ 'bearing_to_viewer' ] = U.bearing( target, ship )
-            telemetry[ 'bearing_to_target' ] = U.bearing( ship, target )
-            telemetry[ 'target_model' ] = target.model_url
-            telemetry[  'distance_from_star' ] = U.distance( target.position, stars[ 0 ].position )
+            telemetry.target =
+                mesh_url : target.model_url
+                rotation : U.bearing target, ship
+                bearing : U.bearing ship, target
 
         return telemetry
 

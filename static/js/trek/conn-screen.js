@@ -2,6 +2,7 @@
 var tmpl = $( "#scannerObjectTmpl" ).html();
 var tmplPoint = $( "#scannerObjectTmplPoint" ).html();
 var tmplHollow = $( "#scannerObjectTmplHollow" ).html();
+var tmplRadius = $( "#scannerObjectTmplRadius" ).html();
 var sensorObjects = {};
 var map;
 var scanInterval;
@@ -174,6 +175,17 @@ function paintScan ( data ) {
         if ( e.descriptor == "Asteroids" ) {
 
             t = tmplPoint;
+
+        }
+
+        if ( e.radius !== undefined && relativeRadius( e.radius ) > 4 ) {
+
+            t = tmplRadius;
+            reading.radius = relativeRadius( e.radius );
+            reading.start_radius = reading.radius + 1;  // stroke width
+            reading.diameter = reading.radius * 2 + 2;   // takes stroke width into account
+            x -= reading.radius;
+            y -= reading.radius;
 
         }
 

@@ -146,7 +146,22 @@ var trek = (function($, _, Mustache, io) {
 
     }
 
-    t.socket.on( "Display", function( data ) {
+    t.socket.on( "Damage", function ( data ) {
+
+        console.log( data );
+
+        if ( data === "Phaser" ) {
+
+            // Play one of the shields hit sounds
+            var coin = Math.floor( Math.random() * 3 );
+            var file = 'static/sound/hit' + coin  +  '.wav';
+            playAudio( file, false );
+
+        }
+
+    } );
+
+    t.socket.on( "Display", function ( data ) {
 
         console.log( data );
 

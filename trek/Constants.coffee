@@ -9,6 +9,8 @@ exports.LY = exports.AU * 63240
 # Nepture is technically at 30AU
 exports.SYSTEM_WIDTH = 80 * exports.AU
 
+exports.SOLAR_RADIUS = 7e8
+
 # Meters per ms
 exports.SPEED_OF_LIGHT = 299792.458
 

@@ -1,7 +1,7 @@
 <% include header.html %>
 
 <div id="displayScreen" class="fullscreen">
-	<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="smallGrid" width="80" height="80" patternUnits="userSpaceOnUse">
             <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#0F8AA6" stroke-width="0.5"/>
@@ -22,7 +22,21 @@
 <script type="text/template" id="scannerObjectTmpl">
     <div class="tactical-scanner-object" id="{{ name }}">
         <svg width="8px" height="8px" xmlns="http://www.w3.org/2000/svg">
-            <circle style="fill:#0F8AA6"; cx="4" cy="4" r="4"/>
+            <path d="M 0 4 L 8 4 M 4 8 L 4 0" fill="none" stroke="#0F8AA6" stroke-width="1"/>
+        </svg>
+        <p class="name">{{ name_clean }}</p>
+        <p class="speed">{{ speed }}</p>
+        <p class="distBearing">{{ dist_and_bearing }}</p>
+    </div>
+</script>
+
+<script type="text/template" id="scannerRadiusTmpl">
+    <div class="tactical-scanner-object" id="{{ name }}">
+        <svg width="{{ diameter }}px" height="{{ diameter }}px" xmlns="http://www.w3.org/2000/svg">
+            <circle style="fill:#0F8AA6; opacity: 0.5;" cx="{{ start_radius }}"
+                cy="{{ start_radius }}" r="{{ radius }}" />
+            <circle stroke="#0F8AA6" stroke-width="1" fill="none"
+                cx="{{ start_radius }}" cy="{{ start_radius }}" r="{{ radius }}"/>
         </svg>
         <p class="name">{{ name_clean }}</p>
         <p class="speed">{{ speed }}</p>
@@ -37,9 +51,9 @@
 </script>
 
 <script type="text/javascript">
-	var shipName = "<%= ship.name %>";
-	var zoom = 17 - <%= zoom_level %>;
-	var weaponZoom = "<%= zoom %>";
+    var shipName = "<%= ship.name %>";
+    var zoom = 17 - <%= zoom_level %>;
+    var weaponZoom = "<%= zoom %>";
 </script>
 
 <script type="text/javascript" src="static/js/trek/tactical-screen.js"></script>

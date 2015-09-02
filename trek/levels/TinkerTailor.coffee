@@ -253,9 +253,14 @@ class TinkerTaylor extends Level
             throw new Error "WTF space objects"
 
         start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
-        p = start_point.position
-        x_rand = Math.floor( Math.random() * 1e8 )
-        y_rand = Math.floor( Math.random() * 1e8 )
+        p = start_point.position  # this is a planet... at least be in orbit
+        if start_point.radius?
+            start_distance = start_point.radius + Math.random() * 10 * start_point.radius
+        else
+            start_distance = Math.random() * 1e6
+        start_rotation = Math.random() * Math.PI * 2
+        x_rand = Math.cos( start_rotation ) * start_distance
+        y_rand = Math.sin( start_rotation ) * start_distance
         k_position = { x : p.x + x_rand, y : p.y + y_rand, z: 0 }
         k = new D7 'ChinTok'
         k.star_system = system
@@ -272,8 +277,13 @@ class TinkerTaylor extends Level
 
         start_point = @space_objects[ 1 + Math.floor( Math.random() * ( @space_objects.length - 1 ) ) ]
         p = start_point.position
-        x_rand = Math.floor( Math.random() * 1e8 )
-        y_rand = Math.floor( Math.random() * 1e8 )
+        if start_point.radius?
+            start_distance = start_point.radius + Math.random() * 10 * start_point.radius
+        else
+            start_distance = Math.random() * 1e6
+        start_rotation = Math.random() * Math.PI * 2
+        x_rand = Math.cos( start_rotation ) * start_distance
+        y_rand = Math.sin( start_rotation ) * start_distance
         k2_position = { x : p.x + x_rand, y : p.y + y_rand, z: 0 }
         k2 = new D7 'ChoRe'
         k2.star_system = system
@@ -297,7 +307,7 @@ class TinkerTaylor extends Level
     _init_space_objects: () ->
 
         system = @map.get_star_system 'Klthos'
-        s = new Star 'Klthos', 'B', 0
+        s = new Star 'Klthos', Star.CLASSIFICATION.B, 0
         s.charted = true
         system.add_star s
         @klthos = s
@@ -307,14 +317,14 @@ class TinkerTaylor extends Level
         init_orbit = 0.3 * C.AU
         inner_orbit_count = 1 + Math.floor( Math.random() * 6 )
         for i in [ 1..inner_orbit_count ]
-            p = new Planet "#{ i }", system.name, 'D', init_orbit
+            p = new Planet "#{ i }", system.name, Planet.CLASSIFICATION.D, init_orbit
             @space_objects.push p
             system.add_planet p
             init_orbit *= 2
 
         # Add 2 gas giants w/ moons and lagrange points
-        @gas_planet_1 = new Planet "#{ inner_orbit_count + 1 }", system.name, 'T', 10 * C.AU
-        @gas_planet_2 = new Planet "#{ inner_orbit_count + 2 }", system.name, 'J', 22 * C.AU
+        @gas_planet_1 = new Planet "#{ inner_orbit_count + 1 }", system.name, Planet.CLASSIFICATION.J, 10 * C.AU
+        @gas_planet_2 = new Planet "#{ inner_orbit_count + 2 }", system.name, Planet.CLASSIFICATION.T, 22 * C.AU
 
         # lagrange: +/- pi/3 radians of orbit
         alpha_lagrange_3 = new Lagrange @gas_planet_1, 3
