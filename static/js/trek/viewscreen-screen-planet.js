@@ -22,7 +22,7 @@ function newPlanet ( radius, type, surfaceColors, atmosphereColors, callback ) {
         // http://stackoverflow.com/questions/17486614/three-js-png-texture-alpha-renders-as-white-instead-as-transparent
         _.each( atmosphereColors, function( color, i ) {
 
-            var coin = Math.round( Math.random() * ( atmosMaps - 1 ) );
+            var coin = Math.floor( Math.random() * atmosMaps );
 
             var atmosGeometry = new THREE.SphereGeometry( radius, 32, 32 );
             atmosGeometry.computeTangents();
@@ -51,7 +51,7 @@ function newPlanet ( radius, type, surfaceColors, atmosphereColors, callback ) {
             if ( i === 0 ) return;  // already used as the base sphere color
 
             console.log("adding rock color");
-            var coin = Math.round( Math.random() * ( rockMaps - 1 ) );
+            var coin = Math.floor( Math.random() * rockMaps );
             var rockGeometry = new THREE.SphereGeometry( radius, 32, 32 );
             rockGeometry.computeTangents();
             var rockMaterial = new THREE.MeshPhongMaterial( {
@@ -72,7 +72,7 @@ function newPlanet ( radius, type, surfaceColors, atmosphereColors, callback ) {
 
         _.each( atmosphereColors, function( color, i ) {
 
-            var coin = Math.round( Math.random() * ( cloudMaps - 1 ) );
+            var coin = Math.floor( Math.random() * cloudMaps );
             var cloudGeometry = new THREE.SphereGeometry( radius, 32, 32 );
             cloudGeometry.computeTangents();
             var cloudMaterial = new THREE.MeshPhongMaterial( {

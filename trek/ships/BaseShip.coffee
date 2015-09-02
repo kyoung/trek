@@ -409,6 +409,8 @@ class BaseShip extends BaseObject
 
     process_phaser_damage: ( from_point, energy, target_deck, target_section ) =>
 
+        @message @prefix_code, "Damage", "Phaser"
+
         quads = @calculate_quadrants from_point
         if target_section? and target_section in quads
             quad = target_section
