@@ -47,7 +47,13 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] Have LR sensors detect ships and allow configuration
 
 ## Hotfix
+- [ ] Can't dismiss target selection list
+- [ ] Detail scans are broken
+- [ ] Can't go back or forth in the academy mode (should make it optional to just disiss or skim these)
+- [ ] "Mainviewer" command doesn't work in the "warp" system menu
 - [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
+- [ ] ChoRe completely flies past the ships
+- [ ] Torpedoes are way overpowered...
 - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
     - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
 - [ ] Spy shows up as a (green) Intruder on the crew display

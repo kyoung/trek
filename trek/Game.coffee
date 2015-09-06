@@ -409,7 +409,7 @@ class Game
         objects = ( o.name for o in @game_objects when U.distance( ship.position, o.position ) < C.VISUAL_RANGE )
 
 
-    get_stelar_telemetry: ( prefix, target_name ) ->
+    get_stellar_telemetry: ( prefix, target_name ) ->
 
         # Proposed refactor:
         #
@@ -436,6 +436,7 @@ class Game
         #       target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined,
         #       # direction : "forward|backward|left|right",
         #       # at_warp : true // gets over-ridden by socket calls
+        #       bearing : // ship's bearing
         #   }
 
         ship = @ships[ prefix ]
@@ -460,8 +461,10 @@ class Game
                 distance : U.distance ship.position, o.position
                 primary_color : o.color
                 bearing : U.bearing ship, o
+                name : o.name
                 )
             target : undefined
+            bearing : ship.bearing
 
         # telemetry =
         #     bearing_to_star : U.bearing( ship, stars[ 0 ] )
