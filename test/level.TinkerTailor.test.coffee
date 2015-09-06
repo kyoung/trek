@@ -10,14 +10,20 @@ process.on 'uncaughtException', ( err ) -> console.log err
 
 exports.LevelTest =
 
-
-    'test captains log population': ( test ) ->
+    'test that the ChinTok Shields dont charge on sabotage': ( test ) ->
         l = new Level 1
-        ships = do l.get_player_ships
-        for prefix, ship of ships
-            logs = do ship.get_pending_captains_logs
-            console.log logs
-            log = do ship.get_pending_captains_logs
-            console.log log
+
+        # Let everyone charge up and get ready
+        delta_t = 10 * 1000
+        o.calculate_state undefined, delta_t for o in do l.get_game_objects
+        l.code_word_said = true
+
+        # We'll find the ChinTok some time later
+        o.calculate_state undefined, delta_t*10 for o in do l.get_game_objects
+
+        for o in do l.get_game_objects
+            if /ChinTok/i.test o.name
+                for s in o.shields
+                    test.ok s.charge == 0, "ChinTok managed to charge #{ s.name } to #{ s.charge }"
 
         do test.done

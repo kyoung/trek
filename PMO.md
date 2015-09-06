@@ -47,18 +47,21 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] Have LR sensors detect ships and allow configuration
 
 ## Hotfix
-- [ ] Can't dismiss target selection list
-- [ ] Detail scans are broken
-- [ ] Can't go back or forth in the academy mode (should make it optional to just disiss or skim these)
-- [ ] "Mainviewer" command doesn't work in the "warp" system menu
-- [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
-- [ ] ChoRe completely flies past the ships
+- Bugs
+    - [ ] Detail scans are broken
+        - unable to confirm
+    - [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
+    - [ ] "Mainviewer" command doesn't work in the "warp" system menu
+    - [ ] ChoRe completely flies past the ships
+    - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
+        - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
+- UX Fail
+    - [ ] Can't dismiss target selection list
+    - [ ] Can't go back or forth in the academy mode (should make it optional to just disiss or skim these)
+
 - [ ] Torpedoes are way overpowered...
-- [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
-    - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
-- [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
