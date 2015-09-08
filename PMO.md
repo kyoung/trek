@@ -48,6 +48,11 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 ## Hotfix
 - Bugs
+    - [ ] AI can't drop out of the "move to position" state?
+    - [ ] Destroying a target somehow results in a "false" showing up in the
+            scanned data feed from 'api/tactical/scan' ()
+    - [ ] Weakened shields don't seem to allow det scanning
+
     - undefined response object on con screen
     - ChoRe fails to get out of "Arrive" state
       - [TypeError undefined is not a function]

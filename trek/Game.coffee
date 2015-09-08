@@ -206,6 +206,7 @@ class Game
         t = ( @get_public_from_scan o, you for o in @game_objects when o.sensor_tag in tags and o not in s )
 
         resp = r.concat( s ).concat( p ).concat( a ).concat( t )
+        resp = ( i for i in resp when i )
 
 
     get_system_information: ( prefix, system_name ) ->
@@ -234,6 +235,7 @@ class Game
         scanned_objects = ( @get_public_from_scan o, you for o in @game_objects when o.sensor_tag in sensor_tags and o not in objects )
         results = objects.concat space_objects
         results = results.concat scanned_objects
+        results = ( i for i in results when i )
 
 
     get_system_scan: ( prefix, target_name ) ->

@@ -266,7 +266,7 @@ class BaseShip extends BaseObject
         for s in @shields
             if not s.active
                 return false
-            if s.charge > 0.5
+            if s.charge < 0.5
                 return false
 
         return true

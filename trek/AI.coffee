@@ -57,7 +57,11 @@ class AI
             console.log error
 
 
-    current_state_complete: () -> @state_stack.pop
+    current_state_complete: () ->
+
+        console.log "AI STATE COMPLETE: current state stack len: #{ @state_stack.length }"
+        do @state_stack.pop
+        console.log "   now #{ @state_stack.length }"
 
 
     play: () ->

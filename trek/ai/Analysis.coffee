@@ -12,7 +12,7 @@ select_appropriate_speed = ( distance ) ->
     AUs = distance / C.AU
 
     switch
-        when AUs < 0.00001 then { scale : 'impulse', value : 0.001 }
+        when AUs < 0.00001 then { scale : 'impulse', value : 0.0005 }
         when AUs < 0.0001 then { scale : 'impulse', value : 0.001 }
         when AUs < 0.001 then { scale : 'impulse', value : 0.01 }
         when AUs < 0.01 then { scale : 'impulse', value : 0.05 }

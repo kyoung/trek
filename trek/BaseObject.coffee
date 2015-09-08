@@ -41,6 +41,7 @@ class BaseObject
 
     is_jamming: -> false
 
+
     scan_for: ( type ) ->
 
         if @_scan_density[type]?

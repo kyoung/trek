@@ -113,7 +113,7 @@ class MovingToPointState extends AIState
         switch @substate
             when @substates.TURNING then @turn ai, game
             when @substates.CLOSING then @close ai, game
-            when @substates.ARRIVED then do ai.curret_state_complete
+            when @substates.ARRIVED then do ai.current_state_complete
 
 
     turn: ( ai, game ) ->
