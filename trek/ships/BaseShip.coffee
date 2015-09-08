@@ -263,12 +263,13 @@ class BaseShip extends BaseObject
     is_jamming: ->
 
         # If all sheilds are up, and charge is greater than 50%
-        all_sheilds_jamming = true
         for s in @shields
-            if not ( s.active and s.charge > 0.5 )
-                all_sheilds_jamming = false
+            if not s.active
+                return false
+            if s.charge > 0.5
+                return false
 
-        return all_sheilds_jamming
+        return true
 
 
     get_target_subsystems: ->

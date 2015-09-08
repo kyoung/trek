@@ -48,11 +48,14 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 ## Hotfix
 - Bugs
+    - ChoRe fails to get out of "Arrive" state
+      - [TypeError undefined is not a function]
     - [ ] Detail scans are broken
-        - unable to confirm
+        - unable to confirm (test on Dr.B's machine later)
     - [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
         - tests don't show this to be true
         - confirmed in mission, but how?
+        - enable the ability to transport when shields are below 50% for now
     - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
         - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
 - UX Fail

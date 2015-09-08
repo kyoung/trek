@@ -220,6 +220,12 @@ function buildCrewMenu ( transScan ) {
 
 }
 
+function redraw () {
+
+    $("#from_menu").hide().show(0);
+
+}
+
 
 function buildCargoFromMenu ( transScan, cargo ) {
 
@@ -258,6 +264,8 @@ function buildCargoFromMenu ( transScan, cargo ) {
             } );
 
         } );
+
+    redraw();
 
 }
 
@@ -310,6 +318,8 @@ function buildCargoMenu ( transScan ) {
         originList.append( c );
 
         } );
+
+    redraw();
 
 }
 
