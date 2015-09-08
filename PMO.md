@@ -48,6 +48,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 ## Hotfix
 - Bugs
+    - undefined response object on con screen
     - ChoRe fails to get out of "Arrive" state
       - [TypeError undefined is not a function]
     - [ ] Detail scans are broken

@@ -365,13 +365,14 @@ var trek = (function($, _, Mustache, io) {
             $( "body" ).append( $bg );
             $bg.css( 'visibility', 'visible' );
 
-            var scoreEl =  documet.getElementById( "gameover-score" );
-            scoreEl.node.textContent = "SCORE: " + score;
+            var scoreEl =  document.getElementById( "gameover-score" );
+            scoreEl.textContent = "SCORE: " + score;
 
 
         } );
 
     }
+    t.displayGameOver = displayGameOver;
 
     isGameOver = false;
     t.socket.on("gameover", function( score ) {
