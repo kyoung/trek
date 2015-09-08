@@ -145,6 +145,8 @@ $( "#mainViewer" ).click( function () {
     var x = document.getElementById( "viewScreen" );
     var searchTerms = x.contentWindow.location.search.replace( "?", "" );
 
+    console.log( searchTerms );
+
     trek.api(
         "command/main-viewer",
         { screen : "conn_screen?" + searchTerms },

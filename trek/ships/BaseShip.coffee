@@ -259,6 +259,18 @@ class BaseShip extends BaseObject
         @weapons_targeting.set_target target, deck, section
 
 
+    # Can I be scanned? Am I jamming somehow? Are my shields up? (Cloak not included)
+    is_jamming: ->
+
+        # If all sheilds are up, and charge is greater than 50%
+        all_sheilds_jamming = true
+        for s in @shields
+            if not ( s.active and s.charge > 0.5 )
+                all_sheilds_jamming = false
+
+        return all_sheilds_jamming
+
+
     get_target_subsystems: ->
 
         ###

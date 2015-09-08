@@ -51,8 +51,8 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [ ] Detail scans are broken
         - unable to confirm
     - [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
-    - [ ] "Mainviewer" command doesn't work in the "warp" system menu
-    - [ ] ChoRe completely flies past the ships
+        - tests don't show this to be true
+        - confirmed in mission, but how?
     - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
         - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
 - UX Fail

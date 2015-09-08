@@ -1,4 +1,3 @@
-
 # ASTRONOMY
 # AU in meters
 exports.AU = 149597870700
@@ -51,15 +50,6 @@ exports.ENVIRONMENT =
 # in seconds
 exports.TIME_FOR_FULL_ROTATION = 10e3
 
-# Weapons
-#exports.PHASER_DAMAGE = 1e4
-# Phaser range:  http://st-v-sw.net/STSW-WeaponRange-Trek.html
-# # 1,000 km
-#exports.PHASER_RANGE = 1000 * 1000
-#exports.TORPEDO_RANGE = 300000 * 1000
-#exports.TORPEDO_MAX_DAMAGE = 1.5e9
-#exports.TORPEDO_BLAST_RADIUS = 1e5
-#exports.TORPEDO_PROBABILITY_OF_IMPACT = 0.3
 exports.HULL_STRENGTH = 600
 # Stations are presumed to be much stronger, as they're stationary
 # and don't rely on SIFs and radiation shielding.

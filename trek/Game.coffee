@@ -695,12 +695,7 @@ class Game
         if not target.alive
             throw new Error "Target destroyed"
 
-        # is relevant sensor array online?
-        # NM. It has to be, or you wouldn't have gotten the passive scan
-        # TODO: validate that assumption later
-
-        # TODO: Demeter says don't do this... expose a public method to get this info
-        if not target._are_all_shields_up? or not do target._are_all_shields_up
+        if not do target.is_jamming
             s.add_scanned_object target
 
         if target.get_system_scan?

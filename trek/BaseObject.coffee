@@ -39,6 +39,8 @@ class BaseObject
     transportable: -> false
 
 
+    is_jamming: -> false
+
     scan_for: ( type ) ->
 
         if @_scan_density[type]?

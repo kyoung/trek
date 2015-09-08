@@ -365,8 +365,8 @@ var trek = (function($, _, Mustache, io) {
             $( "body" ).append( $bg );
             $bg.css( 'visibility', 'visible' );
 
-            var score =  documet.getElementById( "gameover-score" );
-            score.node.textContent = "SCORE: " + score;
+            var scoreEl =  documet.getElementById( "gameover-score" );
+            scoreEl.node.textContent = "SCORE: " + score;
 
 
         } );

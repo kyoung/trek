@@ -108,6 +108,8 @@ class MovingToPointState extends AIState
 
     update: ( ai, game ) ->
 
+        console.log "   >>> AI substate #{ @substate }"
+
         switch @substate
             when @substates.TURNING then @turn ai, game
             when @substates.CLOSING then @close ai, game
@@ -121,6 +123,7 @@ class MovingToPointState extends AIState
         rel_bearing = U.abs2rel_bearing ship, abs_bearing, 3
 
         if rel_bearing.bearing > 0.99 or rel_bearing.bearing < 0.01
+            console.log "    >>> >>> AI rel bearing: #{ rel_bearing.bearing }"
             @substate = @substates.CLOSING
         else
             game.set_course ai.prefix, rel_bearing.bearing, rel_bearing.mark
@@ -133,9 +136,11 @@ class MovingToPointState extends AIState
         abs_bearing = U.point_bearing ship.position, @move_to_point
         rel_bearing = U.abs2rel_bearing ship, abs_bearing, 3
 
-        # misaligned
-        if ( 0.9 <  rel_bearing.bearing ) or ( rel_bearing.bearing < 0.1 )
+        # am I misaligned?
+        if 0.1 < rel_bearing.bearing < 0.9
+            game.set_impulse_speed ai.prefix, 0
             @substate = @substates.TURNING
+            return
 
         tactical_report = do ship.tactical_report
         if distance < tactical_report.phaser_range
