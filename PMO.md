@@ -57,11 +57,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
         - tests don't show this to be true
         - confirmed in mission, but how?
         - enable the ability to transport when shields are below 50% for now
-    - [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
-        - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
 - UX Fail
     - [ ] Can't dismiss target selection list
-    - [ ] Can't go back or forth in the academy mode (should make it optional to just disiss or skim these)
+    - [ ] Can't go back or forth in the academy mode (should make it optional to just dismiss or skim these)
 
 - [ ] Torpedoes are way overpowered...
 - [ ] Spy shows up as a (green) Intruder on the crew display
