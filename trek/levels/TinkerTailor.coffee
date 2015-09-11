@@ -104,6 +104,12 @@ class TinkerTaylor extends Level
             game.hail @klingon2.prefix_code, "#{ @klingon2.name }: #{ @klingon2.polo }"
 
 
+        debug_sheilds = ( game ) =>
+
+            sheild_report = ( { name : s.name, charge : s.charge } for s in @klingon.shields )
+            console.log sheild_report
+
+
         commit_sabotage = ( game ) =>
             console.log ">>> Sabott <<<"
 
@@ -112,6 +118,7 @@ class TinkerTaylor extends Level
 
             # damage the klingon ship
             # # destroy primary power systems (warp core breach?)
+            k.set_power_to_reactor k.warp_core.name, 0
             do k.warp_core.deactivate
             k.warp_core.state = 0.2 * do Math.random
 
@@ -174,11 +181,24 @@ class TinkerTaylor extends Level
             condition : @_is_mission_accomplished,
             do : end_game }
 
+        debug = new LevelEvent {
+            name : 'Debug',
+            every : 5000,
+            do : debug_sheilds
+        }
+
+        auto_trigger = new LevelEvent {
+            name : 'Sabot Trigger',
+            delay : 10000,
+            do : commit_sabotage
+        }
+
         events = [
             loose,
             win,
             sabotage,
-            marco_polo
+            marco_polo,
+            debug, auto_trigger  # debug events
         ]
 
 

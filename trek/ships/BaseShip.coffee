@@ -839,6 +839,9 @@ class BaseShip extends BaseObject
             throw new Error "Unable to set impulse while navigational computer
             is manuvering"
 
+        if impulse_speed > 1
+            throw new Error "Invalid impulse speed: #{ impulse_speed }"
+
         if @impulse == impulse_speed and @warp_speed == 0
             # we're already at this speed
             if callback?
@@ -1944,7 +1947,8 @@ class BaseShip extends BaseObject
         ## subspace warping signals to the nav computer to stop warp
 
 
-    _update_system_state: ( delta_t, eng_locations ) -> s.update_system( delta_t, eng_locations ) for s in @systems
+    _update_system_state: ( delta_t, eng_locations ) ->
+        s.update_system( delta_t, eng_locations ) for s in @systems
 
 
     _update_crew: ( delta_t ) ->

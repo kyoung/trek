@@ -48,17 +48,17 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 
 ## Hotfix
 - Bugs
-    - [ ] AI can't drop out of the "move to position" state?
+    - [x] AI can't drop out of the "move to position" state?
     - [ ] Destroying a target somehow results in a "false" showing up in the
             scanned data feed from 'api/tactical/scan' ()
-    - [ ] Weakened shields don't seem to allow det scanning
+    - [x] Weakened shields don't seem to allow det scanning
 
     - undefined response object on con screen
     - ChoRe fails to get out of "Arrive" state
       - [TypeError undefined is not a function]
     - [ ] Detail scans are broken
         - unable to confirm (test on Dr.B's machine later)
-    - [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
+    - [x] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
         - tests don't show this to be true
         - confirmed in mission, but how?
         - enable the ability to transport when shields are below 50% for now

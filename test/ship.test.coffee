@@ -660,7 +660,9 @@ exports.ShipTest =
         test.ok k.cloak_system.active, "Cloak failed to activate"
         for p in k.phasers
             test.ok !p.active, "Phasers failed to deactivate in cloak"
+            test.ok p.charge == 0, "Phasers failed to discharge in cloak"
         for s in k.shields
-            test.ok !s.active, "Shileds failed to deactivate in cloak"
+            test.ok !s.active, "Shields failed to deactivate in cloak"
+            test.ok s.charge == 0, "Shields failed to discharge in cloak"
 
         do test.done
