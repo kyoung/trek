@@ -181,24 +181,26 @@ class TinkerTaylor extends Level
             condition : @_is_mission_accomplished,
             do : end_game }
 
-        debug = new LevelEvent {
-            name : 'Debug',
-            every : 5000,
-            do : debug_sheilds
-        }
-
-        auto_trigger = new LevelEvent {
-            name : 'Sabot Trigger',
-            delay : 10000,
-            do : commit_sabotage
-        }
+        # Helpful debug events
+        #
+        # debug = new LevelEvent {
+        #     name : 'Debug',
+        #     every : 5000,
+        #     do : debug_sheilds
+        # }
+        #
+        # auto_trigger = new LevelEvent {
+        #     name : 'Sabot Trigger',
+        #     delay : 10000,
+        #     do : commit_sabotage
+        # }
 
         events = [
             loose,
             win,
             sabotage,
             marco_polo,
-            debug, auto_trigger  # debug events
+            # debug, auto_trigger  # debug events
         ]
 
 

@@ -345,7 +345,16 @@ class Game
     get_target_subsystems: ( prefix ) -> do @ships[ prefix ].get_target_subsystems
 
 
-    fire_phasers: ( prefix, threshold ) -> @ships[ prefix ].fire_phasers threshold
+    fire_phasers: ( prefix, threshold ) ->
+
+        r = @ships[ prefix ].fire_phasers threshold
+
+        # TODO also cover case that specifies origin and phaser color
+        ship = @ships[ prefix ]
+        for p, s of @ships
+            @message p, "Display", "Phaser hitting:#{ ship.get_target().name }"
+
+        return r
 
 
     get_phaser_status: ( prefix ) -> do @ships[ prefix ].phaser_report

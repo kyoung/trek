@@ -38,6 +38,8 @@ var cameraEasing, cameraElapsed;
 
 var navigationData;
 
+var stelarTelem;  // holding block for debugging telemetry geometry
+
 var starViews = [
     "undefined",
     "forward",
@@ -49,6 +51,7 @@ trek.api(
     "navigation/stelar-telemetry",
     { target : targetName },
     init );
+
 
 window.requestAnimFrame = ( function () {
 
@@ -125,7 +128,7 @@ function init ( data ) {
         console.log( 'Target data found' );
         shipRotation = data.target.rotation;
         targetURL = data.target.mesh_url;
-        showTarget( data.target );
+        showTarget( data.target, data.bearing );
         // var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
         // lightAngle = netBearingToLight;
         //
@@ -142,6 +145,7 @@ function init ( data ) {
     scene.add( globalLight );
     requestAnimationFrame( update );
 
+    // TODO: Make this go through web sockets... or rather, have it be pushed
     setInterval( function () {
 
         trek.api(
@@ -194,7 +198,7 @@ function getCoordinatesFromRotation ( bearing, refBearing ) {
     // returns { x : , y : } normalized to 1
     var b = ( bearing.bearing + refBearing.bearing ) * 2 * Math.PI;
     return {
-        x : Math.sin( b ),
+        x : - Math.sin( b ),
         z : Math.cos( b )
     }
 
@@ -243,6 +247,7 @@ function showPlanets ( planets, referenceBearing ) {
 
 
 }
+
 
 function showSuns ( stars, referenceBearing ) {
 
@@ -335,7 +340,10 @@ function update ( stamp ) {
 
 }
 
+
 function updateSpheres ( data ) {
+
+    stelarTelem = data;
 
     // # Proposed refactor:
     // #
@@ -363,10 +371,13 @@ function updateSpheres ( data ) {
     // #   }
 
     var refBearing;
-
     if ( amLookingAtTarget() ) {
 
-        refBearing = data.target.bearing;
+        refBearing = {
+            bearing : data.target.bearing.bearing + data.bearing.bearing,
+            mark : data.target.bearing.mark + data.bearing.mark
+        }
+        refBearing = data.bearing;
 
     } else {
 
@@ -532,7 +543,7 @@ function drawWarpTunnel () {
 }
 
 
-function showTarget ( targetData ) {
+function showTarget ( targetData, referenceBearing ) {
 
     // target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined
     loader.load( "/static/mesh/" + targetData.mesh_url, function( geo, mat ) {
@@ -543,14 +554,14 @@ function showTarget ( targetData ) {
         target.rotation.y = ( targetData.rotation.bearing - targetData.bearing.bearing ) * 2 * Math.PI;
 
         // calculate these, and then tell the camera to "look at" the target
-        var theta = targetData.bearing.bearing * Math.PI * 2;
+        var scalarCoordinates = getCoordinatesFromRotation( targetData.bearing, referenceBearing );
         var distanceFromCamera = 10;
-        var x = distanceFromCamera * Math.sin( theta );
-        var z = -distanceFromCamera * Math.cos( theta );
+        var x = distanceFromCamera * scalarCoordinates.x;
+        var z = distanceFromCamera * scalarCoordinates.z;
         target.position.set( x, 0, z );
         scene.add( target );
 
-        camera.rotation.y = targetData.bearing.bearing * Math.PI * 2;
+        camera.rotation.y = ( referenceBearing.bearing + targetData.bearing.bearing ) * Math.PI * 2;
 
         console.log("Expected position: ");
         console.log( target.position );
@@ -561,6 +572,48 @@ function showTarget ( targetData ) {
 
 }
 
+
+// In the event of a phaser being fired at what we're looking at
+function showPhaserHit ( color ) {
+
+    var beam = new THREE.Object3D();
+    var beamLength = 10;
+    var beamSegments = 32;
+
+    // color beam
+    var colorRadius = 1;
+    var colorGeo = new THREE.CylinderGeometry( colorRadius/10, colorRadius,
+        beamLength, beamSegments );
+    var colorMat = new THREE.MeshBasicMaterial( {
+        color : color,
+        transparent : true,
+        opacity : 0.4
+    } );
+    var colorBeam = new THREE.Mesh( colorGeo, colorMat );
+    beam.add( colorBeam );
+
+    // white beam
+    var whiteRadius = 0.1;
+    var whiteGeo = new THREE.CylinderGeometry( whiteRadius/10, whiteRadius,
+        beamLength, beamSegments );
+    var whiteMat = new THREE.MeshBasicMaterial( { color : '#FFFFFF' } );
+    var whiteBeam = new THREE.Mesh( whiteGeo, whiteMat );
+    beam.add( whiteBeam );
+
+    // rotation to target
+    // start pos = 0, -10, 0
+    // end pos = target.position  // likely
+    beamHorizontalOffset = -4;
+    beam.position.set( target.position.x, beamHorizontalOffset, target.position.z );
+    randomOffset = Math.random() * 0.3 - 0.15;
+    beam.rotation.z = randomOffset;
+
+    scene.add( beam );
+
+    // callback for duration of shot (1s)
+    setTimeout( function () { scene.remove( beam ); }, 1000 );
+
+}
 
 // In the event of a Torpedo being fired at what we're looking at
 function showTorpedoHit () {
@@ -747,6 +800,10 @@ trek.socket.on( "Display", function ( data ) {
 
         case "Torpedo hitting":
             showTorpedoHit();
+            break;
+
+        case "Phaser hitting":
+            showPhaserHit('#FF0000');
             break;
 
         case "Destroyed":

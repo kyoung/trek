@@ -259,6 +259,14 @@ class BaseShip extends BaseObject
         @weapons_targeting.set_target target, deck, section
 
 
+    get_target: ->
+
+        if not do @weapons_targeting.is_online
+            throw new Error "Weapons Targeting systems offline."
+
+        @weapons_targeting.target
+
+
     # Can I be scanned? Am I jamming somehow? Are my shields up? (Cloak not included)
     is_jamming: ->
 
