@@ -459,43 +459,16 @@ var trek = (function($, _, Mustache, io) {
 
     // Training Levels
 
-    var academyStorageKey = "academyRecord";
+    window.onkeydown = function ( d ) {
+
+        if ( d.keyCode == 65 ) loadTraining();
+
+    }
 
     function loadTraining () {
 
         // Called after screenName is set
         t.api( 'academy/courses', { screen : t.screenName }, showTraining );
-
-    }
-
-
-    function getLessonsLearned () {
-
-        // Returns all records for lessons learned
-        lessonString = localStorage.getItem( academyStorageKey );
-        if ( !lessonString ) {
-
-            lessonString = "{}";
-
-        }
-
-        return JSON.parse( lessonString );
-
-    }
-
-    function setLessonLearned ( screenName, hash ) {
-
-        record = getLessonsLearned();
-
-        if ( ! _.has( record, screenName ) ) {
-
-            record[ screenName ] = [];
-
-        }
-
-        record[ screenName ].push( hash );
-
-        localStorage.setItem( academyStorageKey, JSON.stringify( record ) );
 
     }
 
@@ -507,25 +480,6 @@ var trek = (function($, _, Mustache, io) {
         console.log( "Lessons for: " + t.screenName );
         console.log( lessons );
 
-        // Check which lessons have already been learned.
-        var learnedLessons = getLessonsLearned();
-        console.log( "learned lessons:" );
-        console.log( learnedLessons );
-
-        lessons = _.filter( lessons, function ( l ) {
-
-            // Filter out lessons already learned!
-            if ( learnedLessons[ l.screen ] &&
-                learnedLessons[ l.screen ].indexOf( l.hash ) >= 0 ) {
-
-                return false;
-
-            }
-
-            return l.screen == t.screenName.toLowerCase();
-
-        } );
-
         // Display the lowest-ranking lesson to be learned.
         var validLessons = _.sortBy( lessons, function ( l ) {
 
@@ -533,33 +487,38 @@ var trek = (function($, _, Mustache, io) {
 
         } );
 
-        if ( validLessons.length == 0 ) {
-
-            return;
-
-        }
+        if ( validLessons.length == 0 ) return;
 
         var nextLesson = validLessons[ 0 ];
 
         var $bg = $( "<div class='blackout'></div>" );
-        $bg.append( $( nextLesson.html ) );
+        var $academyFrame = $( "<div class='academy-frame'></div>" );
+        var $academyWrapper = $( "<div class='academy-wrapper'></div>" );
+        $academyWrapper.html( nextLesson.html );
+        var $academyMenu = $( "<div class='academy-menu'></div>" );
 
-        $bg.click( function () {
+        _.each( validLessons, function( l, i ) {
 
-            $bg.remove();
-            setLessonLearned( nextLesson.screen, nextLesson.hash );
-            showTraining( lessons );
+            var i = $( "<span class='academy-page'>" + l.sequence + "</span>" );
+            i.click( function () { $academyWrapper.html( l.html ); } );
+            $academyMenu.append( i );
 
         } );
 
+        var closeBttn = $( "<span class='academy-page'>close</span>" );
+        closeBttn.click( function () { $bg.remove(); } );
+        $academyMenu.append( closeBttn );
+        $academyFrame.append( $academyMenu );
+        $academyFrame.append( $academyWrapper );
+
         $( "body" ).append( $bg );
         $bg.css( 'visibility', 'visible' );
+        $bg.append( $academyFrame );
 
     }
 
+
     t.showTraining = showTraining;
-    t.setLessonLearned = setLessonLearned;
-    t.getLessonsLearned = getLessonsLearned;
     t.loadTraining = loadTraining;
 
 

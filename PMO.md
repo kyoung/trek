@@ -47,25 +47,9 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] Have LR sensors detect ships and allow configuration
 
 ## Hotfix
-- Bugs
-    - [x] AI can't drop out of the "move to position" state?
-    - [ ] Destroying a target somehow results in a "false" showing up in the
-            scanned data feed from 'api/tactical/scan' ()
-    - [x] Weakened shields don't seem to allow det scanning
-
-    - undefined response object on con screen
-    - ChoRe fails to get out of "Arrive" state
-      - [TypeError undefined is not a function]
-    - [ ] Detail scans are broken
-        - unable to confirm (test on Dr.B's machine later)
-    - [x] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
-        - tests don't show this to be true
-        - confirmed in mission, but how?
-        - enable the ability to transport when shields are below 50% for now
 - UX Fail
     - [ ] Can't dismiss target selection list
     - [ ] Can't go back or forth in the academy mode (should make it optional to just dismiss or skim these)
-
 - [ ] Torpedoes are way overpowered...
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...

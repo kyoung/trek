@@ -299,6 +299,22 @@ ul.informational li {
 
 /* Training
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+.academy-frame {
+    margin-top: 50px;
+}
+
+.academy-menu {
+    width: 600px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+span.academy-page {
+    margin: 0 10px 0 10px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .academy-wrapper {
     width: 600px;
     margin: 0 auto;
@@ -1193,6 +1209,7 @@ path.scan-result-grid-void {
     width: 100%;
     height: 100%;
     position: fixed;
+    overflow-x: scroll;
     top: 0;
     left: 0;
 }
