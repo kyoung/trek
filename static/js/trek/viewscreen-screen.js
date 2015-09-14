@@ -581,7 +581,7 @@ function showPhaserHit ( color ) {
     var beamSegments = 32;
 
     // color beam
-    var colorRadius = 1;
+    var colorRadius = 0.5;
     var colorGeo = new THREE.CylinderGeometry( colorRadius/10, colorRadius,
         beamLength, beamSegments );
     var colorMat = new THREE.MeshBasicMaterial( {
@@ -593,7 +593,7 @@ function showPhaserHit ( color ) {
     beam.add( colorBeam );
 
     // white beam
-    var whiteRadius = 0.1;
+    var whiteRadius = 0.05;
     var whiteGeo = new THREE.CylinderGeometry( whiteRadius/10, whiteRadius,
         beamLength, beamSegments );
     var whiteMat = new THREE.MeshBasicMaterial( { color : '#FFFFFF' } );
