@@ -23,7 +23,6 @@ exports.LevelTest =
             set_environment_function : -> ,
         }
 
-
         # All crew off of stations, stations destroyed, and crew rescued is a victory
         ships_and_stations = do l.get_game_objects
         # Disappear the crew and add some rescues

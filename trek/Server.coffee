@@ -239,7 +239,7 @@ navigation_api = ( prefix, method, command, params ) ->
             game.get_charted_objects prefix, q.system
 
         when "stelar-telemetry"
-            game.get_stelar_telemetry prefix, q.target
+            game.get_stellar_telemetry prefix, q.target
 
         when "sector-telemetry"
             game.get_sector_telemetry prefix

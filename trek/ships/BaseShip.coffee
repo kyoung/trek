@@ -259,6 +259,27 @@ class BaseShip extends BaseObject
         @weapons_targeting.set_target target, deck, section
 
 
+    get_target: ->
+
+        if not do @weapons_targeting.is_online
+            throw new Error "Weapons Targeting systems offline."
+
+        @weapons_targeting.target
+
+
+    # Can I be scanned? Am I jamming somehow? Are my shields up? (Cloak not included)
+    is_jamming: ->
+
+        # If all sheilds are up, and charge is greater than 50%
+        for s in @shields
+            if not s.active
+                return false
+            if s.charge < 0.5
+                return false
+
+        return true
+
+
     get_target_subsystems: ->
 
         ###
@@ -825,6 +846,9 @@ class BaseShip extends BaseObject
         if @_navigation_lock
             throw new Error "Unable to set impulse while navigational computer
             is manuvering"
+
+        if impulse_speed > 1
+            throw new Error "Invalid impulse speed: #{ impulse_speed }"
 
         if @impulse == impulse_speed and @warp_speed == 0
             # we're already at this speed
@@ -1931,7 +1955,8 @@ class BaseShip extends BaseObject
         ## subspace warping signals to the nav computer to stop warp
 
 
-    _update_system_state: ( delta_t, eng_locations ) -> s.update_system( delta_t, eng_locations ) for s in @systems
+    _update_system_state: ( delta_t, eng_locations ) ->
+        s.update_system( delta_t, eng_locations ) for s in @systems
 
 
     _update_crew: ( delta_t ) ->

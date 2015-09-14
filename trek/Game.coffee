@@ -206,6 +206,7 @@ class Game
         t = ( @get_public_from_scan o, you for o in @game_objects when o.sensor_tag in tags and o not in s )
 
         resp = r.concat( s ).concat( p ).concat( a ).concat( t )
+        resp = ( i for i in resp when i )
 
 
     get_system_information: ( prefix, system_name ) ->
@@ -234,6 +235,7 @@ class Game
         scanned_objects = ( @get_public_from_scan o, you for o in @game_objects when o.sensor_tag in sensor_tags and o not in objects )
         results = objects.concat space_objects
         results = results.concat scanned_objects
+        results = ( i for i in results when i )
 
 
     get_system_scan: ( prefix, target_name ) ->
@@ -343,7 +345,16 @@ class Game
     get_target_subsystems: ( prefix ) -> do @ships[ prefix ].get_target_subsystems
 
 
-    fire_phasers: ( prefix, threshold ) -> @ships[ prefix ].fire_phasers threshold
+    fire_phasers: ( prefix, threshold ) ->
+
+        r = @ships[ prefix ].fire_phasers threshold
+
+        # TODO also cover case that specifies origin and phaser color
+        ship = @ships[ prefix ]
+        for p, s of @ships
+            @message p, "Display", "Phaser hitting:#{ ship.get_target().name }"
+
+        return r
 
 
     get_phaser_status: ( prefix ) -> do @ships[ prefix ].phaser_report
@@ -409,7 +420,7 @@ class Game
         objects = ( o.name for o in @game_objects when U.distance( ship.position, o.position ) < C.VISUAL_RANGE )
 
 
-    get_stelar_telemetry: ( prefix, target_name ) ->
+    get_stellar_telemetry: ( prefix, target_name ) ->
 
         # Proposed refactor:
         #
@@ -436,6 +447,7 @@ class Game
         #       target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined,
         #       # direction : "forward|backward|left|right",
         #       # at_warp : true // gets over-ridden by socket calls
+        #       bearing : // ship's bearing
         #   }
 
         ship = @ships[ prefix ]
@@ -460,8 +472,10 @@ class Game
                 distance : U.distance ship.position, o.position
                 primary_color : o.color
                 bearing : U.bearing ship, o
+                name : o.name
                 )
             target : undefined
+            bearing : ship.bearing
 
         # telemetry =
         #     bearing_to_star : U.bearing( ship, stars[ 0 ] )
@@ -692,12 +706,7 @@ class Game
         if not target.alive
             throw new Error "Target destroyed"
 
-        # is relevant sensor array online?
-        # NM. It has to be, or you wouldn't have gotten the passive scan
-        # TODO: validate that assumption later
-
-        # TODO: Demeter says don't do this... expose a public method to get this info
-        if not target._are_all_shields_up? or not do target._are_all_shields_up
+        if not do target.is_jamming
             s.add_scanned_object target
 
         if target.get_system_scan?

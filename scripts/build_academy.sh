@@ -1,7 +1,6 @@
 #! /bin/bash
 
 # Delete any old academy files and recompile
-
 rm views/academy/*
 
 md5 training/* \

@@ -161,7 +161,7 @@ function paintScan ( data ) {
 
         if ( e.descriptor == "Planet" ) {
 
-            console.log( e.classification );
+            // console.log( e.classification );
 
         }
 

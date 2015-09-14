@@ -33,9 +33,12 @@ var systemStarMesh;
 var globalLight;
 
 var cameraTurnRate, cameraTurning;
+var frameTimeStamp = Date.now();
 var cameraEasing, cameraElapsed;
 
 var navigationData;
+
+var stelarTelem;  // holding block for debugging telemetry geometry
 
 var starViews = [
     "undefined",
@@ -48,6 +51,7 @@ trek.api(
     "navigation/stelar-telemetry",
     { target : targetName },
     init );
+
 
 window.requestAnimFrame = ( function () {
 
@@ -75,6 +79,7 @@ function init ( data ) {
     // #       ],
     // #       planets : [
     // #           {
+    // #               name :
     // #               size : [ radius],
     // #               distance : [distance],
     // #               surface_color : #3e8,
@@ -92,6 +97,7 @@ function init ( data ) {
     // #       target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined,
     // #       # direction : "forward|backward|left|right",
     // #       # at_warp : true // gets over-ridden by socket calls
+    // #       bearing : bearing  // abs bearing of ship... all other bearings are relative to this
     // #   }
 
     // Camera params :
@@ -101,12 +107,8 @@ function init ( data ) {
         window.innerWidth / window.innerHeight,
         0.5,
         visibleRadius );
-
-    if ( targetName == "aft" ) {
-
-        camera.rotation.y = Math.PI;
-
-    }
+    camera.rotation.y = Math.PI * 2 * data.bearing.bearing;
+    if ( targetName == "aft" ) camera.rotation.y += Math.PI;
 
     scene = new THREE.Scene();
     scene.add( camera );
@@ -117,8 +119,8 @@ function init ( data ) {
     document.body.appendChild( renderer.domElement );
 
     makeParticles();
-    showSuns( data.stars );
-    showPlanets( data.planets );
+    showSuns( data.stars, data.bearing );
+    showPlanets( data.planets, data.bearing );
     loadGalaxy( data.skyboxes );
 
     if ( data.target !== undefined ) {
@@ -126,7 +128,7 @@ function init ( data ) {
         console.log( 'Target data found' );
         shipRotation = data.target.rotation;
         targetURL = data.target.mesh_url;
-        showTarget( data.target );
+        showTarget( data.target, data.bearing );
         // var netBearingToLight = data.bearing_to_target.bearing + data.bearing_to_star.bearing;
         // lightAngle = netBearingToLight;
         //
@@ -143,6 +145,7 @@ function init ( data ) {
     scene.add( globalLight );
     requestAnimationFrame( update );
 
+    // TODO: Make this go through web sockets... or rather, have it be pushed
     setInterval( function () {
 
         trek.api(
@@ -190,7 +193,19 @@ function loadGalaxy ( skyboxes ) {
 }
 
 
-function showPlanets ( planets ) {
+function getCoordinatesFromRotation ( bearing, refBearing ) {
+
+    // returns { x : , y : } normalized to 1
+    var b = ( bearing.bearing + refBearing.bearing ) * 2 * Math.PI;
+    return {
+        x : - Math.sin( b ),
+        z : Math.cos( b )
+    }
+
+}
+
+
+function showPlanets ( planets, referenceBearing ) {
 
     // #     planets = [
     // #           {
@@ -211,19 +226,14 @@ function showPlanets ( planets ) {
 
         var apparentRadius = p.size / p.distance * displayRadius * -1;
 
-        if ( apparentRadius < 1 ) {
-
-            return;
-
-        }
+        if ( apparentRadius < 1 ) return;
 
         console.log( "name: " + p.name );
         console.log( "distance: " + p.distance );
         console.log( "apparent Radius: " + apparentRadius );
-
-        var radianRotation = p.bearing.bearing * 2 * Math.PI;
-        var x = Math.sin( radianRotation ) * displayRadius;
-        var z = Math.cos( radianRotation ) * displayRadius;
+        var normPoint = getCoordinatesFromRotation( p.bearing, referenceBearing );
+        var x = normPoint.x * displayRadius;
+        var z = normPoint.z * displayRadius;
 
         newPlanet( apparentRadius, p.type, p.surface_color, p.atmosphere_color, function( planet ) {
 
@@ -238,28 +248,32 @@ function showPlanets ( planets ) {
 
 }
 
-function showSuns ( stars ) {
+
+function showSuns ( stars, referenceBearing ) {
 
     // negative because of the wonkiness of display coordinates
     var displayRadius = -900;
 
     _.each( stars, function ( s ) {
 
+        var star = new THREE.Object3D();
+        var normPoint = getCoordinatesFromRotation( s.bearing, referenceBearing );
+        var x = normPoint.x * displayRadius;
+        var z = normPoint.z * displayRadius;
+        star.position.set( x, 0, z );
+
         var newStarLight = new THREE.PointLight( s.primary_color, 1, 0 );
         var whiteStarLight = new THREE.PointLight( "#ffffff", 1, 0 );
-
-        var radianRotation = s.bearing.bearing * 2 * Math.PI;
-        var x = Math.sin( radianRotation ) * displayRadius;
-        var z = Math.cos( radianRotation ) * displayRadius;
-
-        newStarLight.position.set( x, 0, z );
-        whiteStarLight.position.set(x, 0, z);
+        star.add( newStarLight );
+        star.add( whiteStarLight );
 
         var apparentRadius = s.size / s.distance * displayRadius * -1;
         var geometry = new THREE.SphereGeometry( apparentRadius, 32, 32 );
         var material = new THREE.MeshBasicMaterial( { color : '#ffffff' });//s.primary_color } );
         var sphere = new THREE.Mesh( geometry, material );
-        sphere.position.set( x, 0, z );
+        // star.add( sphere );
+        scene.add( star );
+        skySpheres[ s.name ] = star;
 
         // lens flare
         var textureFlare0 = THREE.ImageUtils.loadTexture( "static/textures/lensflare0.png" );
@@ -275,13 +289,11 @@ function showSuns ( stars ) {
         flare.add( textureFlare3, 35, 0.7, THREE.AdditiveBlending, flareColor );
         flare.add( textureFlare3, 60, 0.9, THREE.AdditiveBlending, flareColor );
         flare.add( textureFlare3, 35, 1.0, THREE.AdditiveBlending, flareColor );
+
         var shortRatio = 10;
         flare.position.set( x/shortRatio, 0, z/shortRatio );
-
         scene.add( flare );
-        //scene.add( sphere );
-        scene.add( newStarLight );
-        scene.add( whiteStarLight );
+        skySpheres[ s.name + '_flare' ] = flare;
 
     } );
 
@@ -294,46 +306,44 @@ function update ( stamp ) {
 
         if ( e.position.z < -200 ) {
 
-            torpedos = _.filter( torpedos, function ( t ) {
-
-                return e != t;
-
-                } );
+            torpedos = _.filter(
+                torpedos,
+                function ( t ) { return e != t; }
+            );
             scene.remove( e );
 
         }
 
         e.position.z -= ( 7 - 1.5 );
 
-        _.each( e.lensFlares, function ( f ) {
-
-            f.size /= 1.1;
-
-        } );
+        _.each(
+            e.lensFlares,
+            function ( f ) { f.size /= 1.1; }
+        );
 
     } );
 
+    if ( !amLookingAtTarget() ) {
 
-    if ( cameraTurning ) {
+        var now = Date.now();
+        var delta_t = frameTimeStamp - Date.now();
+        frameTimeStamp = now;
+        if ( cameraTurning ) camera.rotation.y += ( cameraTurnRate * delta_t );
 
-        camera.rotation.y += cameraTurnRate;
-
-    }
-
-    updateWarpSystem();
-
-    if ( !renderLock ) {
-
-        // and render the scene from the perspective of the camera
-        renderer.render( scene, camera );
+        updateWarpSystem();
 
     }
 
+    // and render the scene from the perspective of the camera
+    if ( !renderLock ) renderer.render( scene, camera );
     requestAnimationFrame( update );
 
 }
 
+
 function updateSpheres ( data ) {
+
+    stelarTelem = data;
 
     // # Proposed refactor:
     // #
@@ -357,7 +367,24 @@ function updateSpheres ( data ) {
     // #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
     // #       ],   // 50% of systems are binary
     // #      ...
+    // #      bearing : [ bearing ]
     // #   }
+
+    var refBearing;
+    if ( amLookingAtTarget() ) {
+
+        refBearing = {
+            bearing : data.target.bearing.bearing + data.bearing.bearing,
+            mark : data.target.bearing.mark + data.bearing.mark
+        }
+        refBearing = data.bearing;
+
+    } else {
+
+        camera.rotation.y = data.bearing.bearing * Math.PI * 2;
+        refBearing = data.bearing;
+
+    }
 
     var displayRadius = -800;
 
@@ -367,45 +394,54 @@ function updateSpheres ( data ) {
 
         if ( apparentRadius < 1 ) {
 
-            if ( _.has( skySpheres, p.name ) ) {
-
-                scene.remove( skySpheres[ p.name ] );
-
-            }
-
+            if ( _.has( skySpheres, p.name ) ) scene.remove( skySpheres[ p.name ] );
             return;
 
         }
 
-        var radianRotation = p.bearing.bearing * 2 * Math.PI;
-        var x = Math.sin( radianRotation ) * displayRadius;
-        var z = Math.cos( radianRotation ) * displayRadius;
+        var normPoint = getCoordinatesFromRotation( p.bearing, refBearing );
+        var x = normPoint.x * displayRadius;
+        var z = normPoint.z * displayRadius;
 
         if ( _.has( skySpheres, p.name ) ) {
 
             var s = skySpheres[ p.name ]
+            // TODO: this is a hack!
             var scale = apparentRadius / s.children[0].geometry.boundingSphere.radius;
 
-            if ( scale != 1 ) {
-
-                s.scale = new THREE.Vector3( scale, scale, scale );
-
-            }
+            if ( scale != 1 ) s.scale = new THREE.Vector3( scale, scale, scale );
 
             s.position.set( x, 0, z );
             scene.add( s );
 
         } else {
 
-            newPlanet( apparentRadius, p.type, p.surface_color, p.atmosphere_color, function( planet ) {
+            newPlanet(
+                apparentRadius,
+                p.type,
+                p.surface_color,
+                p.atmosphere_color,
+                function( planet ) {
 
-                planet.position.set( x, 0, z );
-                scene.add( planet );
-                skySpheres[ p.name ] = planet;
+                    planet.position.set( x, 0, z );
+                    scene.add( planet );
+                    skySpheres[ p.name ] = planet;
 
-            } );
+                } );
 
         }
+
+    } );
+
+    // TODO refactor, this is so gross and messy I'm ashamed
+    displayRadius = -900;
+    _.each( data.stars, function ( s ) {
+
+        var normPoint = getCoordinatesFromRotation( s.bearing, refBearing );
+        var x = normPoint.x * displayRadius;
+        var z = normPoint.z * displayRadius;
+        skySpheres[ s.name ].position.set( x, 0, z );
+        skySpheres[ s.name + '_flare' ].position.set( x/10, 0, z/10 );
 
     } );
 
@@ -434,12 +470,9 @@ function calculateNewWarpLinePosition ( line ) {
 
     } else {
 
-        if ( line.position.z < visibleRadius + 1000) {
+        // animate off the screen
+        if ( line.position.z < visibleRadius + 1000) line.position.z += 100;
 
-            // animate off the screen
-            line.position.z += 100;
-
-        }
 
     }
 
@@ -456,12 +489,7 @@ function makeParticles () {
 function goToWarp () {
 
     renderLock = false;
-
-    if ( atWarp ) {
-
-        return;
-
-    }
+    if ( atWarp ) return;
 
     _.each( warpSystem, function( line ) {
 
@@ -469,12 +497,7 @@ function goToWarp () {
 
     } );
 
-    if ( !isWarpGroupAdded ) {
-
-        scene.add( warpGroup );
-
-    }
-
+    if ( !isWarpGroupAdded ) scene.add( warpGroup );
     warpGroup.rotation.y = camera.rotation.y;
     atWarp = true;
 
@@ -493,7 +516,6 @@ function drawWarpTunnel () {
     // Assumes the camera rotation is zero
 
     var lineCount = 1000;
-
     var material = new THREE.MeshBasicMaterial( { wireframe : true, color : "#FFFFFF" } );
 
     for ( var i = 0; i < lineCount; i ++ ) {
@@ -521,7 +543,7 @@ function drawWarpTunnel () {
 }
 
 
-function showTarget ( targetData ) {
+function showTarget ( targetData, referenceBearing ) {
 
     // target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined
     loader.load( "/static/mesh/" + targetData.mesh_url, function( geo, mat ) {
@@ -532,14 +554,14 @@ function showTarget ( targetData ) {
         target.rotation.y = ( targetData.rotation.bearing - targetData.bearing.bearing ) * 2 * Math.PI;
 
         // calculate these, and then tell the camera to "look at" the target
-        var theta = targetData.bearing.bearing * Math.PI * 2;
+        var scalarCoordinates = getCoordinatesFromRotation( targetData.bearing, referenceBearing );
         var distanceFromCamera = 10;
-        var x = distanceFromCamera * Math.sin( theta );
-        var z = -distanceFromCamera * Math.cos( theta );
+        var x = distanceFromCamera * scalarCoordinates.x;
+        var z = distanceFromCamera * scalarCoordinates.z;
         target.position.set( x, 0, z );
         scene.add( target );
 
-        camera.rotation.y = targetData.bearing.bearing * Math.PI * 2;
+        camera.rotation.y = ( referenceBearing.bearing + targetData.bearing.bearing ) * Math.PI * 2;
 
         console.log("Expected position: ");
         console.log( target.position );
@@ -550,6 +572,48 @@ function showTarget ( targetData ) {
 
 }
 
+
+// In the event of a phaser being fired at what we're looking at
+function showPhaserHit ( color ) {
+
+    var beam = new THREE.Object3D();
+    var beamLength = 10;
+    var beamSegments = 32;
+
+    // color beam
+    var colorRadius = 0.5;
+    var colorGeo = new THREE.CylinderGeometry( colorRadius/10, colorRadius,
+        beamLength, beamSegments );
+    var colorMat = new THREE.MeshBasicMaterial( {
+        color : color,
+        transparent : true,
+        opacity : 0.4
+    } );
+    var colorBeam = new THREE.Mesh( colorGeo, colorMat );
+    beam.add( colorBeam );
+
+    // white beam
+    var whiteRadius = 0.05;
+    var whiteGeo = new THREE.CylinderGeometry( whiteRadius/10, whiteRadius,
+        beamLength, beamSegments );
+    var whiteMat = new THREE.MeshBasicMaterial( { color : '#FFFFFF' } );
+    var whiteBeam = new THREE.Mesh( whiteGeo, whiteMat );
+    beam.add( whiteBeam );
+
+    // rotation to target
+    // start pos = 0, -10, 0
+    // end pos = target.position  // likely
+    beamHorizontalOffset = -4;
+    beam.position.set( target.position.x, beamHorizontalOffset, target.position.z );
+    randomOffset = Math.random() * 0.3 - 0.15;
+    beam.rotation.z = randomOffset;
+
+    scene.add( beam );
+
+    // callback for duration of shot (1s)
+    setTimeout( function () { scene.remove( beam ); }, 1000 );
+
+}
 
 // In the event of a Torpedo being fired at what we're looking at
 function showTorpedoHit () {
@@ -604,14 +668,11 @@ function torpedoUpdateCallback ( object ) {
     var vecX = -object.positionScreen.x * 2;
     var vecY = -object.positionScreen.y * 2;
 
-
     for ( f = 0; f < fl; f ++ ) {
 
            flare = object.lensFlares[ f ];
-
            flare.x = object.positionScreen.x + vecX * flare.distance;
            flare.y = object.positionScreen.y + vecY * flare.distance;
-
            flare.rotation = 0;
 
     }
@@ -636,11 +697,7 @@ function showDestruction () {
 function processSpeedData ( navData ) {
 
     // If we're not just looking at stars, don't bother
-    if ( amLookingAtTarget() ) {
-
-        return;
-
-    }
+    if ( amLookingAtTarget() ) return;
 
     if ( navData.set_speed == "warp" ) {
 
@@ -657,11 +714,7 @@ function processSpeedData ( navData ) {
 
 function processTurnState ( navData ) {
 
-    if ( amLookingAtTarget() ) {
-
-        return;
-
-    }
+    if ( amLookingAtTarget() ) return;
 
     // Process periodic updates to state (IE turn thrusters)
 
@@ -677,7 +730,13 @@ function processTurnState ( navData ) {
     }
 
     cameraTurning = true;
-    cameraTurnRate = turnSpeed * Math.PI / 15 * 1000;
+    var fps = 40;  // how many ms pass between a frame refresh?
+
+    // TODO: Use timing and don't just guess at fps...
+    // Turn rate is 10 seconds for a full rotation
+    // turn per ms
+    cameraTurnRate = Math.PI * 2 / ( 10 * 1000 );
+    // cameraTurnRate = turnSpeed * Math.PI * 2 * 1000; // ( / fps )
 
 }
 
@@ -687,28 +746,21 @@ function processTurnDisplay ( navData ) {
     console.log( "Turning detected" );
 
     // Process turn events (IE course plots)
-
     turnDirection = navData.turn_direction;
     turnDuration = navData.turn_duration;
     turnDistance = navData.turn_distance;
 
     // skip if the view isn't a rotating one
-    if ( amLookingAtTarget() ) {
-
-        return;
-
-    }
+    if ( amLookingAtTarget() ) return;
 
     cameraTurning = true;
     // how far does the camera turn each frame?
     var totalRotation = turnDistance * 2 * Math.PI;
+
+    // TODO fix this to use frame timing as well
     var framesOfRotation = turnDuration / 1000 * 15;
     cameraTurnRate = totalRotation / framesOfRotation;
-    if ( turnDirection == "CW" ) {
-
-        cameraTurnRate *= -1;
-
-    }
+    if ( turnDirection == "CW" ) cameraTurnRate *= -1;
 
     setTimeout(
         function () {
@@ -733,29 +785,25 @@ trek.api(
     function ( data ) {
 
         navigationData = data;
-        if ( navigationData.warp > 0 && !atWarp ) {
+        if ( navigationData.warp > 0 && !atWarp ) goToWarp();
 
-            goToWarp();
-
-        }
-
-    } );
+} );
 
 
 trek.socket.on( "Display", function ( data ) {
 
     var message = data.split( ":" );
 
-    if ( message[ 1 ] != targetName ) {
-
-        return;
-
-    }
+    if ( message[ 1 ] != targetName ) return;
 
     switch ( message[ 0 ] ) {
 
         case "Torpedo hitting":
             showTorpedoHit();
+            break;
+
+        case "Phaser hitting":
+            showPhaserHit('#FF0000');
             break;
 
         case "Destroyed":
@@ -764,25 +812,17 @@ trek.socket.on( "Display", function ( data ) {
 
     };
 
-    } );
+} );
 
 
 trek.socket.on( "Navigation", function ( navData ) {
 
 
-    if ( _.has( navData, "turn_direction" ) ) {
+    if ( _.has( navData, "turn_direction" ) ) processTurnDisplay( navData );
+    if ( _.has( navData, "set_speed" ) ) processSpeedData( navData );
 
-        processTurnDisplay( navData );
 
-    }
-
-    if ( _.has( navData, "set_speed" ) ) {
-
-        processSpeedData( navData );
-
-    }
-
-    } );
+} );
 
 
 trek.socket.on( "Turning", function ( navData ) {
@@ -792,11 +832,11 @@ trek.socket.on( "Turning", function ( navData ) {
 
     processTurnState( navData );
 
-    } );
+} );
 
 
 trek.onAlert( function () {
 
     return;
 
-    } );
+} );

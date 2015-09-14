@@ -376,6 +376,15 @@ class ChargedSystem extends System
         @charge = Math.max 0, new_charge
 
 
+    push_power: ( power ) ->
+
+        # You're a charge system and your power got yanked? Guess what!
+        if power == 0
+            @charge = 0
+
+        super power
+
+
     damage_report: ->
 
         if @state > System.OPERABILITY_CUTOFF

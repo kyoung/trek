@@ -8,3 +8,6 @@ reference
 
 # These are compiled views
 views/academy/*
+
+# Ranks
+.ranks

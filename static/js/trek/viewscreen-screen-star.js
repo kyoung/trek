@@ -1,0 +1,6 @@
+
+function newStar ( radius, color ) {
+
+
+
+}

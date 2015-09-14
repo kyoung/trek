@@ -47,12 +47,12 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
     - [x] Have LR sensors detect ships and allow configuration
 
 ## Hotfix
-- [ ] ChinTok seems to have it's shields up after the sabotage in TinkerTailor
-- [ ] Transporting cargo destination menu is *really* slow between refreshes, for no apparent reason
-    - It also seems that the DOM is there, just not displaying... turning any property on and off in the dev tools causes the menu to display?!
+- UX Fail
+    - [ ] Can't dismiss target selection list
+    - [ ] Can't go back or forth in the academy mode (should make it optional to just dismiss or skim these)
+- [ ] Torpedoes are way overpowered...
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
-- [ ] No sound is played when hit with phasers / torpedoes
 - [ ] Engineering overload is still busted
 - [ ] Use input sliders for engineering:
   - https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
@@ -62,33 +62,7 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 - [ ] Transporter doesn't stop you from trying to transport without having selected a destination
 - [ ] Science Scanner circles don't show up on FF
   - http://roadtolarissa.com/blog/2015/02/22/svg-path-strings/
-- [ ] We need to calibrate the rotation of the sky box to the position of the star of the local system
-  - Proposed viewscreen JSON refactor:
-      {
-          skyboxes : [
-              { url : "", alpha_url : "", rotation : 0 }, // allows for super imposed nebula, and the possibility of movement
-          ],
-          planets : [
-              {
-                  size : [ radius],
-                  distance : [distance],
-                  surface_color : #3e8,
-                  atmosphere_color : #3f9,
-                  luminous : false,
-                  rotation : r,
-                  type : "gas|rock"  // can we make bands?,
-                  rings : [
-                      { radius : NNN, color : #3e8 },
-                  ]
-              }
-          ],  // includes planets and moons
-          stars : [
-              { size : [radius], distance : [distance], primary_color : #fff, luminous : true, rotation: r }
-          ],   // 50% of systems are binary
-          target : { mesh_url: "" , rotation : r } | undefined,
-          direction : "forward|backward|left|right",
-          at_warp : true // gets over-ridden by socket calls
-      }
+
 
 # Backlog
 ## Next Sprint

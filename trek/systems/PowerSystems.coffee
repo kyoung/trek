@@ -71,7 +71,12 @@ class ReactorSystem extends System
     push_power: ( power, on_blowout ) -> @relay.push_power power, on_blowout
 
 
-    output_level: -> @output / @output_profile.dyn
+    output_level: ->
+
+        if do @is_online
+            @output / @output_profile.dyn
+        else
+            0
 
 
     activate: ( level, on_blowout ) ->
