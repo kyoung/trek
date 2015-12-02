@@ -49,7 +49,6 @@ Counterclockwise, 0 - 1, the x axis marks 0, for simplicity of trig. The bearing
 ## Hotfix
 - UX Fail
     - [ ] Can't dismiss target selection list
-    - [ ] Can't go back or forth in the academy mode (should make it optional to just dismiss or skim these)
 - [ ] Torpedoes are way overpowered...
 - [ ] Spy shows up as a (green) Intruder on the crew display
 - [ ] AI doesn't know how to handle ship operations/emergencies etc...
