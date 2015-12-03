@@ -125,8 +125,9 @@ class BaseShip extends BaseObject
         do @_set_operational_reactor_settings
 
         # Activate basic systems
-        do @primary_SIF.power_on
-        do @secondary_SIF.power_on
+        if @primary_SIF? and @secondary_SIF?
+            do @primary_SIF.power_on
+            do @secondary_SIF.power_on
 
         @systems = []
 
