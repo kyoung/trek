@@ -125,6 +125,25 @@ class StarDock extends BaseShip
             @SECTIONS['1'],
             System.TRACTOR_POWER )
 
+        # connect power systems
+        @main_relay.add_route @primary_eps
+
+        # Turn on power
+        do @_set_operational_reactor_settings
+
+        # Activate basic systems
+        do @primary_SIF.power_on
+        do @secondary_SIF.power_on
+
+        systems = [
+            @lifesupport, @transponder, @transporters, @communication_array,
+            @inertial_dampener, @primary_SIF, @secondary_SIF, @tractor_beam
+        ]
+        for s in systems
+            @primary_eps.add_route s
+        @systems = systems.concat( [ @fusion_reactors, @main_relay,
+            @emergency_power, @e_power_relay, @primary_eps ] )
+
 
     initialize_power_systems: ->
 
@@ -182,7 +201,7 @@ class StarDock extends BaseShip
 
     initialize_cargo: ->
         @cargobays = []
-        for i in [ 1..10 ]
+        for i in [ 1..5 ]
             @cargobays.push( new CargoBay i )
 
     initialize_crew: ->

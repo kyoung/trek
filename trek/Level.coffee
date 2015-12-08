@@ -43,7 +43,7 @@ class Level
     get_events: -> []
 
     get_environment: ->
-    get_final_score: -> return false
+    get_final_score: -> return 0
 
     handle_hail: ( prefix, message ) ->
 
