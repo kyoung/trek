@@ -24,6 +24,7 @@ for deck_number in [1..2]
     deck_letter = do deck_number.toString
     DECKS[deck_number] = deck_letter
 
+
 class Beacon extends BaseShip
 
     SECTIONS: SECTIONS
@@ -75,3 +76,6 @@ class Beacon extends BaseShip
 
         # Turn on power
         do @_set_operational_reactor_settings
+
+
+exports.Beacon = Beacon

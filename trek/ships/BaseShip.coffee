@@ -57,8 +57,12 @@ class BaseShip extends BaseObject
         do @initialize_systems
         do @initialize_hull
         do @initialize_cargo
-        do @initialize_crew
         do @initialize_logs
+
+        @internal_personnel = []
+        @guests = []
+        @boarding_parties = []
+        do @initialize_crew
 
         @radiological_alerts = {} # Sectional radiological state
         for k, s of @SECTIONS
@@ -1827,6 +1831,9 @@ class BaseShip extends BaseObject
 
 
     _are_all_shields_up: ->
+
+        if @shields.length == 0
+            return false
 
         for s in @shields
 

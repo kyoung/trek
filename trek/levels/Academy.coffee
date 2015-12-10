@@ -2,9 +2,11 @@
 {LevelEvent} = require "../LevelEvent"
 
 {Constitution} = require '../ships/Constitution'
-{SpaceDock} = require '../ships/SpaceDock'
+{StarDock} = require '../ships/StarDock'
+{Beacon} = require '../ships/Beacon'
 {Station} = require '../Station'
 
+{CelestialObject, Star, GasCloud, Planet, Lagrange} = require '../CelestialObject'
 {SpaceSector, StarSystem} = require '../Maps'
 
 C = require "../Constants"
@@ -178,13 +180,12 @@ control your fire. I'm affraid that means you've failed the live-fire trial."
                 return
             @score += 10
             g.hail @range_station.prefix_code, "Well done Enterprise. Proceed to
-            target the B beacon cluster, and destroy the field with a torpedo
-            blast. One shot at maximum yield will be sufficient."
+target the B beacon cluster, and destroy the field with a torpedo
+blast. One shot at maximum yield will be sufficient."
 
         # Has destroyed cluster of targets with torpedos
         check_are_all_beacons_dead = ( g ) =>
-            if @beacon3.is_alive or @beacon4.is_alive or @beacon5.is_alive or
-                @beadon6.is_alive or @beacon7.is_alive
+            if @beacon3.is_alive or @beacon4.is_alive or @beacon5.is_alive or @beadon6.is_alive or @beacon7.is_alive
                 g.hail @range_station.prefix_code, "Enterprise, you failed to
 target and destroy the target beacons. I'm affraid that means you've failed the
 live-fire trial."
@@ -294,13 +295,13 @@ You have cleared weapons trials and are cleared for your next mission."
         @space_objects.push @altan
 
         # Altan 1 - 3 are rocks
-        a1 = new Planet "1", 'Altan', Planet.CLASSIFICATION.B, 0.3
-        a2 = new Planet "2", 'Altan', Planet.CLASSIFICATION.B, 0.5
-        a3 = new Planet "3", 'Altan', Planet.CLASSIFICATION.N, 0.8
+        a1 = new Planet "1", 'Altan', Planet.CLASSIFICATION.B, 0.3*C.AU
+        a2 = new Planet "2", 'Altan', Planet.CLASSIFICATION.B, 0.5*C.AU
+        a3 = new Planet "3", 'Altan', Planet.CLASSIFICATION.N, 0.8*C.AU
 
         # Altan 4 and 5 are outer gas giants
-        a4 = new Planet "4", 'Altan', Planet.CLASSIFICATION.J, 5
-        a5 = new Planet "5", 'Altan', Planet.CLASSIFICATION.J, 20
+        a4 = new Planet "4", 'Altan', Planet.CLASSIFICATION.J, 5*C.AU
+        a5 = new Planet "5", 'Altan', Planet.CLASSIFICATION.J, 20*C.AU
 
         for p in [a1, a2, a3, a4, a5]
             @space_objects.push p
@@ -329,6 +330,8 @@ You have cleared weapons trials and are cleared for your next mission."
         @enterprise.set_coordinate dock_position
         @enterprise.set_alignment C.ALIGNMENT.FEDERATION
         @enterprise.enter_captains_log @enterprise_logs[ 0 ]
+
+        @ships[ @enterprise.prefix_code ] = @enterprise
 
         # shutdown the enterprise
         @enterprise.set_power_to_system @enterprise.forward_shields.name, 0
