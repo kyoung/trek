@@ -234,6 +234,7 @@ class Constitution extends BaseShip
             @navigational_deflectors
             @weapons_targeting
             @brig
+            @long_range_sensors
         ] )
 
 

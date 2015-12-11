@@ -343,6 +343,14 @@ You have cleared weapons trials and are cleared for your next mission."
         do @enterprise.warp_core.deactivate
         do @enterprise.impulse_reactors.deactivate
 
+        for s in @enterprise.systems
+            if s.name in [
+                @enterprise.lifesupport.name,
+                @enterprise.brige.name,
+                @enterprise.transponder.name]
+                return
+            do s.deactivate
+
         # get her crew onto the stardock
         @enterprise_crew = @enterprise.internal_personnel
         for c in @enterprise_crew
@@ -401,7 +409,15 @@ You have cleared weapons trials and are cleared for your next mission."
 
         @ai_states = new HoldingState() for ai in ais
 
-    _init_game_objects: ->
+
+    _init_game_objects: () ->
+
+        for k, v of @ai_ships
+            @game_objects.push v
+
+        for k, v of @ships
+            @game_objects.push v
+
 
     _init_environment: ->
 

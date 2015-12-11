@@ -1889,7 +1889,7 @@ class BaseShip extends BaseObject
         @_update_system_state delta, engineering_locations
 
         # drop out of warp... I hope your SI is on...
-        if not @warp_core.is_online() and @warp_speed > 0
+        if @warp_core? and not @warp_core.is_online() and @warp_speed > 0
             @warp_speed = 0
             @velocity.x = 0
             @velocity.y = 0
@@ -1972,7 +1972,8 @@ class BaseShip extends BaseObject
 
         health_locaitons = {}
         # Any crew in sickbay should get better
-        health_locaitons[ @sick_bay.deck ] = [ @sick_bay.section ]
+        if @sick_bay?
+            health_locaitons[ @sick_bay.deck ] = [ @sick_bay.section ]
         # Any crew near a medical team member should get better
         for crew in @internal_personnel when crew.description == "Medical Team" and not do crew.is_enroute
 
@@ -2020,6 +2021,9 @@ class BaseShip extends BaseObject
             for s in @sensors
                 s.run_scans world_scan, @position, @bearing.bearing, now
 
+        if not @long_range_sensors?
+            return
+            
         @long_range_sensors.run_scans world_scan, @position, @bearing.bearing, now
 
 
