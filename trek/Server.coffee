@@ -13,6 +13,7 @@ program = require "commander"
 
 fs = require "fs"
 
+
 program
     .version( "0.21" )
     .option( "-l, --level [level]", "Select a level.", "DGTauIncident" )
@@ -20,7 +21,6 @@ program
     .parse( process.argv )
 
 {Game} = require "./Game"
-{BattleState} = require './ai/State'
 ai = require "./AI"
 
 game = new Game program.level, program.teams
@@ -796,13 +796,13 @@ for ship in game_stats.player_ships
 
 # Setup AI
 ai_prefixes = ( s.prefix for s in game_stats.ai_ships )
-AIs = ai.play game, ai_prefixes, [ new BattleState(), new BattleState() ]
-console.log "AI Ships <<DEBUG>>"
+ai_states = game_stats.ai_states
+AIs = ai.play game, ai_prefixes, ai_states
 for s in game_stats.ai_ships
     console.log "#{s.name} #{s.prefix}"
 
 game.set_AIs AIs
 
 
-PORT = 8080
+PORT = 8088
 server.listen PORT, "0.0.0.0"

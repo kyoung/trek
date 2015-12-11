@@ -10,6 +10,8 @@
 {ShieldSystem, PhaserSystem, TorpedoSystem} = require '../systems/WeaponSystems'
 {SpaceSector, StarSystem} = require '../Maps'
 
+{BattleState, HoldingState} = require '../ai/State'
+
 {Spy, EngineeringTeam} = require '../Crew'
 
 C = require "../Constants"
@@ -315,6 +317,9 @@ class TinkerTaylor extends Level
         @ai_ships[ k2.prefix_code ] = k2
         do k2.cloak
         @klingon2 = k2
+
+        # two klingon AIs
+        @ai_states = [ new BattleState(), new BattleState() ]
 
 
     _init_game_objects: () ->

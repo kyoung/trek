@@ -80,8 +80,10 @@ play = ( game, prefixes, init_states ) ->
     for prefix, i in prefixes
         m5 = new AI game, prefix
         # Allow the passing of initial states
-        if init_states?
+        if init_states? and init_states[ i ]?
             m5.state_stack.push init_states[ i ]
+        else
+            console.log "Missing AI init state for AI #{i} #{prefix}"
         do m5.play
         AIs.push m5
     return AIs

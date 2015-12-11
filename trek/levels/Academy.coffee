@@ -4,7 +4,9 @@
 {Constitution} = require '../ships/Constitution'
 {StarDock} = require '../ships/StarDock'
 {Beacon} = require '../ships/Beacon'
-{Station} = require '../Station'
+{SpaceLab} = require '../ships/SpaceLab'
+
+{BattleState, HoldingState} = require '../ai/State'
 
 {CelestialObject, Star, GasCloud, Planet, Lagrange} = require '../CelestialObject'
 {SpaceSector, StarSystem} = require '../Maps'
@@ -359,8 +361,9 @@ You have cleared weapons trials and are cleared for your next mission."
             z : @altan5.position.z
         @range_position = range_position
 
-        @range_station = new Station 'Range Control', range_position
+        @range_station = new SpaceLab 'Range Control'
         @range_station.star_system = system
+        @range_station.set_position range_position
         @range_station.set_alignment C.ALIGNMENT.FEDERATION
 
         @beacon1 = new Beacon '563-X'  # phaser target
@@ -390,6 +393,13 @@ You have cleared weapons trials and are cleared for your next mission."
             b.position.y += Math.floor( Math.random() * 2e4 - 1e4 )
             b.position.z += Math.floor( Math.random() * 2e4 - 1e4 )
 
+        @ai_ships = {}
+        #for s in [ @beacon1, @beacon2, @beacon3, @beacon4, @beacon5, @beacon6, @beacon7, @range_station, @stardock ]
+        ais =  [ @stardock, @range_station, @beacon1, @beacon2, @beacon3, @beacon4, @beacon5, @beacon6, @beacon7 ]
+        for s in ais
+            @ai_ships[ s.prefix_code ] = s
+
+        @ai_states = new HoldingState() for ai in ais
 
     _init_game_objects: ->
 

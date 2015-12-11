@@ -166,7 +166,7 @@ function paintScan ( data ) {
         }
 
         var t = tmpl;
-        if ( e.descriptor == "Planet" && /[MLKND]/.test( e.classification ) ) {
+        if ( e.descriptor == "Planet" && /[BHMLKND]/.test( e.classification ) ) {
 
             t = tmplHollow;
 

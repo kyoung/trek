@@ -59,6 +59,7 @@ class Game
 
         # two seperate lists for convenience
         @ai_ships = do level.get_ai_ships
+        @ai_init_states = do level.get_ai_states
         @player_ships = do level.get_player_ships
 
         @game_objects = do level.get_game_objects
@@ -133,12 +134,12 @@ class Game
                 prefix : s.prefix_code,
                 postfix : s.postfix_code,
                 position : s.position
-
             }
 
         r =
             player_ships : player_ships
             ai_ships : ai_ships
+            ai_states : @ai_init_states
 
 
     get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @player_ships )
