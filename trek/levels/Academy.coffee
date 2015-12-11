@@ -346,9 +346,9 @@ You have cleared weapons trials and are cleared for your next mission."
         for s in @enterprise.systems
             if s.name in [
                 @enterprise.lifesupport.name,
-                @enterprise.brige.name,
+                @enterprise.bridge.name,
                 @enterprise.transponder.name]
-                return
+                continue
             do s.deactivate
 
         # get her crew onto the stardock
