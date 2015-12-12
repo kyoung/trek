@@ -15,8 +15,8 @@ class ReactorSystem extends System
     # Class for systems that generate power
 
     @ANTIMATTER = { max : 2.3, dyn : 1e6 }
-    @FUSION = { max : 1.2, dyn : 1e3 }
-    @BATTERY = { max : 1, dyn : 1e2 }
+    @FUSION = { max : 1.2, dyn : 1e5 }
+    @BATTERY = { max : 1.4, dyn : 1e4 }
 
     @ANTIMATTER_SIGNATURE = [
         0.025477707
@@ -99,6 +99,17 @@ class ReactorSystem extends System
         @push_power @output, undefined
 
 
+    bring_online: ->
+
+        @online = true
+
+        working_order = @state > System.OPERABILITY_CUTOFF
+        if not working_order
+            @online = false
+
+        return @online
+
+
     is_online: ->
 
         working_order = @state > ReactorSystem.OPERABILITY_CUTOFF
@@ -179,8 +190,8 @@ class PowerSystem extends System
     # Class for systems that route power
 
     @WARP_RELAY_POWER = { min : 0, max : 4, dyn : 1.211e6 }
-    @IMPULSE_RELAY_POWER = { min : 0, max : 1.1, dyn : 1.3e3 }
-    @EMERGENCY_RELAY_POWER = { min : 0, max : 4, dyn : 1.7e2 }
+    @IMPULSE_RELAY_POWER = { min : 0, max : 1.1, dyn : 1.3e5 }
+    @EMERGENCY_RELAY_POWER = { min : 0, max : 4, dyn : 1.7e4 }
 
     @EPS_RELAY_POWER = { min : 0, max : 4, dyn : 1.1234e5 }
 

@@ -1266,6 +1266,15 @@ class BaseShip extends BaseObject
 
     get_system_scan: ->
 
+        power_readings = []
+        if @reactors?
+            for r in @reactors
+                power_readings.push do r.field_output
+
+        if @starboard_warp_coil? and @port_warp_coil?
+            power_readings.push do @starboard_warp_coil.warp_field_output
+            power_readings.push do @port_warp_coil.warp_field_output
+
         r =
             systems: do @damage_report
             cargo: do @get_cargo_status
@@ -1273,12 +1282,7 @@ class BaseShip extends BaseObject
             # Eventually, power readings will be used to profile a ship
             # for now, let's simply return the power output to the nacels
             # which is feasably measured
-            power_readings: [
-                    do @port_warp_coil.warp_field_output,
-                    do @starboard_warp_coil.warp_field_output,
-                    do @warp_core.field_output,
-                    do @impulse_reactors.field_output,
-                    do @emergency_power.field_output ]
+            power_readings: power_readings
             mesh: @model_url
             name: @name
             mesh_scale: @model_display_scale
@@ -2023,7 +2027,7 @@ class BaseShip extends BaseObject
 
         if not @long_range_sensors?
             return
-            
+
         @long_range_sensors.run_scans world_scan, @position, @bearing.bearing, now
 
 

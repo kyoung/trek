@@ -69,8 +69,8 @@ class StarDock extends BaseShip
 
         super @name, @serial
         @model_url = "spacedock.json"
-        @model_display_scale = 10
-        @ship_class = "StarDock"
+        @model_display_scale = 7
+        @ship_class = "SpaceDock"
 
 
     initilize_systems: ->

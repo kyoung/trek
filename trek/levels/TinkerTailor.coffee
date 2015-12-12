@@ -319,7 +319,9 @@ class TinkerTaylor extends Level
         @klingon2 = k2
 
         # two klingon AIs
-        @ai_states = [ new BattleState(), new BattleState() ]
+        @ai_states =
+            k1.prefix_code : new BattleState()
+            k2.prefix_code : new BattleState()
 
 
     _init_game_objects: () ->

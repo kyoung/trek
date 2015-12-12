@@ -91,6 +91,9 @@ function init ( data ) {
     // #               ]
     // #           }
     // #       ],  // includes planets and moons
+    // #       meshes : [
+    // #           { mesh_url : "", rotation : r, bearing : b, scale : s }
+    // #       ],  // things are sometimes very close by... ie starbases
     // #       stars : [
     // #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
     // #       ],   // 50% of systems are binary
@@ -137,6 +140,13 @@ function init ( data ) {
         //     lightAngle -= 1;
         //
         // }
+
+    } else {
+
+        // let's check for meshes!
+        for ( var i=0; i < data.meshes.length; i++ ) {
+            showMesh( data.meshes[i], data.bearing )
+        }
 
     }
 
@@ -298,6 +308,34 @@ function showSuns ( stars, referenceBearing ) {
     } );
 
 };
+
+function showMesh ( meshParameters, referenceBearing ) {
+    var url = meshParameters.mesh_url;
+    var rotation = meshParameters.rotation;
+    var bearing = meshParameters.bearing;
+    console.log("loading mesh " + url)
+
+    // target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined
+    loader.load( "/static/mesh/" + url, function( geo, mat ) {
+
+        console.log("loaded")
+
+        target = new THREE.Mesh( geo, new THREE.MeshFaceMaterial( mat ) );
+        // we have to subtract the bearing to make up for the rotation added by
+        // turning our camera towards the target
+        target.rotation.y = ( rotation.bearing - bearing.bearing ) * 2 * Math.PI;
+
+        // calculate these, and then tell the camera to "look at" the target
+        var scalarCoordinates = getCoordinatesFromRotation( bearing, referenceBearing );
+        target.position.set( scalarCoordinates.x, 0, scalarCoordinates.z );
+        scene.add( target );
+
+        console.log("setting coord for mesh:");
+        console.log(scalarCoordinates);
+
+    } );
+
+}
 
 
 function update ( stamp ) {

@@ -297,7 +297,7 @@ class Constitution extends BaseShip
             'Emergency Relays',
             @DECKS.Q,
             @SECTIONS.PORT,
-            PowerSystem.EMEGENCY_RELAY_POWER )
+            PowerSystem.EMERGENCY_RELAY_POWER )
 
         @warp_relay = new PowerSystem(
             'Plasma Relay Conduits',

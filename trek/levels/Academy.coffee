@@ -322,7 +322,7 @@ You have cleared weapons trials and are cleared for your next mission."
             y : @altan3.position.y + @altan3.radius * 2
             z : @altan3.position.z
 
-        @stardock = new StarDock 'L', '897'
+        @stardock = new StarDock 'Stardock L', '897'
         @stardock.star_system = system
         @stardock.set_coordinate dock_position
         @stardock.set_alignment C.ALIGNMENT.FEDERATION
@@ -348,8 +348,9 @@ You have cleared weapons trials and are cleared for your next mission."
                 @enterprise.lifesupport.name,
                 @enterprise.bridge.name,
                 @enterprise.transponder.name]
-                continue
-            do s.deactivate
+                @enterprise.set_power_to_system s.name, 0.2
+            else
+                do s.deactivate
 
         # get her crew onto the stardock
         @enterprise_crew = @enterprise.internal_personnel
@@ -402,12 +403,12 @@ You have cleared weapons trials and are cleared for your next mission."
             b.position.z += Math.floor( Math.random() * 2e4 - 1e4 )
 
         @ai_ships = {}
+        @ai_states = {}
         #for s in [ @beacon1, @beacon2, @beacon3, @beacon4, @beacon5, @beacon6, @beacon7, @range_station, @stardock ]
         ais =  [ @stardock, @range_station, @beacon1, @beacon2, @beacon3, @beacon4, @beacon5, @beacon6, @beacon7 ]
         for s in ais
             @ai_ships[ s.prefix_code ] = s
-
-        @ai_states = new HoldingState() for ai in ais
+            @ai_states[ s.prefix_code ] = new HoldingState()
 
 
     _init_game_objects: () ->

@@ -6,7 +6,7 @@ class Level
         @game_time_start = new Date().getTime()
         @ships = {}
         @ai_ships = {}
-        @ai_states = []
+        @ai_states = {}
         @space_objects = []
         @game_objects = []
         @map = {}

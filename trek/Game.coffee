@@ -442,6 +442,9 @@ class Game
         #               ]
         #           }
         #       ],  // includes planets and moons
+        #       meshes : [
+        #           { mesh_url : "", rotation : r, bearing : b, scale : s }
+        #       ],  // things are sometimes very close by... ie starbases
         #       stars : [
         #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
         #       ],   // 50% of systems are binary
@@ -453,6 +456,8 @@ class Game
 
         ship = @ships[ prefix ]
         stars = ( o for o in @space_objects when o.classification.indexOf( "Star" ) >= 0 )
+        VISIBLE_RANGE = 3000 # 3km
+        visible_objects = ( s for s in @game_objects when ( U.distance(ship.position, s.position) < VISIBLE_RANGE and s isnt ship ) )
 
         telemetry =
             skyboxes : [
@@ -467,6 +472,11 @@ class Game
                 type : p.type
                 bearing : U.bearing ship, p
                 rings : []
+                )
+            meshes : ( for s in visible_objects
+                mesh_url : s.model_url
+                rotation : U.bearing s, ship
+                bearing : U.bearing ship, s
                 )
             stars : ( for o in @space_objects when o instanceof Star
                 size : o.radius
@@ -488,6 +498,7 @@ class Game
                 mesh_url : target.model_url
                 rotation : U.bearing target, ship
                 bearing : U.bearing ship, target
+            telemetry.meshes = []
 
         return telemetry
 
@@ -730,8 +741,8 @@ class Game
         ###
 
         # Find all objects in range, that respond to type
-        game_hits = ( o for o in @game_objects when 0 < U.distance( position, o.position ) < range )
-        space_hits = ( o for o in @space_objects when 0 < U.distance( position, o.position ) < range or o.charted )
+        game_hits = ( o for o in @game_objects when 0 <= U.distance( position, o.position ) < range )
+        space_hits = ( o for o in @space_objects when 0 <= U.distance( position, o.position ) < range or o.charted )
         hits = game_hits.concat space_hits
         hits = ( h for h in hits when h.scan_for type )
         count_show_up_on_scan = hits.length
@@ -742,9 +753,9 @@ class Game
         max_bearing = Math.max bearing_to, bearing_from
 
         if crossing_lapping_scan
-            hits = ( h for h in hits when min_bearing > U.point_bearing( position, h.position ).bearing or max_bearing < U.point_bearing( position, h.position ).bearing )
+            hits = ( h for h in hits when min_bearing >= U.point_bearing( position, h.position ).bearing or max_bearing <= U.point_bearing( position, h.position ).bearing )
         else
-            hits = ( h for h in hits when min_bearing < U.point_bearing( position, h.position ).bearing < max_bearing )
+            hits = ( h for h in hits when min_bearing <= U.point_bearing( position, h.position ).bearing <= max_bearing )
         # For each object, see if blocked by space objects
         count_pre_block = hits.length
 
