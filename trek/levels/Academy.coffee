@@ -340,17 +340,32 @@ You have cleared weapons trials and are cleared for your next mission."
         @enterprise.set_power_to_system @enterprise.forward_sensors.name, 0
         @enterprise.set_power_to_system @enterprise.weapons_targeting.name, 0
         @enterprise.reroute_power_relay @enterprise.forward_eps.name, @enterprise.e_power_relay.name
-        do @enterprise.warp_core.deactivate
-        do @enterprise.impulse_reactors.deactivate
+        # do @enterprise.warp_core.deactivate
+        # do @enterprise.impulse_reactors.deactivate
+
+        # @enterprise.set_online @enterprise.emergency_power.name, true
+        # @enterprise.set_online @enterprise.e_power_relay.name, true
+        # @enterprise.set_online @enterprise.forward_eps.name, true
 
         for s in @enterprise.systems
+            # systems needing power
             if s.name in [
                 @enterprise.lifesupport.name,
                 @enterprise.bridge.name,
-                @enterprise.transponder.name]
+                @enterprise.transponder.name ]
                 @enterprise.set_power_to_system s.name, 0.2
-            else
-                do s.deactivate
+                continue
+
+            # systems we need on, period
+            if s.name in [
+                @enterprise.emergency_power.name,
+                @enterprise.e_power_relay.name,
+                @enterprise.forward_eps.name
+            ]
+                continue
+
+            #everyone else
+            do s.deactivate
 
         # get her crew onto the stardock
         @enterprise_crew = @enterprise.internal_personnel

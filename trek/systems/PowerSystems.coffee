@@ -258,16 +258,22 @@ class PowerSystem extends System
         if not @is_online() or not @_fuse_on
             throw new Error "#{ @name } Fused: Cannot reallocate power."
 
+        if not power_balance?
+            throw new Error "#{ @name } invalid power balance set: #{ power_balance }"
+
         sum = 0
         sum += p for p in power_balance
         # Rounding errors
-        if sum < 0.999999
+        if 0 < sum < 0.999999
             console.log "#{ @name }: Power levels don't sum (#{ sum })--rebalancing"
-            power_balance = (p/sum for p in power_balance)
-
+            power_balance = ( p/sum for p in power_balance )
         if sum == 0
-            throw new Error "#{@name} invalid power balance calculated:
-                all zero"
+            power_balance = ( 0 for p in power_balance )
+
+        if isNaN sum
+            console.log @power_distribution
+            console.log power_balance
+            throw new Error "#{ @name } invalid power balance calculated"
 
         @power_distribution = power_balance
         @push_power undefined, on_blowout
@@ -280,7 +286,16 @@ class PowerSystem extends System
         power_dist[ i ] += power
         new_sum = 0
         new_sum += pwr for pwr in power_dist
-        new_balance = (pwr/new_sum for pwr in power_dist)
+        if new_sum == 0
+            new_balance = ( 0 for pwr in power_dist )
+        else
+            new_balance = (pwr/new_sum for pwr in power_dist)
+
+        for i in new_balance
+            if isNaN i
+                throw new Error "#{ @name } calculated impossible balance for #{ system.name }: new sum #{ new_sum }"
+
+        return new_balance
 
 
     get_required_power_balance: ->
@@ -293,7 +308,7 @@ class PowerSystem extends System
         ###
 
         if @attached_systems.length == 0
-            return
+            return []
 
         megadynes = (s.get_required_power() for s in @attached_systems)
         sum = 0
@@ -354,7 +369,6 @@ class PowerSystem extends System
 
         ###
 
-
         if input_power?
             @input_power = input_power
             @power = @input_power
@@ -380,7 +394,14 @@ class PowerSystem extends System
                 continue
 
             power_level = @power_distribution[ i ]
-            power_to_push = power_level * @input_power
+            if not power_level? or isNaN power_level
+                console.log @name
+                console.log @power_distribution
+                console.log @attached_systems
+                throw new Error "Improperly configured power distribution settings!"
+            power_to_push = power_level * @power
+            if isNaN power_to_push
+                throw new Error "Impossibly calculated power allocation for #{ s.name } from #{ power_level } and #{ @power }"
             power_pushed = s.push_power power_to_push, on_blowout
 
             if not power_pushed?

@@ -27,6 +27,14 @@ exports.distance = ( p1, p2, round=true ) ->
         return d
 
 
+exports.distance_vector = ( p1, p2 ) ->
+
+    delta =
+        x : p2.x - p1.x,
+        y : p2.y - p1.y,
+        z : p2.z - p1.z
+
+
 exports.distance_between = ( object1, object2 ) ->
     @distance object1.position, object2.position
 

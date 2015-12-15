@@ -31,7 +31,7 @@ for deck_number in [ 65..85 ]
 
 class BaseShip extends BaseObject
 
-    @THRUSTER_DELTA_V_MPS = 200
+    @THRUSTER_DELTA_V_MPS = 2
 
     DECKS: DECKS
     SECTIONS: SECTIONS
@@ -713,9 +713,6 @@ class BaseShip extends BaseObject
             @warp_speed = 0
             @port_warp_coil.set_warp 0
             @starboard_warp_coil.set_warp 0
-            @velocity.x = 0
-            @velocity.y = 0
-            @velocity.z = 0
 
         flat_rotation = @bearing.bearing * Math.PI * 2
         flat_mark = @bearing.mark * Math.PI * 2
@@ -1523,17 +1520,23 @@ class BaseShip extends BaseObject
         parent_eps_relays = ( r for r in @eps_grids when r.is_attached system )
         if parent_eps_relays.length > 0
             parent_eps_relay = parent_eps_relays[ 0 ]
+            if not parent_eps_relay.online
+                throw new Error "#{ parent_eps_relay.name } is not online."
 
         primary_power_relays = ( r for r in @primary_power_relays when r.is_attached( system ) or r.is_attached( parent_eps_relay ) )
         if primary_power_relays.length isnt 1
             throw new Error "Unable to trace primary power relay for #{ system_name }"
         primary_power_relay = primary_power_relays[ 0 ]
+        if not primary_power_relay.online
+            throw new Error "Associated primary power relay, #{ primary_power_relay.name } is not online."
 
         reactors = ( r for r in @reactors when r.is_attached primary_power_relay )
         if reactors.length isnt 1
             throw new Error "Unable to trace reactor power for #{ primary_power_relay.name }"
 
         reactor = reactors[ 0 ]
+        if not reactor.online
+            throw new Error "#{ reactor.name } is offline."
 
         if parent_eps_relay?
             new_eps_balance = parent_eps_relay.calculate_new_balance(

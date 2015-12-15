@@ -443,7 +443,7 @@ class Game
         #           }
         #       ],  // includes planets and moons
         #       meshes : [
-        #           { mesh_url : "", rotation : r, bearing : b, scale : s }
+        #           { mesh_url : "", rotation : r, bearing : b, scale : s, relative_position : p, sensor_tag : t}
         #       ],  // things are sometimes very close by... ie starbases
         #       stars : [
         #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
@@ -477,6 +477,8 @@ class Game
                 mesh_url : s.model_url
                 rotation : U.bearing s, ship
                 bearing : U.bearing ship, s
+                relative_position : U.distance_vector ship, s
+                sensor_tag : s.sensor_tag
                 )
             stars : ( for o in @space_objects when o instanceof Star
                 size : o.radius

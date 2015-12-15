@@ -24,6 +24,7 @@ var skyGeometry = new THREE.SphereGeometry( 3000, 400, 400 );
 var skyBox;
 
 var skySpheres = {};  // suns and planets... etc
+var closeMeshes = {};  // space dock, etc
 
 var station;
 var ship;
@@ -325,13 +326,17 @@ function showMesh ( meshParameters, referenceBearing ) {
         // turning our camera towards the target
         target.rotation.y = ( rotation.bearing - bearing.bearing ) * 2 * Math.PI;
 
-        // calculate these, and then tell the camera to "look at" the target
-        var scalarCoordinates = getCoordinatesFromRotation( bearing, referenceBearing );
-        target.position.set( scalarCoordinates.x, 0, scalarCoordinates.z );
+        var gameCoordinate = meshParameters.relative_position;
+        // translate into threejs coordinate system
+        var renderCoordinate = {
+            x : gameCoordinate.x,
+            y : gameCoordinate.z,
+            z : gameCoordinate.y
+        }
+        target.position.set( renderCoordinate.x, renderCoordinate.y, renderCoordinate.z );
         scene.add( target );
 
-        console.log("setting coord for mesh:");
-        console.log(scalarCoordinates);
+        closeMeshes[ meshParameters.sensor_tag ] = target;
 
     } );
 
@@ -482,6 +487,39 @@ function updateSpheres ( data ) {
         skySpheres[ s.name + '_flare' ].position.set( x/10, 0, z/10 );
 
     } );
+
+    // TODO factor this out entirely
+
+    _.each( data.meshes, function ( m ) {
+
+        if ( closeMeshes.hasOwnProperty(m.sensor_tag) ) {
+
+            var x = m.relative_position.x;
+            var y = m.relative_position.z;
+            var z = m.relative_position.y;
+
+            closeMeshes[ m.sensor_tag ].position.set( x, y, z );
+
+        } else {
+
+            showMesh( m );
+
+        }
+
+    } );
+
+    // remove outdated meshes
+    var tags = _.map( data.meshes, function ( m ) { return m.sensor_tag } );
+    _.each( closeMeshes, function( v, k ) {
+
+        if ( tags.indexOf( k ) < 0 ) {
+
+            scene.remove( closeMeshes[ k ] );
+            delete closeMeshes[ k ];
+
+        }
+
+    } )
 
 }
 
