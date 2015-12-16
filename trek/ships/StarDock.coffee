@@ -73,7 +73,7 @@ class StarDock extends BaseShip
         @ship_class = "SpaceDock"
 
 
-    initilize_systems: ->
+    initialize_systems: ->
 
         do @initialize_shileds
         do @initialize_weapons
@@ -100,7 +100,7 @@ class StarDock extends BaseShip
         @communication_array = new CommunicationsSystems(
             'Communications',
             @DECKS['4'],
-            @SECTIONS['4'])
+            @SECTIONS['4'] )
 
         @inertial_dampener = new System(
             'Inertial Dampener',
@@ -125,7 +125,14 @@ class StarDock extends BaseShip
             @SECTIONS['1'],
             System.TRACTOR_POWER )
 
+        systems = [
+            @lifesupport, @transponder, @transporters, @communication_array,
+            @inertial_dampener, @primary_SIF, @secondary_SIF, @tractor_beam
+        ]
+
         # connect power systems
+        for s in systems
+            @primary_eps.add_route s
         @main_relay.add_route @primary_eps
 
         # Turn on power
@@ -135,12 +142,6 @@ class StarDock extends BaseShip
         do @primary_SIF.power_on
         do @secondary_SIF.power_on
 
-        systems = [
-            @lifesupport, @transponder, @transporters, @communication_array,
-            @inertial_dampener, @primary_SIF, @secondary_SIF, @tractor_beam
-        ]
-        for s in systems
-            @primary_eps.add_route s
         @systems = systems.concat( [ @fusion_reactors, @main_relay,
             @emergency_power, @e_power_relay, @primary_eps ] )
 

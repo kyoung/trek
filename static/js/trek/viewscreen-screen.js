@@ -41,6 +41,8 @@ var navigationData;
 
 var stelarTelem;  // holding block for debugging telemetry geometry
 
+var shipVelocity;
+
 var starViews = [
     "undefined",
     "forward",
@@ -896,6 +898,16 @@ trek.socket.on( "Navigation", function ( navData ) {
 
     if ( _.has( navData, "turn_direction" ) ) processTurnDisplay( navData );
     if ( _.has( navData, "set_speed" ) ) processSpeedData( navData );
+
+
+} );
+
+
+trek.socket.on( "Thruster", function ( navData) {
+
+    // we're moving? yay? let's assume all meshes are not and move them
+    // inversely.
+    shipVelocity = navData.velocity;
 
 
 } );

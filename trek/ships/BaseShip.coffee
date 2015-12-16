@@ -54,6 +54,12 @@ class BaseShip extends BaseObject
         @star_system = undefined
         @enroute_to_system = undefined
 
+        # Generic holders
+        @shields = []
+        @phasers = []
+        @systems = []
+        @sensors = []
+
         do @initialize_systems
         do @initialize_hull
         do @initialize_cargo
@@ -735,6 +741,8 @@ class BaseShip extends BaseObject
                 @velocity.x -= vectors.x * delta_v
                 @velocity.y -= vectors.y * delta_v
                 @velocity.z -= vectors.z * delta_v
+
+        @message @prefix_code, "Thruster", do @navigation_report
 
 
     set_course: ( bearing, mark, callback ) =>

@@ -804,7 +804,6 @@ class Game
                 if ship.hear_hail prefix, message
                     @message pfix, "hail", msg
 
-
         response_function = ( msg ) =>
             for pfix, ship of @ships
                 if ship.hear_hail "", msg

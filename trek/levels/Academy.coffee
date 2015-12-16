@@ -63,47 +63,47 @@ class Academy extends Level
 
 
     # Level states
-    _is_crew_boarded: ->
+    _is_crew_boarded: =>
         for c in @enterprise_crew
             if c not in @enterprise.internal_personnel
                 return false
         return true
 
-    _is_cargo_secured: ->
-        for c in @spacedock.cargobays
+    _is_cargo_secured: =>
+        for c in @stardock.cargobays
             for k, v of c
                 if v > 0
                     return false
         return true
 
-    _has_requested_departure: ->
+    _has_requested_departure: =>
         @state.is_departure_requested
 
-    _has_departed: ->
+    _has_departed: =>
         if @enterprise.velocity.x > 0 or @enterprise.velocity.y > 0 or @enterprise.velocity.z > 0
             return true
         return false
 
-    _has_arrived_at_range: ->
+    _has_arrived_at_range: =>
         if U.distance(@enterprise.position, @range_position) < 1e6
             return true
         return false
 
-    _has_destroyed_w_phasers: ->
-        if @beacon1.is_alive
+    _has_destroyed_w_phasers: =>
+        if @beacon1.alive
             return false
         return true
 
-    _has_destroyed_subsystem: ->
-        if @beacon2.is_alive and @beacon2.tranceiver.status = 0
+    _has_destroyed_subsystem: =>
+        if @beacon2.alive and @beacon2.transponder.status == 0
             return true
         return false
 
-    _has_destroyed_w_torpedoes: ->
+    _has_destroyed_w_torpedoes: =>
         # TODO to make this harder, this should just be a check for a torp
         # detonation
         for b in [@beacon3, @beacon4, @beacon5, @beacon6, @beacon7]
-            if b.is_alive
+            if b.alive
                 return false
         return true
 
@@ -126,16 +126,21 @@ cargo secured."
         # Has requested clearance to depart
         message_departure_clearance = ( g ) =>
             if !@_is_crew_boarded()
+                console.log "<messaging negative; crew missing>"
                 g.hail @stardock.prefix_code, "Negative Enterprise; you still
 have disembarked crew aboard."
+                @state.is_departure_requested = false
                 return
 
             if !@_is_cargo_secured()
+                console.log "<messaging negative; cargo missing>"
                 g.hail @stardock.prefix_code, "Negative Enterprise; we still show
 remaining cargo for you to transfer."
+                @state.is_departure_requested = false
                 return
 
             else
+                console.log "<messaging clear for departure>"
                 @state.is_cleared_for_departure = true
                 g.hail @stardock.prefix_code, "Roger that Enterprise; moorings
 retracted. You are clear to depart."
@@ -174,11 +179,11 @@ but not the beacon."
 
         # Has destroyed second target subsystem
         check_second_target = ( g ) =>
-            if !@beacon2.is_alive
+            if !@beacon2.alive
                 g.hail @range_station.prefix_code, "Enterprise, you failed to
 control your fire. I'm affraid that means you've failed the live-fire trial."
                 @score -= 20
-                do end_game
+                end_game g
                 return
             @score += 10
             g.hail @range_station.prefix_code, "Well done Enterprise. Proceed to
@@ -187,64 +192,64 @@ blast. One shot at maximum yield will be sufficient."
 
         # Has destroyed cluster of targets with torpedos
         check_are_all_beacons_dead = ( g ) =>
-            if @beacon3.is_alive or @beacon4.is_alive or @beacon5.is_alive or @beadon6.is_alive or @beacon7.is_alive
+            if @beacon3.alive or @beacon4.alive or @beacon5.alive or @beacon6.alive or @beacon7.alive
                 g.hail @range_station.prefix_code, "Enterprise, you failed to
 target and destroy the target beacons. I'm affraid that means you've failed the
 live-fire trial."
                 @score -= 20
-                do end_game
+                end_game g
                 return
             @score += 20
             g.hail @range_station.prefix_code, "Excellent, well done Enterprise.
 You have cleared weapons trials and are cleared for your next mission."
-            do end_game
+            end_game g
 
         crew_boarded = new LevelEvent {
             name : 'Crew Boarded',
             condition : @_is_crew_boarded,
-            action : message_crew_boarded
+            do : message_crew_boarded
         }
 
         cargo_secured = new LevelEvent {
             name : 'Cargo Secured',
             condition : @_is_cargo_secured,
-            action : message_cargo_boarded
+            do : message_cargo_boarded
         }
 
         clearance = new LevelEvent {
             name : 'Dock Clearance',
             condition : @_has_requested_departure,
-            action : message_departure_clearance
+            do : message_departure_clearance
         }
 
         departure = new LevelEvent {
             name : 'Dock Departure',
             condition : @_has_departed,
-            action : verify_departure
+            do : verify_departure
         }
 
         arrived_at_range = new LevelEvent {
             name : 'Arrived at Range',
             condition : @_has_arrived_at_range,
-            action : welcome_to_range
+            do : welcome_to_range
         }
 
         destroy_w_phasers = new LevelEvent {
             name : 'Has destroyed the beacon with Phasers',
             condition : @_has_destroyed_w_phasers,
-            action : instruct_to_target_subsystems
+            do : instruct_to_target_subsystems
         }
 
         destroy_subsystem = new LevelEvent {
             name : 'Destroy subsystem with Phasers',
             condition : @_has_destroyed_subsystem,
-            action : check_second_target
+            do : check_second_target
         }
 
         destroy_w_torpedoes = new LevelEvent {
             name : 'Destroy with torpedoes',
             condition : @_has_destroyed_w_torpedoes,
-            action : check_are_all_beacons_dead
+            do : check_are_all_beacons_dead
         }
 
         events = [

@@ -38,7 +38,7 @@ class Beacon extends BaseShip
         @ship_class = "Beacon"
 
 
-    initilize_systems: ->
+    initialize_systems: ->
 
         @main_relay = new PowerSystem(
             'Station Primary Relays',
@@ -70,9 +70,10 @@ class Beacon extends BaseShip
             @SECTIONS['2'],
             System.TRANSPONDER_POWER )
 
-        @battery_power.add_route @main_relay
         @main_relay.add_route @eps
         @eps.add_route @transponder
+
+        @systems = [ @main_relay, @battery_power, @eps, @transponder ]
 
         # Turn on power
         do @_set_operational_reactor_settings
