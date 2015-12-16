@@ -59,6 +59,7 @@ class Game
 
         # two seperate lists for convenience
         @ai_ships = do level.get_ai_ships
+        @ai_init_states = do level.get_ai_states
         @player_ships = do level.get_player_ships
 
         @game_objects = do level.get_game_objects
@@ -133,12 +134,12 @@ class Game
                 prefix : s.prefix_code,
                 postfix : s.postfix_code,
                 position : s.position
-
             }
 
         r =
             player_ships : player_ships
             ai_ships : ai_ships
+            ai_states : @ai_init_states
 
 
     get_ships: -> ( { name : s.name, registry : s.serial } for k, s of @player_ships )
@@ -441,6 +442,9 @@ class Game
         #               ]
         #           }
         #       ],  // includes planets and moons
+        #       meshes : [
+        #           { mesh_url : "", rotation : r, bearing : b, scale : s, relative_position : p, sensor_tag : t}
+        #       ],  // things are sometimes very close by... ie starbases
         #       stars : [
         #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
         #       ],   // 50% of systems are binary
@@ -452,6 +456,8 @@ class Game
 
         ship = @ships[ prefix ]
         stars = ( o for o in @space_objects when o.classification.indexOf( "Star" ) >= 0 )
+        VISIBLE_RANGE = 3000 # 3km
+        visible_objects = ( s for s in @game_objects when ( U.distance(ship.position, s.position) < VISIBLE_RANGE and s isnt ship ) )
 
         telemetry =
             skyboxes : [
@@ -466,6 +472,13 @@ class Game
                 type : p.type
                 bearing : U.bearing ship, p
                 rings : []
+                )
+            meshes : ( for s in visible_objects
+                mesh_url : s.model_url
+                rotation : U.bearing s, ship
+                bearing : U.bearing ship, s
+                relative_position : U.distance_vector ship, s
+                sensor_tag : s.sensor_tag
                 )
             stars : ( for o in @space_objects when o instanceof Star
                 size : o.radius
@@ -487,6 +500,7 @@ class Game
                 mesh_url : target.model_url
                 rotation : U.bearing target, ship
                 bearing : U.bearing ship, target
+            telemetry.meshes = []
 
         return telemetry
 
@@ -729,8 +743,8 @@ class Game
         ###
 
         # Find all objects in range, that respond to type
-        game_hits = ( o for o in @game_objects when 0 < U.distance( position, o.position ) < range )
-        space_hits = ( o for o in @space_objects when 0 < U.distance( position, o.position ) < range or o.charted )
+        game_hits = ( o for o in @game_objects when 0 <= U.distance( position, o.position ) < range )
+        space_hits = ( o for o in @space_objects when 0 <= U.distance( position, o.position ) < range or o.charted )
         hits = game_hits.concat space_hits
         hits = ( h for h in hits when h.scan_for type )
         count_show_up_on_scan = hits.length
@@ -741,9 +755,9 @@ class Game
         max_bearing = Math.max bearing_to, bearing_from
 
         if crossing_lapping_scan
-            hits = ( h for h in hits when min_bearing > U.point_bearing( position, h.position ).bearing or max_bearing < U.point_bearing( position, h.position ).bearing )
+            hits = ( h for h in hits when min_bearing >= U.point_bearing( position, h.position ).bearing or max_bearing <= U.point_bearing( position, h.position ).bearing )
         else
-            hits = ( h for h in hits when min_bearing < U.point_bearing( position, h.position ).bearing < max_bearing )
+            hits = ( h for h in hits when min_bearing <= U.point_bearing( position, h.position ).bearing <= max_bearing )
         # For each object, see if blocked by space objects
         count_pre_block = hits.length
 
@@ -789,7 +803,6 @@ class Game
             for pfix, ship of @ships when pfix isnt prefix
                 if ship.hear_hail prefix, message
                     @message pfix, "hail", msg
-
 
         response_function = ( msg ) =>
             for pfix, ship of @ships

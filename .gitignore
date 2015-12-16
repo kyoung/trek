@@ -5,6 +5,7 @@ node_modules
 .DS_Store
 reference
 .coveralls.yml
+npm-debug.log
 
 # These are compiled views
 views/academy/*

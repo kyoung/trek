@@ -73,6 +73,9 @@ class System
 
     push_power: ( power ) ->
 
+        # if isNaN power
+        #     return @power
+
         # power (in Dynes) is being pushed to this system through charged plasma
         relative_power = power / @power_thresholds.dyn
 
@@ -86,7 +89,7 @@ class System
             return @power = power
 
         # Ya blew it
-        console.log "#{ @name }: Too much power: #{ relative_power }x above operational levels."
+        console.log "#{ @name }: Too much power: #{ relative_power }x above operational levels. (#{ power })"
         # Power components will be fused or blown
         @online = false
         @_fuse_on = false
@@ -203,6 +206,10 @@ class System
         working_order = @state > System.OPERABILITY_CUTOFF
         if not working_order
             @online = false
+
+        # DEBUG
+        if @name == "Forward EPS"
+            console.log "fwd eps turned on: resulting state: #{ @online }"
 
         return @online
 

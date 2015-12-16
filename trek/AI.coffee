@@ -77,11 +77,13 @@ class AI
 play = ( game, prefixes, init_states ) ->
 
     AIs = []
-    for prefix, i in prefixes
+    for prefix in prefixes
         m5 = new AI game, prefix
         # Allow the passing of initial states
-        if init_states?
-            m5.state_stack.push init_states[ i ]
+        if init_states? and init_states[ prefix ]?
+            m5.state_stack.push init_states[ prefix ]
+        else
+            console.log "Missing AI init state for AI #{prefix}"
         do m5.play
         AIs.push m5
     return AIs

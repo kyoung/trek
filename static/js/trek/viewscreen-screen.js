@@ -24,6 +24,7 @@ var skyGeometry = new THREE.SphereGeometry( 3000, 400, 400 );
 var skyBox;
 
 var skySpheres = {};  // suns and planets... etc
+var closeMeshes = {};  // space dock, etc
 
 var station;
 var ship;
@@ -39,6 +40,8 @@ var cameraEasing, cameraElapsed;
 var navigationData;
 
 var stelarTelem;  // holding block for debugging telemetry geometry
+
+var shipVelocity;
 
 var starViews = [
     "undefined",
@@ -91,6 +94,9 @@ function init ( data ) {
     // #               ]
     // #           }
     // #       ],  // includes planets and moons
+    // #       meshes : [
+    // #           { mesh_url : "", rotation : r, bearing : b, scale : s }
+    // #       ],  // things are sometimes very close by... ie starbases
     // #       stars : [
     // #           { size : [radius], distance : [distance], primary_color : #fff, bearing : [bearing] }
     // #       ],   // 50% of systems are binary
@@ -137,6 +143,13 @@ function init ( data ) {
         //     lightAngle -= 1;
         //
         // }
+
+    } else {
+
+        // let's check for meshes!
+        for ( var i=0; i < data.meshes.length; i++ ) {
+            showMesh( data.meshes[i], data.bearing )
+        }
 
     }
 
@@ -299,6 +312,38 @@ function showSuns ( stars, referenceBearing ) {
 
 };
 
+function showMesh ( meshParameters, referenceBearing ) {
+    var url = meshParameters.mesh_url;
+    var rotation = meshParameters.rotation;
+    var bearing = meshParameters.bearing;
+    console.log("loading mesh " + url)
+
+    // target : { mesh_url: "" , rotation : r, bearing : [bearing] } | undefined
+    loader.load( "/static/mesh/" + url, function( geo, mat ) {
+
+        console.log("loaded")
+
+        target = new THREE.Mesh( geo, new THREE.MeshFaceMaterial( mat ) );
+        // we have to subtract the bearing to make up for the rotation added by
+        // turning our camera towards the target
+        target.rotation.y = ( rotation.bearing - bearing.bearing ) * 2 * Math.PI;
+
+        var gameCoordinate = meshParameters.relative_position;
+        // translate into threejs coordinate system
+        var renderCoordinate = {
+            x : gameCoordinate.x,
+            y : gameCoordinate.z,
+            z : gameCoordinate.y
+        }
+        target.position.set( renderCoordinate.x, renderCoordinate.y, renderCoordinate.z );
+        scene.add( target );
+
+        closeMeshes[ meshParameters.sensor_tag ] = target;
+
+    } );
+
+}
+
 
 function update ( stamp ) {
 
@@ -444,6 +489,39 @@ function updateSpheres ( data ) {
         skySpheres[ s.name + '_flare' ].position.set( x/10, 0, z/10 );
 
     } );
+
+    // TODO factor this out entirely
+
+    _.each( data.meshes, function ( m ) {
+
+        if ( closeMeshes.hasOwnProperty(m.sensor_tag) ) {
+
+            var x = m.relative_position.x;
+            var y = m.relative_position.z;
+            var z = m.relative_position.y;
+
+            closeMeshes[ m.sensor_tag ].position.set( x, y, z );
+
+        } else {
+
+            showMesh( m );
+
+        }
+
+    } );
+
+    // remove outdated meshes
+    var tags = _.map( data.meshes, function ( m ) { return m.sensor_tag } );
+    _.each( closeMeshes, function( v, k ) {
+
+        if ( tags.indexOf( k ) < 0 ) {
+
+            scene.remove( closeMeshes[ k ] );
+            delete closeMeshes[ k ];
+
+        }
+
+    } )
 
 }
 
@@ -820,6 +898,16 @@ trek.socket.on( "Navigation", function ( navData ) {
 
     if ( _.has( navData, "turn_direction" ) ) processTurnDisplay( navData );
     if ( _.has( navData, "set_speed" ) ) processSpeedData( navData );
+
+
+} );
+
+
+trek.socket.on( "Thruster", function ( navData) {
+
+    // we're moving? yay? let's assume all meshes are not and move them
+    // inversely.
+    shipVelocity = navData.velocity;
 
 
 } );

@@ -6,6 +6,7 @@ class Level
         @game_time_start = new Date().getTime()
         @ships = {}
         @ai_ships = {}
+        @ai_states = {}
         @space_objects = []
         @game_objects = []
         @map = {}
@@ -28,6 +29,9 @@ class Level
     get_ai_ships: -> @ai_ships
 
 
+    get_ai_states: -> @ai_states
+
+
     set_AIs: ( @AIs ) ->
 
 
@@ -43,7 +47,7 @@ class Level
     get_events: -> []
 
     get_environment: ->
-    get_final_score: -> return false
+    get_final_score: -> return 0
 
     handle_hail: ( prefix, message ) ->
 

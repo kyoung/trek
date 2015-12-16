@@ -31,7 +31,7 @@ for deck_number in [ 65..85 ]
 
 class BaseShip extends BaseObject
 
-    @THRUSTER_DELTA_V_MPS = 200
+    @THRUSTER_DELTA_V_MPS = 2
 
     DECKS: DECKS
     SECTIONS: SECTIONS
@@ -54,11 +54,21 @@ class BaseShip extends BaseObject
         @star_system = undefined
         @enroute_to_system = undefined
 
+        # Generic holders
+        @shields = []
+        @phasers = []
+        @systems = []
+        @sensors = []
+
         do @initialize_systems
         do @initialize_hull
         do @initialize_cargo
-        do @initialize_crew
         do @initialize_logs
+
+        @internal_personnel = []
+        @guests = []
+        @boarding_parties = []
+        do @initialize_crew
 
         @radiological_alerts = {} # Sectional radiological state
         for k, s of @SECTIONS
@@ -125,8 +135,9 @@ class BaseShip extends BaseObject
         do @_set_operational_reactor_settings
 
         # Activate basic systems
-        do @primary_SIF.power_on
-        do @secondary_SIF.power_on
+        if @primary_SIF? and @secondary_SIF?
+            do @primary_SIF.power_on
+            do @secondary_SIF.power_on
 
         @systems = []
 
@@ -708,9 +719,6 @@ class BaseShip extends BaseObject
             @warp_speed = 0
             @port_warp_coil.set_warp 0
             @starboard_warp_coil.set_warp 0
-            @velocity.x = 0
-            @velocity.y = 0
-            @velocity.z = 0
 
         flat_rotation = @bearing.bearing * Math.PI * 2
         flat_mark = @bearing.mark * Math.PI * 2
@@ -733,6 +741,8 @@ class BaseShip extends BaseObject
                 @velocity.x -= vectors.x * delta_v
                 @velocity.y -= vectors.y * delta_v
                 @velocity.z -= vectors.z * delta_v
+
+        @message @prefix_code, "Thruster", do @navigation_report
 
 
     set_course: ( bearing, mark, callback ) =>
@@ -1261,6 +1271,15 @@ class BaseShip extends BaseObject
 
     get_system_scan: ->
 
+        power_readings = []
+        if @reactors?
+            for r in @reactors
+                power_readings.push do r.field_output
+
+        if @starboard_warp_coil? and @port_warp_coil?
+            power_readings.push do @starboard_warp_coil.warp_field_output
+            power_readings.push do @port_warp_coil.warp_field_output
+
         r =
             systems: do @damage_report
             cargo: do @get_cargo_status
@@ -1268,12 +1287,7 @@ class BaseShip extends BaseObject
             # Eventually, power readings will be used to profile a ship
             # for now, let's simply return the power output to the nacels
             # which is feasably measured
-            power_readings: [
-                    do @port_warp_coil.warp_field_output,
-                    do @starboard_warp_coil.warp_field_output,
-                    do @warp_core.field_output,
-                    do @impulse_reactors.field_output,
-                    do @emergency_power.field_output ]
+            power_readings: power_readings
             mesh: @model_url
             name: @name
             mesh_scale: @model_display_scale
@@ -1514,17 +1528,23 @@ class BaseShip extends BaseObject
         parent_eps_relays = ( r for r in @eps_grids when r.is_attached system )
         if parent_eps_relays.length > 0
             parent_eps_relay = parent_eps_relays[ 0 ]
+            if not parent_eps_relay.online
+                throw new Error "#{ parent_eps_relay.name } is not online."
 
         primary_power_relays = ( r for r in @primary_power_relays when r.is_attached( system ) or r.is_attached( parent_eps_relay ) )
         if primary_power_relays.length isnt 1
             throw new Error "Unable to trace primary power relay for #{ system_name }"
         primary_power_relay = primary_power_relays[ 0 ]
+        if not primary_power_relay.online
+            throw new Error "Associated primary power relay, #{ primary_power_relay.name } is not online."
 
         reactors = ( r for r in @reactors when r.is_attached primary_power_relay )
         if reactors.length isnt 1
             throw new Error "Unable to trace reactor power for #{ primary_power_relay.name }"
 
         reactor = reactors[ 0 ]
+        if not reactor.online
+            throw new Error "#{ reactor.name } is offline."
 
         if parent_eps_relay?
             new_eps_balance = parent_eps_relay.calculate_new_balance(
@@ -1827,6 +1847,9 @@ class BaseShip extends BaseObject
 
     _are_all_shields_up: ->
 
+        if @shields.length == 0
+            return false
+
         for s in @shields
 
             if not s.active || not s.online || s.charge <= 0.01
@@ -1881,7 +1904,7 @@ class BaseShip extends BaseObject
         @_update_system_state delta, engineering_locations
 
         # drop out of warp... I hope your SI is on...
-        if not @warp_core.is_online() and @warp_speed > 0
+        if @warp_core? and not @warp_core.is_online() and @warp_speed > 0
             @warp_speed = 0
             @velocity.x = 0
             @velocity.y = 0
@@ -1964,7 +1987,8 @@ class BaseShip extends BaseObject
 
         health_locaitons = {}
         # Any crew in sickbay should get better
-        health_locaitons[ @sick_bay.deck ] = [ @sick_bay.section ]
+        if @sick_bay?
+            health_locaitons[ @sick_bay.deck ] = [ @sick_bay.section ]
         # Any crew near a medical team member should get better
         for crew in @internal_personnel when crew.description == "Medical Team" and not do crew.is_enroute
 
@@ -2011,6 +2035,9 @@ class BaseShip extends BaseObject
         if @warp_speed == 0
             for s in @sensors
                 s.run_scans world_scan, @position, @bearing.bearing, now
+
+        if not @long_range_sensors?
+            return
 
         @long_range_sensors.run_scans world_scan, @position, @bearing.bearing, now
 
